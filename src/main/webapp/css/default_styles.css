@@ -1,0 +1,319 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+	color: #666;
+    background: #fff;
+    font-size: 13px; 
+	font-family: Arial,helvetica,sans-serif;
+}
+
+#header {
+	background: #fff none repeat scroll 0 0;
+    overflow: hidden;
+	margin-bottom: 10px;
+    border-bottom: 1px solid #266FAD;
+	width: 1024px;
+}
+
+#header #header-main {
+}
+
+#nav-main {
+	background-color: #4867D6;
+	color: #ff7373;
+	padding-left: 16px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	overflow: none;
+	font-size: 12px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: bold;
+	border-top: 1px solid #F0F8FF;
+}
+
+#nav-main ul li {
+	display: inline;
+	margin: 5px;
+}
+
+#nav-main a:link {
+	color: #fff;
+}
+
+#nav-main a:visited {
+	color: #fff;
+}
+
+#nav-main a:hover {
+	color: #EC665D;
+}
+
+h2 {
+    font-size: 1.3em;
+    color: #0000B8;
+	margin-bottom: 5px;
+}
+
+#content {
+    margin: 0 20px 2em 20px;
+	float: left;
+	width: 1024px;
+}
+
+a:link {
+	color:#002FA7;
+}
+
+a:visited {
+	color: #002FA7;
+}
+
+#content #main {
+    width: 40%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
+#content #sidebar {
+	min-height: 750px;
+    width: 27%;
+    float: left;
+	overflow: auto;
+	background-color: #BDDDED;
+}
+
+#content #sidebar a:hover {
+	color: #082567;
+}
+
+#blog-posts {
+	margin: 10px;
+	margin-top: 5px;
+	line-height: 1.4;
+}
+
+#footer {
+    clear: left;
+    background-color: #4169E1;
+    color: #fff;
+    margin-top: 2em;
+    width: 1024px;
+    overflow: auto;
+}
+
+#footer a:link {
+	color: #fff;
+	font-size: 11px;
+	font-weight: bold;
+}
+#footer a:visited {
+	color: #fff;
+	font-size: 11px;
+	font-weight: bold;
+}
+#footer a:hover {
+	color: #ddd;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+#footer div.chunk {
+    margin-top: 1em;
+    margin-left: 20px;
+    width: 15%;
+    float: left;
+    margin-bottom: 2em;
+}
+
+#footer div.chunk h3 {
+    font-size: 110%;
+}
+
+#footer div.chunk ul {
+    list-style-type: none;
+}
+
+#footer #copyright {
+    clear: left;
+    padding-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 20px;
+}
+
+a {
+	text-decoration: none;
+}
+
+.course_listing_heading {
+	background: #BDDDED; 
+	padding-left: 5px;
+}
+
+.course_title {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	background: #F9F9F9;
+	border: 1px solid #EEEEEE;
+	font-weight: bold;
+}
+
+#course-details {
+	margin-bottom: 10px;
+	padding-bottom: 5px;
+}
+
+.course_description {
+	text-align: justify;
+	padding: 5px;
+	border-bottom: 1px solid #EEEEEE;
+	border-left: 1px solid #EEEEEE;
+	border-right: 1px solid #EEEEEE;
+}
+
+
+#course-listing a:link {
+	color: #082567;
+}
+
+#course-listing a:visited {
+	color: #082567;
+}
+
+#course-listing a:hover {
+	color: #269926; 
+}
+
+.course-name {
+	color: #266FAD;
+	font-weight: bold;
+	padding-bottom: 15px;
+}
+
+.topic-name {
+	color: #266FAD;
+	background-color: #EEEEEE;
+	font-weight: bold;
+	padding-left: 5px;
+	font-size: 13px;
+}
+
+#topic-content {
+	padding: 10px;
+}
+
+#topic-content p {
+	margin-bottom:10px;
+}
+
+.course-description {
+	line-height: 1.4;
+	text-align: justify;
+}
+
+.course-description td p {
+	padding-bottom: 8px;
+}
+
+.course-description ul {
+	margin-left: 20px;
+}
+
+.course-description a:visited {
+	color: #4EAFAE;	
+}
+
+.course-description a:link {
+	color: #4EAFAE;	
+}
+
+.course-description a:hover {
+	color: #266FAD;	
+}
+
+#course-topics {
+	margin-left: 20px;
+}
+
+#course-topics a:link {
+	color: #4EAFAE;
+	font-weight: bold;
+	padding-left: 10px;
+}
+
+#course-topics a:visited {
+	color: #4EAFAE;
+	font-weight: bold;
+	padding-left: 10px;
+}
+
+#course-topics a:hover {
+	color: #266FAD;
+	font-weight: bold;
+	padding-left: 10px;
+}
+
+#forum {
+	margin-top: 20px;
+	line-height: 1.4;
+}
+
+.link-theme-b a:visited {
+	color: #4EAFAE;	
+}
+
+.link-theme-b a:link {
+	color: #4EAFAE;	
+}
+
+.link-theme-b a:hover {
+	color: #4EAFAE;	
+}
+
+.topic-navigation {
+	padding: 20px;
+	font-weight: bold;
+}
+
+.topic-navigation a {
+	color: #FF7373;
+	font-size: 14px;
+}
+
+.topic-navigation-top {
+	padding-top: 5px;
+	padding-left: 20px;
+	padding-bottom: 5px;
+	font-weight: bold;
+}
+
+.topic-navigation-top a {
+	color: #FF7373;
+	font-size: 14px;
+}
+
+.link-theme-static {
+	text-align: justify
+}
+
+.link-theme-static p {
+	padding-bottom: 8px;
+}
+
+.link-theme-static p {
+	padding-bottom: 8px;
+}
+
+.link-theme-static ul {
+	margin: 20px;
+}
+
+.link-theme-static ol {
+	margin: 20px;
+}

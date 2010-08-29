@@ -19,9 +19,9 @@ public class WWALDApplication extends WebApplication
 	/**
 	 * @see org.apache.wicket.Application#getHomePage()
 	 */
-	public Class<HomePage> getHomePage()
+	public Class<HomePage1> getHomePage()
 	{
-		return HomePage.class;
+		return HomePage1.class;
 	}
 
 }
