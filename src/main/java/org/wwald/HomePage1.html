@@ -36,36 +36,81 @@
 
 					<div id="course-details">
 						<div class="course_title">
-							<a href="/courses/course/show/UCATI/">Understanding Computers And The Internet</a>
+							<a href="/courses/course/show/UCATI/"><span wicket:id="course1.title">Course 1 Title</span></a>
 						</div>
 						<div class="course_description">
-							This course is all about understanding: understanding what's going on inside your computer when you flip on the switch, why tech support has you constantly rebooting your computer, how everything you do on the Internet can be watched by ...
+							<span wicket:id="course1.description">Course 1 Description</span>
 						</div>
 					</div>
 					
 					<div id="course-details">
 						<div class="course_title">
-							<a href="/courses/course/show/INTROCS/">Introduction To Computer Science</a>
+							<a href="/courses/course/show/INTROCS/"><span wicket:id="course2.title">Course 2 Title</span></a>
 						</div>
 						<div class="course_description">
-							Introduction to Computer Science I is a first course in computer science at Harvard College for concentrators and non-concentrators alike. More than just teach you how to program, this course teaches you how to think more methodically and how to ...
+							<span wicket:id="course2.description">Course 2 Description</span>
 						</div>
 					</div>
 
 					<div id="course-details">
 						<div class="course_title">
-							<a href="/courses/course/show/INTRCSPROG/">Introduction to Computer Science and Programming (using Python)</a>
+							<a href="/courses/course/show/INTRCSPROG/"><span wicket:id="course3.title">Course 1 Title</span></a>
 						</div>
 						<div class="course_description">
-							<p>
-								This subject is aimed at students with little or no programming experience. It aims to provide students with an understanding of the role computation can play in solving problems. It also aims to help students, regardless of their major, to ...</p>
+								<span wicket:id="course3.description">Course 3 Description</span>
 						</div>
 
 					</div>
 
 				</div>
 			</div>
+			
+			<div id="status_updates">
+				<h2 class="status_updates_heading">Site Updates</h2>
+				
+				<div id="status_update">
+					Daniel learned HTML lists and blogged his learnings.
+				</div>
+				
+				<div id="status_update">
+					Parag took a quiz on Java programming.
+				</div>
+				
+				<div id="status_update">
+					Joe finished watching a lecture on sorting algorithms.
+				</div>
+			</div>
+			
+			<div id="admin">
+				<p class="auth_component">
+					<table>
+						<tr><th>Existing users login</th></tr>
+						<tr><td>username</td></tr>
+						<tr><td><input type="text" name="username" class="auth" /></td></tr>
+						<tr><td>password</td></tr>
+						<tr><td><input type="password" name="password" class="auth" /></td></tr>
+						<tr><td><input type="submit" value="Login" class="auth" /></td></tr>
+					</table>
+				</p>
+				<p class="auth_component">
+					<table>
+						<tr><th>Not an existing user?</th></tr>
+						<tr><td>email</td></tr>
+						<tr><td><input type="text" name="email" class="auth" /></td></tr>
+						<tr><td>username</td></tr>
+						<tr><td><input type="text" name="username" class="auth" /></td></tr>
+						<tr><td>password</td></tr>
+						<tr><td><input type="password" name="password1" class="auth" /></td></tr>
+						<tr><td>re-enter password</td></tr>
+						<tr><td><input type="password" name="password1" class="auth" /></td></tr>
+						<tr><td><input type="submit" value="Register" class="auth" /></td></tr>
+					</table>
+				</p>
+			</div>
+			
 		</div>
+		
+		
 		
 		<div id="footer">	
 			<div class="chunk" id="footer">

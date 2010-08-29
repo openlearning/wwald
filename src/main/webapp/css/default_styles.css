@@ -79,6 +79,20 @@ a:visited {
 	padding-right: 10px;
 }
 
+#content #status_updates {
+    width: 40%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
+#content #admin {
+    width: 15%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
 #content #sidebar {
 	min-height: 750px;
     width: 27%;
@@ -164,6 +178,22 @@ a {
 	font-weight: bold;
 }
 
+.status_updates_heading {
+	background: #BDDDED; 
+	padding-left: 5px;
+}
+
+#status_update {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-bottom: 5px;
+	background: #F9F9F9;
+	border: 1px solid #EEEEEE;
+	font-weight: bold;
+}
+
 #course-details {
 	margin-bottom: 10px;
 	padding-bottom: 5px;
@@ -189,6 +219,7 @@ a {
 #course-listing a:hover {
 	color: #269926; 
 }
+
 
 .course-name {
 	color: #266FAD;
@@ -316,4 +347,20 @@ a {
 
 .link-theme-static ol {
 	margin: 20px;
+}
+
+.auth {
+	font-size: 12px;
+	width: 100px;
+}
+
+.auth_component {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-bottom: 20px;
+	background: #F9F9F9;
+	border: 1px solid #EEEEEE;
+	font-size: 12px;
 }
