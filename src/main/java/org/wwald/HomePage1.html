@@ -34,33 +34,24 @@
 				
 				<div id="course-listing">
 
-					<div id="course-details">
+					<div wicket:id="courses" id="course-details">
 						<div class="course_title">
-							<a href="/courses/course/show/UCATI/"><span wicket:id="course1.title">Course 1 Title</span></a>
+							<a wicket:id="goto.course" href="#"><span wicket:id="course.title">Course 1 Title</span></a>
 						</div>
 						<div class="course_description">
-							<span wicket:id="course1.description">Course 1 Description</span>
+							<span wicket:id="course.description">Course 1 Description</span>
 						</div>
 					</div>
-					
-					<div id="course-details">
-						<div class="course_title">
-							<a href="/courses/course/show/INTROCS/"><span wicket:id="course2.title">Course 2 Title</span></a>
+					<wicket:remove>
+						<div id="course-details">
+							<div class="course_title">
+								<a href="/courses/course/show/INTROCS/"><span>Course 2 Title</span></a>
+							</div>
+							<div class="course_description">
+								<span>Course 2 Description</span>
+							</div>
 						</div>
-						<div class="course_description">
-							<span wicket:id="course2.description">Course 2 Description</span>
-						</div>
-					</div>
-
-					<div id="course-details">
-						<div class="course_title">
-							<a href="/courses/course/show/INTRCSPROG/"><span wicket:id="course3.title">Course 1 Title</span></a>
-						</div>
-						<div class="course_description">
-								<span wicket:id="course3.description">Course 3 Description</span>
-						</div>
-
-					</div>
+					</wicket:remove>
 
 				</div>
 			</div>
