@@ -26,8 +26,13 @@ public class HomePage1 extends WebPage {
 	 *            Page parameters
 	 */
     public HomePage1(final PageParameters parameters) {
-
-    	add(new ListView("courses", getCourses()) {
+    	add(getCoursesListView());
+    	add(getStatusUpdateListView());
+    }
+    
+    private ListView getCoursesListView() {
+    	return
+    	new ListView("courses", getCourses()) {
 
 			@Override
 			protected void populateItem(ListItem item) {
@@ -44,7 +49,20 @@ public class HomePage1 extends WebPage {
 				item.add(new Label("course.description", course.getDescription()));
 			}
     		
-    	});
+    	};
+    }
+    
+    private ListView getStatusUpdateListView() {
+    	return
+    	new ListView("status_updates", getStatusUpdates()) {
+
+			@Override
+			protected void populateItem(ListItem item) {
+				StatusUpdate statusUpdate = (StatusUpdate)item.getModelObject();
+				item.add(new Label("status_update_text", statusUpdate.getText()));
+			}
+    		
+    	};
     }
     
     private List<Course> getCourses() {
@@ -60,5 +78,13 @@ public class HomePage1 extends WebPage {
     						   "This subject is aimed at students with little or no programming experience. It aims to provide students with an understanding of the role computation can play in solving problems. It also aims to help students, regardless of their major, to ..."));
     	
     	return courses;
+    }
+    
+    private List<StatusUpdate> getStatusUpdates() {
+    	List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
+    	statusUpdates.add(new StatusUpdate("Daniel learned HTML lists and blogged his learnings. "));
+    	statusUpdates.add(new StatusUpdate("Parag took a quiz on Java programming. "));
+    	statusUpdates.add(new StatusUpdate("Joe finished watching a lecture on sorting algorithms."));
+    	return statusUpdates;
     }
 }

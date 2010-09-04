@@ -59,17 +59,15 @@
 			<div id="status_updates">
 				<h2 class="status_updates_heading">Site Updates</h2>
 				
-				<div id="status_update">
-					Daniel learned HTML lists and blogged his learnings.
+				<div wicket:id="status_updates" id="status_update">
+					<span wicket:id="status_update_text">Daniel learned HTML lists and blogged his learnings.</span>
 				</div>
 				
-				<div id="status_update">
-					Parag took a quiz on Java programming.
-				</div>
-				
-				<div id="status_update">
-					Joe finished watching a lecture on sorting algorithms.
-				</div>
+				<wicket:remove>
+					<div id="status_update">
+						Parag took a quiz on Java programming.
+					</div>
+				</wicket:remove>
 			</div>
 			
 			<div id="admin">
