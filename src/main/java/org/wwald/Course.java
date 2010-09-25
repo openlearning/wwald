@@ -3,11 +3,13 @@
  */
 package org.wwald;
 
+import java.io.Serializable;
+
 /**
  * @author pshah
  *
  */
-public class Course {
+public class Course implements Serializable {
 	private String title;
 	private String description;
 	

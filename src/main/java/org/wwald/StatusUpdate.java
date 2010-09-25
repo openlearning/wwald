@@ -3,11 +3,13 @@
  */
 package org.wwald;
 
+import java.io.Serializable;
+
 /**
  * @author pshah
  *
  */
-public class StatusUpdate {
+public class StatusUpdate implements Serializable {
 	private String text;
 	
 	public StatusUpdate(String text) {
