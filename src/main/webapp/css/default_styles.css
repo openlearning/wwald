@@ -93,6 +93,54 @@ a:visited {
 	padding-right: 10px;
 }
 
+#content #lecture_list {
+    width: 20%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
+#content #lecture {
+    width: 60%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
+.competency {
+    padding-bottom: 4px;
+	font-weight: bold;
+}
+
+#content #mentor {
+    width: 15%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
+#content #mentor #instructor_image {
+    padding-bottom: 4px;
+	padding-top: 4px;
+}
+
+.mentor_detail {
+	padding-bottom: 4px;
+	padding-top: 4px;
+	font-weight: bold;	
+}
+
+#content #mentor #course_summary_heading {
+    padding-bottom: 4px;
+	padding-top: 4px;
+	font-weight: bold;	
+}
+
+#content #mentor #course_summary {
+    padding-bottom: 4px;
+	padding-top: 4px;
+}
+
 #content #sidebar {
 	min-height: 750px;
     width: 27%;

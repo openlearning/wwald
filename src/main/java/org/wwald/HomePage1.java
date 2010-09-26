@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -37,13 +38,7 @@ public class HomePage1 extends WebPage {
 			@Override
 			protected void populateItem(ListItem item) {
 				Course course = (Course)item.getModelObject();
-				Link courseLink = new Link("goto.course", item.getModel()) {
-					@Override
-					public void onClick() {
-						// TODO Auto-generated method stub
-						
-					}
-				};
+				BookmarkablePageLink courseLink = new BookmarkablePageLink("goto.course", CoursePage.class);
 				courseLink.add(new Label("course.title", course.getTitle()));
 				item.add(courseLink);
 				item.add(new Label("course.description", course.getDescription()));
