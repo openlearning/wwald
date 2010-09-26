@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.wwald;
+package org.wwald.model;
 
 import java.io.Serializable;
 

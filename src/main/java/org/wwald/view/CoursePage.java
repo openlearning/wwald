@@ -1,15 +1,17 @@
-package org.wwald;
+package org.wwald.view;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.wwald.WWALDApplication;
+import org.wwald.model.Competency;
+import org.wwald.model.Course;
+import org.wwald.model.DataStore;
 
 public class CoursePage extends WebPage{
 	public CoursePage(final PageParameters parameters) {

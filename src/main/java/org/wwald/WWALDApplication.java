@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.protocol.http.WebApplication;
+import org.wwald.model.DataStore;
+import org.wwald.view.HomePage1;
 
 /**
  * Application object for your web application. If you want to run this application without deploying, run the Start class.

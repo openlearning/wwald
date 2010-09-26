@@ -1,10 +1,11 @@
 /**
  * 
  */
-package org.wwald;
+package org.wwald.model;
 
 import java.io.Serializable;
 import java.util.List;
+
 
 /**
  * @author pshah

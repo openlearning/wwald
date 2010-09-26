@@ -2,6 +2,7 @@ package org.wwald;
 
 import junit.framework.TestCase;
 import org.apache.wicket.util.tester.WicketTester;
+import org.wwald.view.HomePage;
 
 /**
  * Simple test using the WicketTester

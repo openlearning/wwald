@@ -1,4 +1,4 @@
-package org.wwald;
+package org.wwald.model;
 
 public class Mentor {
 	

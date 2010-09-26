@@ -1,7 +1,8 @@
-package org.wwald;
+package org.wwald.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class DataStore {
 	private List<Course> courses;
