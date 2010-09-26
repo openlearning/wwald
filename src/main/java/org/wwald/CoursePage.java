@@ -13,20 +13,23 @@ import org.apache.wicket.markup.html.list.ListView;
 
 public class CoursePage extends WebPage{
 	public CoursePage(final PageParameters parameters) {
-		add(getCompetenciesListView());
+		Course selectedCourse = getSelectedCourse(parameters);
+		add(getCompetenciesListView(selectedCourse.getCompetencies()));
+		add(new Label("selected.course", "Introduction to computers and the Internet"));
 		add(new Label("selected.lecture", "Hardware - Part 1"));
-		Mentor mentor = getMentor();
-		add(new Label("mentor.name", mentor.getName()));
-		add(new Label("mentor.qanswered", mentor.getQuestionsAnswered()));
-		add(new Label("mentor.lastlogin", mentor.getLastLogin()));
+		add(new Label("mentor.name", selectedCourse.getMentor().getName()));
+		add(new Label("mentor.qanswered", selectedCourse.getMentor().getQuestionsAnswered()));
+		add(new Label("mentor.lastlogin", selectedCourse.getMentor().getLastLogin()));
     }
 	
-	private Mentor getMentor() {
-		return new Mentor("David J. Malan", "7", "7/11/2010");
+	private Course getSelectedCourse(PageParameters parameters) {
+		WWALDApplication app = (WWALDApplication)getApplication();
+		DataStore dataStore = app.getDataStore();
+		return dataStore.getCourse(parameters.getString(HomePage1.SELECTED_COURSE));
 	}
-
-	private ListView getCompetenciesListView() {
-		return new ListView("competencies", getCompetencies()) {
+	
+	private ListView getCompetenciesListView(List<Competency> competencies) {
+		return new ListView("competencies", competencies) {
 
 			@Override
 			protected void populateItem(ListItem item) {
@@ -37,14 +40,5 @@ public class CoursePage extends WebPage{
 			}
 			
 		};
-	}
-
-	private List<Competency> getCompetencies() {
-		List<Competency> competencies = new ArrayList<Competency>();
-		competencies.add(new Competency("Hardware - Part 1", "Describes the basics of how computer hardware works", ""));
-		competencies.add(new Competency("Hardware - Part 2", "Describes advanced concepts of how computer hardware works", ""));
-		competencies.add(new Competency("The Internet - Part 1", "Describes the basics of how the Internet works", ""));
-		competencies.add(new Competency("The Internet - Part 2", "Describes advanced concepts of how the Internet works", ""));
-		return competencies;
 	}
 }

@@ -1,5 +1,8 @@
 package org.wwald;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.protocol.http.WebApplication;
 
 /**
@@ -8,12 +11,14 @@ import org.apache.wicket.protocol.http.WebApplication;
  * @see org.wwald.Start#main(String[])
  */
 public class WWALDApplication extends WebApplication
-{    
+{
+	private DataStore dataStore;
     /**
      * Constructor
      */
 	public WWALDApplication()
 	{
+		this.dataStore = new DataStore();
 	}
 	
 	/**
@@ -23,5 +28,9 @@ public class WWALDApplication extends WebApplication
 	{
 		return HomePage1.class;
 	}
-
+	
+	public DataStore getDataStore() {
+		return this.dataStore;
+	}
+	
 }
