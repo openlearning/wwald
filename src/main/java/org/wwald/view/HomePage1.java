@@ -23,6 +23,7 @@ public class HomePage1 extends WebPage {
 	private static final long serialVersionUID = 1L;
 	
 	public static String SELECTED_COURSE = "selected.course";
+	public static String SELECTED_COMPETENCY = "selected.competency";
 
 	// TODO Add any page properties or variables here
 

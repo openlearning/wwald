@@ -2,37 +2,58 @@ package org.wwald.model;
 
 public class Mentor {
 	
-	private String name;
-	private String questionsAnswered;
-	private String lastLogin;
+	private int id;
+	private String firstName;
+	private String middleInitial;
+	private String lastName;
+	private String shortBio;
 	
-	public Mentor(String name, String questionsAnswered, String lastLogin) {
-		this.name = name;
-		this.questionsAnswered = questionsAnswered;
-		this.lastLogin = lastLogin;
+	public Mentor(int id, String firstName, String middleInitial, String lastName, String shortBio) {
+		this.id = id;
+		this.firstName = firstName;
+		this.middleInitial = middleInitial;
+		this.lastName = lastName;
+		this.shortBio = shortBio;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getMiddleInitial() {
+		return middleInitial;
+	}
+
+	public void setMiddleInitial(String middleInitial) {
+		this.middleInitial = middleInitial;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getShortBio() {
+		return shortBio;
+	}
+
+	public void setShortBio(String shortBio) {
+		this.shortBio = shortBio;
 	}
 	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getQuestionsAnswered() {
-		return questionsAnswered;
-	}
-
-	public void setQuestionsAnswered(String questionsAnswered) {
-		this.questionsAnswered = questionsAnswered;
-	}
-
-	public String getLastLogin() {
-		return lastLogin;
-	}
-
-	public void setLastLogin(String lastLogin) {
-		this.lastLogin = lastLogin;
-	}
 }

@@ -12,22 +12,45 @@ import org.wwald.WWALDApplication;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.DataStore;
+import org.wwald.model.Mentor;
 
 public class CoursePage extends WebPage{
 	public CoursePage(final PageParameters parameters) {
 		Course selectedCourse = getSelectedCourse(parameters);
+		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
 		add(getCompetenciesListView(selectedCourse.getCompetencies()));
-		add(new Label("selected.course", "Introduction to computers and the Internet"));
-		add(new Label("selected.lecture", "Hardware - Part 1"));
-		add(new Label("mentor.name", selectedCourse.getMentor().getName()));
-		add(new Label("mentor.qanswered", selectedCourse.getMentor().getQuestionsAnswered()));
-		add(new Label("mentor.lastlogin", selectedCourse.getMentor().getLastLogin()));
+		add(new Label("selected.course", selectedCourse.getTitle()));
+		add(new Label("selected.lecture", selectedCompetency.getTitle()));
+		Mentor mentor = selectedCourse.getMentor();
+		add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMiddleInitial() + " " + mentor.getLastName()));
+		add(new Label("mentor.qanswered", "7 xxx"));
+		add(new Label("mentor.lastlogin", "some date"));
     }
 	
 	private Course getSelectedCourse(PageParameters parameters) {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		DataStore dataStore = app.getDataStore();
-		return dataStore.getCourse(parameters.getString(HomePage1.SELECTED_COURSE));
+		String selectedCourseId = parameters.getString(HomePage1.SELECTED_COURSE);
+		return dataStore.getCourse(selectedCourseId);
+	}
+	
+	private Competency getSelectedCompetency(PageParameters parameters, Course selectedCourse) {
+		String selectedCompetencyId = parameters.getString(HomePage1.SELECTED_COMPETENCY);
+		Competency competency = null; 
+		if(selectedCompetencyId == null) {
+			List<Competency> competencies = selectedCourse.getCompetencies();
+			if(competencies != null && competencies.size() > 0) {
+				competency = competencies.get(0);
+			}
+		}
+		else {
+			competency = selectedCourse.getCompetency(selectedCompetencyId);
+		}
+		
+		if(competency == null) {
+			competency = Competency.createBlankCompeteny();
+		}
+		return competency;
 	}
 	
 	private ListView getCompetenciesListView(List<Competency> competencies) {

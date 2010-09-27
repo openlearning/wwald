@@ -63,4 +63,22 @@ public class Course implements Serializable {
 	public Mentor getMentor() {
 		return this.mentor;
 	}
+	
+	@Override
+	public String toString() {
+		return this.id + " " + this.title;
+	}
+
+	public Competency getCompetency(String selectedCompetencyId) {
+		Competency competency = null;
+		if(selectedCompetencyId != null && this.competencies != null) {
+			for(Competency aCompetency : competencies) {
+				if(selectedCompetencyId.equals(aCompetency.getId())) {
+					competency = aCompetency;
+					break;
+				}
+			}
+		}
+		return competency;
+	}
 }
