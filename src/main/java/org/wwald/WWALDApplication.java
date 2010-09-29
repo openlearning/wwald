@@ -1,8 +1,5 @@
 package org.wwald;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.wicket.protocol.http.WebApplication;
 import org.wwald.model.DataFacade;
 import org.wwald.view.HomePage1;

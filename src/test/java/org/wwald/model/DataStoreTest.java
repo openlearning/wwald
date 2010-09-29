@@ -1,11 +1,12 @@
 package org.wwald.model;
 
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
-
-import static junit.framework.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
