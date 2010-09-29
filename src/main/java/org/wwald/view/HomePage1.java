@@ -23,8 +23,8 @@ public class HomePage1 extends WebPage {
 	
 	private static Logger cLogger = Logger.getLogger(HomePage1.class);
 	
-	public static String SELECTED_COURSE = "selected.course";
-	public static String SELECTED_COMPETENCY = "selected.competency";
+	public static String SELECTED_COURSE = "course";
+	public static String SELECTED_COMPETENCY = "competency";
 
 	// TODO Add any page properties or variables here
 
@@ -48,8 +48,8 @@ public class HomePage1 extends WebPage {
 			protected void populateItem(ListItem item) {
 				Course course = (Course)item.getModelObject();
 				PageParameters pars = new PageParameters();
-				pars.add(SELECTED_COURSE, course.getId());
 				BookmarkablePageLink courseLink = new BookmarkablePageLink("goto.course", CoursePage.class, pars);
+				courseLink.setParameter(SELECTED_COURSE, course.getId());
 				courseLink.add(new Label("course.title", course.getTitle()));
 				item.add(courseLink);
 				item.add(new Label("course.description", course.getDescription()));

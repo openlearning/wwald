@@ -2,7 +2,9 @@ package org.wwald;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.wwald.model.DataFacade;
+import org.wwald.view.CoursePage;
 import org.wwald.view.HomePage1;
 
 /**
@@ -29,6 +31,12 @@ public class WWALDApplication extends WebApplication
 	public Class<HomePage1> getHomePage()
 	{
 		return HomePage1.class;
+	}
+	
+	@Override
+	public void init() {
+//		mount(new IndexedParamUrlCodingStrategy("courses", CoursePage.class));
+		mountBookmarkablePage("courses", CoursePage.class);
 	}
 	
 	public DataFacade getDataStore() {
