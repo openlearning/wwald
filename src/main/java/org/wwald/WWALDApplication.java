@@ -1,5 +1,6 @@
 package org.wwald;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.wwald.model.DataFacade;
 import org.wwald.view.HomePage1;
@@ -11,6 +12,8 @@ import org.wwald.view.HomePage1;
  */
 public class WWALDApplication extends WebApplication
 {
+	private static Logger cLogger = Logger.getLogger(WWALDApplication.class);
+	
 	private DataFacade dataStore;
     /**
      * Constructor

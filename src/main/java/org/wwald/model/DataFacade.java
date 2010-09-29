@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 public class DataFacade {
 	
@@ -16,15 +18,11 @@ public class DataFacade {
 	private static final String password = "";
 	private Connection conn;
 	
+	private static Logger cLogger = Logger.getLogger(DataFacade.class);
+	
 	public DataFacade(Connection conn) {
 		this.conn = conn;
-		try {
-			//NOTE: This is temporary code which is used to init the database... will be removed fro production
-			initData();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		initData();
 	}
 	
 	public DataFacade() {		
@@ -32,9 +30,10 @@ public class DataFacade {
 			Class.forName("org.hsqldb.jdbcDriver");
 			conn = DriverManager.getConnection(url, user, password);
 			initData();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ClassNotFoundException cnfe) {
+			cLogger.error("Could not load database driver", cnfe);
+		} catch(SQLException sqle) {
+			cLogger.error("Could not obtain database connection", sqle);
 		}
 	}
 
@@ -51,7 +50,9 @@ public class DataFacade {
 			buildCompetenciesForCourses(courses);
 			buildMentorsForCourses(courses);
 		} catch(SQLException sqle) {
-			
+			//TODO: At some point of time we need to send this exception to the view page which should then
+			//redirect to a standard error page with an error message
+			cLogger.error("Could not build list of courses", sqle);
 		}
 		
 		return courses;
@@ -76,13 +77,15 @@ public class DataFacade {
 				}
 			}
 		} catch(SQLException sqle) {
-			sqle.printStackTrace();
+			//TODO: At some point of time we need to send this exception to the view page which should then
+			//redirect to a standard error page with an error message
+			cLogger.error("Could not get course", sqle);
 		}
 		
 		return course;
 	}
 	
-	private void initData() throws SQLException {
+	private void initData() {
 		Data.init(conn);
 	}
 

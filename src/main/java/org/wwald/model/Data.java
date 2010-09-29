@@ -52,6 +52,7 @@ public class Data {
 			createTables(conn);
 			populateTables(conn);
 		} catch (SQLException e) {
+			//TODO: This method needs to go away and should be put instead in test code
 			e.printStackTrace();
 		}
 	}

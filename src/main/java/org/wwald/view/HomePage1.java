@@ -3,6 +3,7 @@ package org.wwald.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -19,6 +20,8 @@ import org.wwald.model.StatusUpdate;
 public class HomePage1 extends WebPage {
 
 	private static final long serialVersionUID = 1L;
+	
+	private static Logger cLogger = Logger.getLogger(HomePage1.class);
 	
 	public static String SELECTED_COURSE = "selected.course";
 	public static String SELECTED_COMPETENCY = "selected.competency";

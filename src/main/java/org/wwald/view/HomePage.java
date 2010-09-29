@@ -11,6 +11,7 @@ public class HomePage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 
+	
 	// TODO Add any page properties or variables here
 
     /**

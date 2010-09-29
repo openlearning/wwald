@@ -2,6 +2,7 @@ package org.wwald.view;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -15,6 +16,9 @@ import org.wwald.model.DataFacade;
 import org.wwald.model.Mentor;
 
 public class CoursePage extends WebPage{
+	
+	private static Logger cLogger = Logger.getLogger(CoursePage.class);
+	
 	public CoursePage(final PageParameters parameters) {
 		Course selectedCourse = getSelectedCourse(parameters);
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
