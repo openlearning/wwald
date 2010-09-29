@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -22,7 +23,7 @@ public class CoursePage extends WebPage{
 	public CoursePage(final PageParameters parameters) {
 		Course selectedCourse = getSelectedCourse(parameters);
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
-		add(getCompetenciesListView(selectedCourse.getCompetencies(), parameters.getString(HomePage1.SELECTED_COURSE)));
+		add(getCompetenciesListView(selectedCourse, selectedCompetency));
 		add(new Label("selected.course", selectedCourse.getTitle()));
 		add(new Label("selected.lecture", selectedCompetency.getTitle()));
 		add(new Label("competency.resources", selectedCompetency.getResource()).setEscapeModelStrings(false));
@@ -65,14 +66,17 @@ public class CoursePage extends WebPage{
 		return competency;
 	}
 	
-	private ListView getCompetenciesListView(List<Competency> competencies, final String courseId) {
-		return new ListView("competencies", competencies) {
+	private ListView getCompetenciesListView(final Course selectedCourse, final Competency selectedCompetency) {
+		return new ListView("competencies", selectedCourse.getCompetencies()) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				Competency competency = (Competency)item.getModelObject();
+				if(selectedCompetency.equals(competency)) {
+					item.add(new SimpleAttributeModifier("class", "selected_lecture"));
+				}
 				PageParameters pars = new PageParameters();
-				pars.add(HomePage1.SELECTED_COURSE, courseId);
+				pars.add(HomePage1.SELECTED_COURSE, selectedCourse.getId());
 				pars.add(HomePage1.SELECTED_COMPETENCY, competency.getId());
 				BookmarkablePageLink competencyLink = new BookmarkablePageLink("goto.competency", CoursePage.class, pars);				
 				competencyLink.add(new Label("competency.title",competency.getTitle()));

@@ -107,6 +107,10 @@ a:visited {
 	padding-right: 10px;
 }
 
+.selected_lecture {
+	background-color: #cccccc;	
+}
+
 #competency_resources {
 	margin-bottom: 30px;
 }
