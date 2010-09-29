@@ -5,7 +5,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.wwald.model.DataFacade;
 import org.wwald.view.CoursePage;
-import org.wwald.view.HomePage1;
+import org.wwald.view.HomePage;
 
 /**
  * Application object for your web application. If you want to run this application without deploying, run the Start class.
@@ -28,9 +28,9 @@ public class WWALDApplication extends WebApplication
 	/**
 	 * @see org.apache.wicket.Application#getHomePage()
 	 */
-	public Class<HomePage1> getHomePage()
+	public Class<HomePage> getHomePage()
 	{
-		return HomePage1.class;
+		return HomePage.class;
 	}
 	
 	@Override

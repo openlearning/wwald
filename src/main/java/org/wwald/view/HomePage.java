@@ -17,11 +17,11 @@ import org.wwald.model.StatusUpdate;
 /**
  * Homepage
  */
-public class HomePage1 extends WebPage {
+public class HomePage extends WebPage {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger cLogger = Logger.getLogger(HomePage1.class);
+	private static Logger cLogger = Logger.getLogger(HomePage.class);
 	
 	public static String SELECTED_COURSE = "course";
 	public static String SELECTED_COMPETENCY = "competency";
@@ -34,7 +34,7 @@ public class HomePage1 extends WebPage {
 	 * @param parameters
 	 *            Page parameters
 	 */
-    public HomePage1(final PageParameters parameters) {
+    public HomePage(final PageParameters parameters) {
     	add(getCoursesListView());
     	add(getStatusUpdateListView());
     }

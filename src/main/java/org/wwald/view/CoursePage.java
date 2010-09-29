@@ -37,7 +37,7 @@ public class CoursePage extends WebPage{
 	private Course getSelectedCourse(PageParameters parameters) {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		DataFacade dataStore = app.getDataStore();
-		String selectedCourseId = parameters.getString(HomePage1.SELECTED_COURSE);
+		String selectedCourseId = parameters.getString(HomePage.SELECTED_COURSE);
 		return dataStore.getCourse(selectedCourseId);
 	}
 	
@@ -48,7 +48,7 @@ public class CoursePage extends WebPage{
 		if(selectedCourse == null) {
 			throw new NullPointerException("selectedCourse cannot be null");
 		}
-		String selectedCompetencyId = parameters.getString(HomePage1.SELECTED_COMPETENCY);
+		String selectedCompetencyId = parameters.getString(HomePage.SELECTED_COMPETENCY);
 		Competency competency = null; 
 		if(selectedCompetencyId == null) {
 			List<Competency> competencies = selectedCourse.getCompetencies();
@@ -76,8 +76,8 @@ public class CoursePage extends WebPage{
 					item.add(new SimpleAttributeModifier("class", "selected_lecture"));
 				}
 				PageParameters pars = new PageParameters();
-				pars.add(HomePage1.SELECTED_COURSE, selectedCourse.getId());
-				pars.add(HomePage1.SELECTED_COMPETENCY, competency.getId());
+				pars.add(HomePage.SELECTED_COURSE, selectedCourse.getId());
+				pars.add(HomePage.SELECTED_COMPETENCY, competency.getId());
 				BookmarkablePageLink competencyLink = new BookmarkablePageLink("goto.competency", CoursePage.class, pars);				
 				competencyLink.add(new Label("competency.title",competency.getTitle()));
 				item.add(competencyLink);
