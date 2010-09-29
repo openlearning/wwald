@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.protocol.http.WebApplication;
-import org.wwald.model.DataStore;
+import org.wwald.model.DataFacade;
 import org.wwald.view.HomePage1;
 
 /**
@@ -14,13 +14,13 @@ import org.wwald.view.HomePage1;
  */
 public class WWALDApplication extends WebApplication
 {
-	private DataStore dataStore;
+	private DataFacade dataStore;
     /**
      * Constructor
      */
 	public WWALDApplication()
 	{
-		this.dataStore = new DataStore();
+		this.dataStore = new DataFacade();
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class WWALDApplication extends WebApplication
 		return HomePage1.class;
 	}
 	
-	public DataStore getDataStore() {
+	public DataFacade getDataStore() {
 		return this.dataStore;
 	}
 	

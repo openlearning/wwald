@@ -2,7 +2,6 @@ package org.wwald.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DataStore {
+public class DataFacade {
 	
 	private static final String url = "jdbc:hsqldb:mem:mymemdb";
 	private static final String user = "SA";
 	private static final String password = "";
 	private Connection conn;
 	
-	public DataStore(Connection conn) {
+	public DataFacade(Connection conn) {
 		this.conn = conn;
 		try {
 			//NOTE: This is temporary code which is used to init the database... will be removed fro production
@@ -28,7 +27,7 @@ public class DataStore {
 		}
 	}
 	
-	public DataStore() {		
+	public DataFacade() {		
 		try {
 			Class.forName("org.hsqldb.jdbcDriver");
 			conn = DriverManager.getConnection(url, user, password);

@@ -11,7 +11,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.wwald.WWALDApplication;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
-import org.wwald.model.DataStore;
+import org.wwald.model.DataFacade;
 import org.wwald.model.Mentor;
 
 public class CoursePage extends WebPage{
@@ -29,7 +29,7 @@ public class CoursePage extends WebPage{
 	
 	private Course getSelectedCourse(PageParameters parameters) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		DataStore dataStore = app.getDataStore();
+		DataFacade dataStore = app.getDataStore();
 		String selectedCourseId = parameters.getString(HomePage1.SELECTED_COURSE);
 		return dataStore.getCourse(selectedCourseId);
 	}
