@@ -58,19 +58,15 @@ public class DataStore {
 	}
 
 	public Course getCourse(String id) {
-		System.out.println("Trying to get Course for id " + id);
 		Course course = null;
 		try {
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, wrapForSQL(id)));
-			System.out.println("Obtained ResultSet");
 			while(rs.next()) {
-				System.out.println("Found row in ResultSet");
 				String title = rs.getString(2);
 				String description = rs.getString(3);
 				course = new Course(id, title, description);
-				System.out.println("Created course");
 				if(course != null) {
 					List<Course> courses = new ArrayList<Course>();
 					courses.add(course);

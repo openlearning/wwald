@@ -18,7 +18,7 @@ public class CoursePage extends WebPage{
 	public CoursePage(final PageParameters parameters) {
 		Course selectedCourse = getSelectedCourse(parameters);
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
-		add(getCompetenciesListView(selectedCourse.getCompetencies()));
+		add(getCompetenciesListView(selectedCourse.getCompetencies(), parameters.getString(HomePage1.SELECTED_COURSE)));
 		add(new Label("selected.course", selectedCourse.getTitle()));
 		add(new Label("selected.lecture", selectedCompetency.getTitle()));
 		Mentor mentor = selectedCourse.getMentor();
@@ -35,6 +35,12 @@ public class CoursePage extends WebPage{
 	}
 	
 	private Competency getSelectedCompetency(PageParameters parameters, Course selectedCourse) {
+		if(parameters == null) {
+			throw new NullPointerException("PageParameters cannot be null");
+		}
+		if(selectedCourse == null) {
+			throw new NullPointerException("selectedCourse cannot be null");
+		}
 		String selectedCompetencyId = parameters.getString(HomePage1.SELECTED_COMPETENCY);
 		Competency competency = null; 
 		if(selectedCompetencyId == null) {
@@ -53,13 +59,16 @@ public class CoursePage extends WebPage{
 		return competency;
 	}
 	
-	private ListView getCompetenciesListView(List<Competency> competencies) {
+	private ListView getCompetenciesListView(List<Competency> competencies, final String courseId) {
 		return new ListView("competencies", competencies) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				Competency competency = (Competency)item.getModelObject();
-				BookmarkablePageLink competencyLink = new BookmarkablePageLink("goto.competency", CoursePage.class);
+				PageParameters pars = new PageParameters();
+				pars.add(HomePage1.SELECTED_COURSE, courseId);
+				pars.add(HomePage1.SELECTED_COMPETENCY, competency.getId());
+				BookmarkablePageLink competencyLink = new BookmarkablePageLink("goto.competency", CoursePage.class, pars);				
 				competencyLink.add(new Label("competency.title",competency.getTitle()));
 				item.add(competencyLink);
 			}
