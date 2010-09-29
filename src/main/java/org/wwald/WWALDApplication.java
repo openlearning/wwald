@@ -3,8 +3,10 @@ package org.wwald;
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
+import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
 import org.wwald.model.DataFacade;
 import org.wwald.view.CoursePage;
+import org.wwald.view.ErrorPage404;
 import org.wwald.view.HomePage;
 
 /**
@@ -37,6 +39,7 @@ public class WWALDApplication extends WebApplication
 	public void init() {
 //		mount(new IndexedParamUrlCodingStrategy("courses", CoursePage.class));
 		mountBookmarkablePage("courses", CoursePage.class);
+		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 	}
 	
 	public DataFacade getDataStore() {

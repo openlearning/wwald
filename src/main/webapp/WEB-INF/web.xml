@@ -30,5 +30,9 @@
 	<url-pattern>/*</url-pattern>
  </filter-mapping>
 
+	<error-page>
+		<error-code>404</error-code>
+		<location>/courses/course/INTROCS</location>
+	</error-page>
 
 </web-app>
