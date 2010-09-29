@@ -20,6 +20,7 @@ public class DataStore {
 	public DataStore(Connection conn) {
 		this.conn = conn;
 		try {
+			//NOTE: This is temporary code which is used to init the database... will be removed fro production
 			initData();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -62,7 +63,7 @@ public class DataStore {
 		try {
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, wrapForSQL(id)));
+			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, Data.wrapForSQL(id)));
 			while(rs.next()) {
 				String title = rs.getString(2);
 				String description = rs.getString(3);
@@ -83,8 +84,7 @@ public class DataStore {
 	}
 	
 	private void initData() throws SQLException {
-		createTables();
-		populateTables();
+		Data.init(conn);
 	}
 
 	private List<Course> buildCourseObjectsFromResultSet(ResultSet rs) throws SQLException {
@@ -106,7 +106,7 @@ public class DataStore {
 		String sqlToGetCompetencyIdsForCourse = "SELECT (competency_id) FROM COURSE_COMPETENCY WHERE course_id = %s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCompetencyIdsForCourse, wrapForSQL(course.getId())));
+			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCompetencyIdsForCourse, Data.wrapForSQL(course.getId())));
 			List<Competency> competencies = buildCompetencyObjectsFromResultSet(rs);
 			course.setCompetencies(competencies);
 			
@@ -117,7 +117,7 @@ public class DataStore {
 		String sqlToGetMentorIdsForCourse = "SELECT (mentor_id) FROM COURSE_MENTORS WHERE course_id=%s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, wrapForSQL(course.getId())));
+			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, Data.wrapForSQL(course.getId())));
 			List<Mentor> mentors = buildMentorObjectsFromResultSet(rs);
 			course.setMentor(mentors.get(0));
 		}
@@ -134,7 +134,7 @@ public class DataStore {
 			String sqlToFetchCompetency = "SELECT * FROM COMPETENCY WHERE COMPETENCY.id=%s";
 			
 			Statement stmt = conn.createStatement();
-			ResultSet rsForCompetencies = stmt.executeQuery(String.format(sqlToFetchCompetency, wrapForSQL(competency_id)));
+			ResultSet rsForCompetencies = stmt.executeQuery(String.format(sqlToFetchCompetency, Data.wrapForSQL(competency_id)));
 			
 			while(rsForCompetencies.next()) {
 				String id = rsForCompetencies.getString(1);
@@ -165,122 +165,6 @@ public class DataStore {
 			}
 		}
 		return mentors;
-	}
-	
-	private void createTables() throws SQLException {
-		Statement s = conn.createStatement();
-		String sql = null;
-		
-		sql = getSqlToCreateCourseTable();
-		s.executeUpdate(sql);
-		
-		sql = getSqlToCreateCompetencyTable();
-		s.executeUpdate(sql);
-		
-		sql = getSqlToCreateMentorTable();
-		s.executeUpdate(sql);		
-	}
-	
-	private void populateTables() throws SQLException {
-		//create courses
-		String sqlToAddCourses = 
-			"INSERT INTO COURSE(id, title, description) VALUES (%s,%s,%s)";
-		Statement stmt = conn.createStatement();
-		for(int i = 0; i < Data.courses.length; i++) {
-			stmt.execute(String.format(sqlToAddCourses, 
-									   wrapForSQL(Data.courses[i][0]), wrapForSQL(Data.courses[i][1]), wrapForSQL(Data.courses[i][2])));
-		}
-		
-		//create competencies
-		String sqlToAddCompetencies = 
-			"INSERT INTO COMPETENCY(id, title, description, resources) VALUES (%s,%s,%s,%s)";
-		Statement stmt1 = conn.createStatement();
-		for(int i = 0; i < Data.competencies.length; i++) {
-			stmt1.execute(String.format(sqlToAddCompetencies, 
-										wrapForSQL(Data.competencies[i][0]), wrapForSQL(Data.competencies[i][1]), wrapForSQL(Data.competencies[i][2]), wrapForSQL(Data.competencies[i][3])));
-		}
-		
-		//create mentors
-		String sqlToAddMentors = 
-			"INSERT INTO MENTOR(id, first_name, middle_initial, last_name, short_bio) VALUES (%s,%s,%s,%s,%s)";
-		Statement stmt2 = conn.createStatement();
-		for(int i = 0; i < Data.mentors.length; i++) {
-			stmt2.execute(String.format(sqlToAddMentors, 
-										Data.mentors[i][0], wrapForSQL(Data.mentors[i][1]), wrapForSQL(Data.mentors[i][2]), wrapForSQL(Data.mentors[i][3]), wrapForSQL(Data.mentors[i][4])));
-		}
-		
-		//create course_competencies table
-		String sqlToAddCourseCompetency = 
-			"INSERT INTO COURSE_COMPETENCY(course_id, competency_id) VALUES (%s,%s);";
-		Statement stmt3 = conn.createStatement();
-		for(int i = 0; i < Data.courseCompetencies.length; i++) {
-			stmt3.execute(String.format(sqlToAddCourseCompetency, 
-										wrapForSQL(Data.courseCompetencies[i][0]), wrapForSQL(Data.courseCompetencies[i][1])));
-		}
-		
-		//create course_mentors table
-		String sqlToAddCourseMentors = 
-			"INSERT INTO COURSE_MENTORS(course_id, mentor_id) VALUES (%s,%s);";
-		Statement stmt4 = conn.createStatement();
-		for(int i = 0; i < Data.courseMentors.length; i++) {
-			stmt3.execute(String.format(sqlToAddCourseMentors, 
-										wrapForSQL(Data.courseMentors[i][0]), Data.courseMentors[i][1]));
-		}
-	}
-
-	private String getSqlToCreateMentorTable() {
-		String createMentorTable = 
-			" CREATE TABLE MENTOR (" +
-			" 	id INTEGER NOT NULL PRIMARY KEY," +
-			"	first_name VARCHAR(32)," +
-			"	middle_initial VARCHAR(1)," +
-			"	last_name VARCHAR(32)," +
-			"	short_bio VARCHAR(2048));";
-		
-		String createCourseMentorTable = 
-			" CREATE TABLE COURSE_MENTORS (" +
-			" 	course_id VARCHAR(16) NOT NULL," +
-			"	mentor_id INTEGER NOT NULL," +
-			"		PRIMARY KEY(course_id, mentor_id)," +
-			"		CONSTRAINT course_mentors_col1_fk FOREIGN KEY (course_id) REFERENCES COURSE(id)," +
-			"		CONSTRAINT course_mentors_col2_fk FOREIGN KEY (mentor_id) REFERENCES MENTOR(id));";
-		
-		return createMentorTable + "\n" + createCourseMentorTable;
-	}
-
-	private String getSqlToCreateCompetencyTable() {
-		String createCompetencyTable = 
-			" CREATE TABLE COMPETENCY (" +
-			" 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
-			"	title VARCHAR(128) NOT NULL," +
-			"	description VARCHAR(2048)," +
-			"	resources VARCHAR(2048));";
-		
-		String createCourseToCompetencyTable = 
-			" CREATE TABLE COURSE_COMPETENCY (" +
-			" 	course_id VARCHAR(16) NOT NULL," +
-			" 	competency_id VARCHAR(16) NOT NULL," +
-			" 		PRIMARY KEY(course_id, competency_id)," +
-			" 		CONSTRAINT course_competency_col1_fk FOREIGN KEY (course_id) REFERENCES COURSE(id)," +
-			" 		CONSTRAINT course_competency_col2_fk FOREIGN KEY (competency_id) REFERENCES COMPETENCY(id));";
-		
-		return createCompetencyTable + "\n" + createCourseToCompetencyTable;
-	}
-
-	private String getSqlToCreateCourseTable() {
-		return " CREATE TABLE COURSE (" +
-			   " 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
-			   " 	title VARCHAR(128) NOT NULL," +
-			   " 	description VARCHAR(1024));";
-	}
-
-	private String wrapForSQL(String s) {
-		return "'" + s + "'";
-	}
-	
-	public static void main(String args[]) {
-		DataStore dataStore = new DataStore();
-		
 	}
 
 }
