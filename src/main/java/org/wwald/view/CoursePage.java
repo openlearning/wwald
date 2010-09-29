@@ -21,6 +21,8 @@ public class CoursePage extends WebPage{
 		add(getCompetenciesListView(selectedCourse.getCompetencies(), parameters.getString(HomePage1.SELECTED_COURSE)));
 		add(new Label("selected.course", selectedCourse.getTitle()));
 		add(new Label("selected.lecture", selectedCompetency.getTitle()));
+		add(new Label("competency.resources", selectedCompetency.getResource()).setEscapeModelStrings(false));
+		add(new Label("competency.description", selectedCompetency.getDescription()));
 		Mentor mentor = selectedCourse.getMentor();
 		add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMiddleInitial() + " " + mentor.getLastName()));
 		add(new Label("mentor.qanswered", "7 xxx"));

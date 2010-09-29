@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Data {
+	private static String video1 = "<embed src=\"http://blip.tv/play/gtQk6o5MkPxE\" type=\"application/x-shockwave-flash\" width=\"500\" height=\"311\" allowscriptaccess=\"always\" allowfullscreen=\"true\"></embed><p style=\"font-size:11px;font-family:tahoma,arial\">Watch it on <a style=\"text-decoration:underline\" href=\"http://academicearth.org/lectures/malan-hardware/\">Academic Earth</a></p>";
+	private static String video2 = "<object width=\"480\" height=\"385\"><param name=\"movie\" value=\"http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"480\" height=\"385\"></embed></object>";
+	
 	public static String courses[][] = {
 			{"INTROCS", "Introduction To Computer Science", "Introduction to Computer Science I is a first course in computer science at Harvard College for concentrators and non-concentrators alike."},
 			{"INTROCSPROG", "Introduction to Computer Science and Programming (using Python)", "This subject is aimed at students with little or no programming experience."},
@@ -13,9 +16,9 @@ public class Data {
 		};
 
 	public static String competencies[][] = {
-			{"L1","Lecture 1","Description of lecture 1","Resources for lecture 1"},
-			{"L2","Lecture 2","Description of lecture 2","Resources for lecture 2"},
-			{"L3","Lecture 3","Description of lecture 3","Resources for lecture 3"},
+			{"L1","Lecture 1","Description of lecture 1",video1},
+			{"L2","Lecture 2","Description of lecture 2",video2},
+			{"L3","Lecture 3","Description of lecture 3",video1},
 		  };
 
 	public static String mentors[][] = {
@@ -71,7 +74,7 @@ public class Data {
 		return " CREATE TABLE COURSE (" +
 			   " 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
 			   " 	title VARCHAR(128) NOT NULL," +
-			   " 	description VARCHAR(1024));";
+			   " 	description LONGVARCHAR);";
 	}
 	
 	private static String getSqlToCreateMentorTable() {
@@ -81,7 +84,7 @@ public class Data {
 			"	first_name VARCHAR(32)," +
 			"	middle_initial VARCHAR(1)," +
 			"	last_name VARCHAR(32)," +
-			"	short_bio VARCHAR(2048));";
+			"	short_bio LONGVARCHAR);";
 		
 		String createCourseMentorTable = 
 			" CREATE TABLE COURSE_MENTORS (" +
@@ -99,8 +102,8 @@ public class Data {
 			" CREATE TABLE COMPETENCY (" +
 			" 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
 			"	title VARCHAR(128) NOT NULL," +
-			"	description VARCHAR(2048)," +
-			"	resources VARCHAR(2048));";
+			"	description LONGVARCHAR," +
+			"	resources LONGVARCHAR);";
 		
 		String createCourseToCompetencyTable = 
 			" CREATE TABLE COURSE_COMPETENCY (" +
