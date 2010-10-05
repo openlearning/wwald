@@ -124,14 +124,7 @@ a:visited {
 	font-weight: bold;
 }
 
-#content #mentor {
-    width: 15%;
-    float: left;
-    padding-bottom: 4em;
-	padding-right: 10px;
-}
-
-#content #mentor #instructor_image {
+#content #rhs_sidebar #instructor_image {
     padding-bottom: 4px;
 	padding-top: 4px;
 }
@@ -142,13 +135,13 @@ a:visited {
 	font-weight: bold;	
 }
 
-#content #mentor #course_summary_heading {
+#content #rhs_sidebar #course_summary_heading {
     padding-bottom: 4px;
 	padding-top: 4px;
 	font-weight: bold;	
 }
 
-#content #mentor #course_summary {
+#content #rhs_sidebar #course_summary {
     padding-bottom: 4px;
 	padding-top: 4px;
 }
