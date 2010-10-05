@@ -153,18 +153,6 @@ a:visited {
 	padding-top: 4px;
 }
 
-#content #sidebar {
-	min-height: 750px;
-    width: 27%;
-    float: left;
-	overflow: auto;
-	background-color: #BDDDED;
-}
-
-#content #sidebar a:hover {
-	color: #082567;
-}
-
 #blog-posts {
 	margin: 10px;
 	margin-top: 5px;
