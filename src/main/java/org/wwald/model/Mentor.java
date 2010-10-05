@@ -1,6 +1,8 @@
 package org.wwald.model;
 
-public class Mentor {
+import java.io.Serializable;
+
+public class Mentor implements Serializable {
 	
 	private int id;
 	private String firstName;

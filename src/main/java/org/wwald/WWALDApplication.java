@@ -1,9 +1,12 @@
 package org.wwald;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
+import org.wwald.model.Competency;
 import org.wwald.model.DataFacade;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
@@ -45,5 +48,5 @@ public class WWALDApplication extends WebApplication
 	public DataFacade getDataStore() {
 		return this.dataStore;
 	}
-	
+
 }

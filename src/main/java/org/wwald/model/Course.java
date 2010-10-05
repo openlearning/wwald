@@ -4,7 +4,10 @@
 package org.wwald.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -12,16 +15,20 @@ import java.util.List;
  *
  */
 public class Course implements Serializable {
+	
 	private String id;
 	private String title;
 	private String description;
 	private List<Competency> competencies;
 	private Mentor mentor;
 	
+	private static Logger cLogger = Logger.getLogger(Course.class);
+	
 	public Course(String id, String title, String description) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
+		this.competencies = new ArrayList<Competency>();
 	}
 		
 	public String getId() {
@@ -69,16 +76,28 @@ public class Course implements Serializable {
 		return this.id + " " + this.title;
 	}
 
-	public Competency getCompetency(String selectedCompetencyId) {
+	public Competency getCompetency(int id) {
 		Competency competency = null;
-		if(selectedCompetencyId != null && this.competencies != null) {
-			for(Competency aCompetency : competencies) {
-				if(selectedCompetencyId.equals(aCompetency.getId())) {
-					competency = aCompetency;
-					break;
-				}
+		
+		for(Competency aCompetency : competencies) {
+			if(id == aCompetency.getId()) {
+				competency = aCompetency;
+				break;
 			}
 		}
+		
+		return competency;
+	}
+	
+	public Competency getCompetency(String id) {
+		Competency competency = null;
+		try {
+			int intid = Integer.parseInt(id);
+			competency = getCompetency(intid);
+		} catch(NumberFormatException nfe) {
+			cLogger.error("Could not convert String " + id + " to int ", nfe);
+		}
+		
 		return competency;
 	}
 }

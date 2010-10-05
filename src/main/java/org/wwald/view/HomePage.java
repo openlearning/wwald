@@ -1,5 +1,6 @@
 package org.wwald.view;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,22 +9,25 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.wwald.WWALDApplication;
 import org.wwald.model.Course;
+import org.wwald.model.NonExistentCourse;
 import org.wwald.model.StatusUpdate;
 
 /**
  * Homepage
  */
-public class HomePage extends WebPage {
+public class HomePage extends WebPage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger cLogger = Logger.getLogger(HomePage.class);
 	
 	public static String SELECTED_COURSE = "course";
+	public static String SELECTED_COURSE_TITLE = "title";
 	public static String SELECTED_COMPETENCY = "competency";
 
 	// TODO Add any page properties or variables here
@@ -35,25 +39,50 @@ public class HomePage extends WebPage {
 	 *            Page parameters
 	 */
     public HomePage(final PageParameters parameters) {
+    	add(new Link("courses.edit", null){
+
+			@Override
+			public void onClick() {
+				setResponsePage(EditCourses.class);
+			}
+    		
+    	});
     	add(getCoursesListView());
     	add(getStatusUpdateListView());
     }
     
     private ListView getCoursesListView() {
     	WWALDApplication app = (WWALDApplication)(getApplication());
+    	List<Course> allCoursesToDisplay = app.getDataStore().getAllCoursesToDisplay(); 
     	return
-    	new ListView("courses", app.getDataStore().getAllCourses()) {
+    	new ListView("courses", allCoursesToDisplay) {
 
 			@Override
 			protected void populateItem(ListItem item) {
-				Course course = (Course)item.getModelObject();
-				PageParameters pars = new PageParameters();
-				BookmarkablePageLink courseLink = new BookmarkablePageLink("goto.course", CoursePage.class, pars);
-				courseLink.setParameter(SELECTED_COURSE, course.getId());
-				courseLink.add(new Label("course.title", course.getTitle()));
-				item.add(courseLink);
-				item.add(new Label("course.description", course.getDescription()));
-			}    		
+				final Course course = (Course)item.getModelObject();
+				if(course instanceof NonExistentCourse) {
+					Link courseLink = new Link("goto.course", null) {
+						@Override
+						public void onClick() {
+							WWALDApplication app = (WWALDApplication)(getApplication());
+							Course newCourse = app.getDataStore().createCourse(course);
+							PageParameters pageParameters = new PageParameters();
+							pageParameters.add(SELECTED_COURSE, newCourse.getId());
+							setResponsePage(EditCompetencies.class, pageParameters);
+						}
+					};
+					courseLink.add(new Label("course.title", course.getTitle()));
+					item.add(courseLink);
+					item.add(new Label("course.description", course.getDescription()));
+				}
+				else {
+					BookmarkablePageLink courseLink = new BookmarkablePageLink("goto.course", CoursePage.class);
+					courseLink.setParameter(SELECTED_COURSE, course.getId());
+					courseLink.add(new Label("course.title", course.getTitle()));
+					item.add(courseLink);
+					item.add(new Label("course.description", course.getDescription()));
+				}
+			}
     	};
     }
         

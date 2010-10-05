@@ -8,6 +8,11 @@ public class Data {
 	private static String video1 = "<embed src=\"http://blip.tv/play/gtQk6o5MkPxE\" type=\"application/x-shockwave-flash\" width=\"500\" height=\"311\" allowscriptaccess=\"always\" allowfullscreen=\"true\"></embed><p style=\"font-size:11px;font-family:tahoma,arial\">Watch it on <a style=\"text-decoration:underline\" href=\"http://academicearth.org/lectures/malan-hardware/\">Academic Earth</a></p>";
 	private static String video2 = "<object width=\"480\" height=\"385\"><param name=\"movie\" value=\"http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"480\" height=\"385\"></embed></object>";
 	
+	public static String courseWiki = "INTROCS | Introduction To Computer Science\n" +
+									  "INTROCSPROG | Introduction to Computer Science and Programming (using Python)\n" +									  
+									  "PROGPAR | Programming Paradigms\n" +
+									  "UCATI | Understanding Computers And The Internet\n";
+	
 	public static String courses[][] = {
 			{"INTROCS", "Introduction To Computer Science", "Introduction to Computer Science I is a first course in computer science at Harvard College for concentrators and non-concentrators alike."},
 			{"INTROCSPROG", "Introduction to Computer Science and Programming (using Python)", "This subject is aimed at students with little or no programming experience."},
@@ -16,9 +21,9 @@ public class Data {
 		};
 
 	public static String competencies[][] = {
-			{"L1","Lecture 1","Description of lecture 1",video1},
-			{"L2","Lecture 2","Description of lecture 2",video2},
-			{"L3","Lecture 3","Description of lecture 3",video1},
+			{"1","Lecture 1","Description of lecture 1",video1},
+			{"2","Lecture 2","Description of lecture 2",video2},
+			{"3","Lecture 3","Description of lecture 3",video1},
 		  };
 
 	public static String mentors[][] = {
@@ -26,19 +31,26 @@ public class Data {
 		 };
 
 	public static String courseCompetencies[][] = {
-						{"UCATI","L1"},	
-						{"UCATI","L2"},
-						{"UCATI","L3"},
-						{"INTROCS","L1"},	
-						{"INTROCS","L2"},
-						{"INTROCS","L3"},
-						{"INTROCSPROG","L1"},	
-						{"INTROCSPROG","L2"},
-						{"INTROCSPROG","L3"},
-						{"PROGPAR","L1"},	
-						{"PROGPAR","L2"},
-						{"PROGPAR","L3"},
+						{"UCATI","1"},	
+						{"UCATI","2"},
+						{"UCATI","3"},
+						{"INTROCS","1"},	
+						{"INTROCS","2"},
+						{"INTROCS","3"},
+						{"INTROCSPROG","1"},	
+						{"INTROCSPROG","2"},
+						{"INTROCSPROG","3"},
+						{"PROGPAR","1"},	
+						{"PROGPAR","2"},
+						{"PROGPAR","3"},
 					};
+	
+	public static String courseCompetenciesWiki[][] = {
+		{"UCATI","Lecture 1\nLecture 2\nLecture 3"},
+		{"INTROCS","Lecture 1\nLecture 2\nLecture 3"},
+		{"INTROCSPROG","Lecture 1\nLecture 2\nLecture 3"},
+		{"PROGPAR","Lecture 1\nLecture 2\nLecture 3"},
+	};
 
 	public static String courseMentors[][] = {
 					{"UCATI","1"},
@@ -46,6 +58,23 @@ public class Data {
 					{"INTROCSPROG","1"},
 					{"PROGPAR","1"},
 			   };
+	
+	public static String SQL_CREATE_COURSE_COMPETENCIES_WIKI = 
+		" CREATE TABLE COURSE_COMPETENCIES_WIKI ( " +
+	   	"	course_id VARCHAR(16) NOT NULL PRIMARY KEY," +
+	   	"	contents LONGVARCHAR," +
+	   	"	CONSTRAINT course_competencies_wiki_fk1 FOREIGN KEY (course_id) REFERENCES COURSE(id));";
+	
+	public static String SQL_CREATE_COURSES_WIKI = 
+		" CREATE TABLE COURSES_WIKI (" +
+		" 	id INTEGER NOT NULL PRIMARY KEY," +
+		"	content LONGVARCHAR);";
+	
+	public static String SQL_CREATE_COURSE = 
+		" CREATE TABLE COURSE (" +
+		" 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
+		" 	title VARCHAR(128) NOT NULL," +
+		" 	description LONGVARCHAR);";
 	
 	public static void init(Connection conn) {
 		try {
@@ -61,8 +90,11 @@ public class Data {
 		Statement s = conn.createStatement();
 		String sql = null;
 		
-		sql = getSqlToCreateCourseTable();
-		s.executeUpdate(sql);
+		s.executeUpdate(SQL_CREATE_COURSES_WIKI);
+		
+		s.executeUpdate(SQL_CREATE_COURSE);
+		
+		s.executeUpdate(SQL_CREATE_COURSE_COMPETENCIES_WIKI);
 		
 		sql = getSqlToCreateCompetencyTable();
 		s.executeUpdate(sql);
@@ -70,14 +102,7 @@ public class Data {
 		sql = getSqlToCreateMentorTable();
 		s.executeUpdate(sql);		
 	}
-	
-	private static String getSqlToCreateCourseTable() {
-		return " CREATE TABLE COURSE (" +
-			   " 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
-			   " 	title VARCHAR(128) NOT NULL," +
-			   " 	description LONGVARCHAR);";
-	}
-	
+
 	private static String getSqlToCreateMentorTable() {
 		String createMentorTable = 
 			" CREATE TABLE MENTOR (" +
@@ -101,15 +126,16 @@ public class Data {
 	private static String getSqlToCreateCompetencyTable() {
 		String createCompetencyTable = 
 			" CREATE TABLE COMPETENCY (" +
-			" 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
+			" 	id INTEGER NOT NULL PRIMARY KEY," +
 			"	title VARCHAR(128) NOT NULL," +
 			"	description LONGVARCHAR," +
-			"	resources LONGVARCHAR);";
+			"	resources LONGVARCHAR," +
+			"		CONSTRAINT competency_unique UNIQUE (title));";
 		
 		String createCourseToCompetencyTable = 
 			" CREATE TABLE COURSE_COMPETENCY (" +
 			" 	course_id VARCHAR(16) NOT NULL," +
-			" 	competency_id VARCHAR(16) NOT NULL," +
+			" 	competency_id INTEGER NOT NULL," +
 			" 		PRIMARY KEY(course_id, competency_id)," +
 			" 		CONSTRAINT course_competency_col1_fk FOREIGN KEY (course_id) REFERENCES COURSE(id)," +
 			" 		CONSTRAINT course_competency_col2_fk FOREIGN KEY (competency_id) REFERENCES COMPETENCY(id));";
@@ -118,6 +144,11 @@ public class Data {
 	}
 	
 	private static void populateTables(Connection conn) throws SQLException {
+		//create courses wiki content
+		String sqlToAddCoursesWiki = "INSERT INTO COURSES_WIKI (id, content) VALUES (1, %s);";
+		Statement stmt0 = conn.createStatement();
+		stmt0.execute(String.format(sqlToAddCoursesWiki, wrapForSQL(Data.courseWiki)));
+		
 		//create courses
 		String sqlToAddCourses = 
 			"INSERT INTO COURSE(id, title, description) VALUES (%s,%s,%s)";
@@ -133,7 +164,7 @@ public class Data {
 		Statement stmt1 = conn.createStatement();
 		for(int i = 0; i < Data.competencies.length; i++) {
 			stmt1.execute(String.format(sqlToAddCompetencies, 
-										wrapForSQL(Data.competencies[i][0]), wrapForSQL(Data.competencies[i][1]), wrapForSQL(Data.competencies[i][2]), wrapForSQL(Data.competencies[i][3])));
+										Data.competencies[i][0], wrapForSQL(Data.competencies[i][1]), wrapForSQL(Data.competencies[i][2]), wrapForSQL(Data.competencies[i][3])));
 		}
 		
 		//create mentors
@@ -151,7 +182,15 @@ public class Data {
 		Statement stmt3 = conn.createStatement();
 		for(int i = 0; i < Data.courseCompetencies.length; i++) {
 			stmt3.execute(String.format(sqlToAddCourseCompetency, 
-										wrapForSQL(Data.courseCompetencies[i][0]), wrapForSQL(Data.courseCompetencies[i][1])));
+										wrapForSQL(Data.courseCompetencies[i][0]), Data.courseCompetencies[i][1]));
+		}
+		
+		//add data to course competency wiki
+		String sqlToAddToCourseCompetencyWiki = 
+			"INSERT INTO COURSE_COMPETENCIES_WIKI(course_id, contents) VALUES (%s, %s);";
+		Statement stmt3_1 = conn.createStatement();
+		for(int i = 0; i < Data.courseCompetenciesWiki.length; i++) {
+			stmt3_1.execute(String.format(sqlToAddToCourseCompetencyWiki, wrapForSQL(Data.courseCompetenciesWiki[i][0]), wrapForSQL(Data.courseCompetenciesWiki[i][1])));
 		}
 		
 		//create course_mentors table

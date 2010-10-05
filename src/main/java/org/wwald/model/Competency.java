@@ -1,20 +1,22 @@
 package org.wwald.model;
 
-public class Competency {
+import java.io.Serializable;
+
+public class Competency implements Serializable {
 	
-	private String id;
+	private int id;
 	private String title;
 	private String description;
 	private String resource;
 	
-	public Competency(String id, String title, String description, String resource) {
+	public Competency(int id, String title, String description, String resource) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.resource = resource;
 	}
 	
-	public String getId() {
+	public int getId() {
 		return this.id;
 	}
 	
@@ -42,8 +44,8 @@ public class Competency {
 		this.resource = resource;
 	}
 	
-	public static Competency createBlankCompeteny() {
-		return new Competency("", "", "", "");
+	@Override
+	public String toString() {
+		return this.id + " " + this.title + " " + this.description + " " + this.resource;
 	}
-
 }
