@@ -86,7 +86,7 @@ a:visited {
 	padding-right: 10px;
 }
 
-#content #admin {
+#content #rhs_sidebar {
     width: 15%;
     float: left;
     padding-bottom: 4em;
@@ -400,15 +400,4 @@ a {
 .auth {
 	font-size: 12px;
 	width: 100px;
-}
-
-.auth_component {
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	margin-bottom: 20px;
-	background: #F9F9F9;
-	border: 1px solid #EEEEEE;
-	font-size: 12px;
 }
