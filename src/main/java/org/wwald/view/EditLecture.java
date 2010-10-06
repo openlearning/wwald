@@ -1,16 +1,19 @@
 package org.wwald.view;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.model.Competency;
 
-public class EditLecture extends WebPage {
+public class EditLecture extends BasePage {
 	public EditLecture(PageParameters pageParams) {
+		super(pageParams);
 		String courseId = pageParams.getString(HomePage.SELECTED_COURSE);
 		String sCompetencyId = pageParams.getString(HomePage.SELECTED_COMPETENCY);
 		Competency competency = getCompetency(courseId, sCompetencyId);
@@ -48,5 +51,10 @@ public class EditLecture extends WebPage {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		Competency competency = app.getDataStore().getCompetency(courseId, sCompetencyId);
 		return competency;
+	}
+
+	@Override
+	public Component getSidebar() {
+		return new EmptyPanel("rhs_sidebar");
 	}
 }
