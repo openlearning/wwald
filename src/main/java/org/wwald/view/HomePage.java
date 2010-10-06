@@ -12,6 +12,8 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.model.Course;
 import org.wwald.model.NonExistentCourse;
@@ -20,7 +22,7 @@ import org.wwald.model.StatusUpdate;
 /**
  * Homepage
  */
-public class HomePage extends WebPage implements Serializable {
+public class HomePage extends BasePage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -39,6 +41,7 @@ public class HomePage extends WebPage implements Serializable {
 	 *            Page parameters
 	 */
     public HomePage(final PageParameters parameters) {
+    	super(parameters);
     	add(new Link("courses.edit", null){
 
 			@Override
@@ -106,4 +109,9 @@ public class HomePage extends WebPage implements Serializable {
     	statusUpdates.add(new StatusUpdate("Joe finished watching a lecture on sorting algorithms."));
     	return statusUpdates;
     }
+
+	@Override
+	public Panel getSidebar() {
+		return new EmptyPanel("rhs_sidebar");
+	}
 }
