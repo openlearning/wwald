@@ -1,59 +1,16 @@
-<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
-    <head>  
-        <title>Computer Science For Everyone</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="free computer science courses" />
-		<meta name="keywords" content="computer science videos, computer science courses, learn programming, algorithms, data structures, python, java, introduction to computers, machine learning, open courseware, video lecturesi, adaptive learning online, parag shah"/>
-		<meta name="Distribution" content="Global" />
-		<meta name="author" content="Parag Shah" />
-		<meta name="copyright" content="Satish Talim 2007 and beyond..." />
-		<meta name="robots" content="index,follow" />
-		<meta http-equiv="Expires" content="0" />
-		<meta name="revisit-after" content="1 days" />
-
-		<link rel="stylesheet" type="text/css" href="css/default_styles.css" />
-
-    </head>
-    <body class="about">
-        <div id="header">
-			<div id="header-main">
-				<img src="images/summer_sky.jpg" />
-			</div> <!-- header-main -->
-			<div id="nav-main">
-				<ul>
-					<li><a href="/wwald">Home .</a></li>
-					<li><a href="/wwald/about/">About .</a></li>
-				</ul>
-				
-			</div> <!-- nav-main -->
-		</div> <!-- header -->	
-
-		<div id="content">
-			
-			<div id="lecture_list">
-				<h2 class="course_listing_heading">Lectures<a wicket:id="competencies.edit" href="#">[edit]</a></h2>
-				<p wicket:id="competencies" class="competency"><a wicket:id="goto.competency" href="#"><span wicket:id="competency.title">Competency 1 Title</span></a></p>
-				<wicket:remove>
-					<p class="competency"><a href="#"><span>Competency 2 Title</span></a></p>
-				</wicket:remove>
-			</div>
-			
-			<div id="lecture">
-				<h2 wicket:id="selected.course" class="course_listing_heading">Selected Course</h2>
-				<h2 wicket:id="selected.lecture" class="course_listing_heading">Selected Lecture</h2><a wicket:id="lecture.edit" href="#">[edit]</a>
-				<div id="competency_resources" wicket:id="competency.resources">Video</div>
-				<div id="competency_description" wicket:id="competency.description">Description</div>
-			</div>
-			
-		</div>
-		<div id="rhs_sidebar">
-				<h2 class="course_listing_heading">Mentor</h2>
-				<p id="instructor_image"><img src="images/Instructor.jpg"/></p>
-				<p class="mentor_detail"><span wicket:id="mentor.name" >Mentor's Name</span></p>
-				<p class="mentor_detail">Questions answered: <span wicket:id="mentor.qanswered" >7</span></p>
-				<p class="mentor_detail">Last Login: <span wicket:id="mentor.lastlogin">7/10/2010</span></p>
-				<p id="course_summary_heading">Course Summary:</p>
-				<p id="course_summary">This course is all about understanding: understanding what's going on inside your computer when you flip on the switch, why tech support has you constantly rebooting your computer, how everything you do on the Internet can be watched by others, and how your computer can become infected with a worm just by turning it on. </p>
-			</div> 
-    </body>
-</html>
+<wicket:extend>			
+	<div id="lecture_list">
+		<h2 class="course_listing_heading">Lectures<a wicket:id="competencies.edit" href="#">[edit]</a></h2>
+		<p wicket:id="competencies" class="competency"><a wicket:id="goto.competency" href="#"><span wicket:id="competency.title">Competency 1 Title</span></a></p>
+		<wicket:remove>
+			<p class="competency"><a href="#"><span>Competency 2 Title</span></a></p>
+		</wicket:remove>
+	</div>
+	
+	<div id="lecture">
+		<h2 wicket:id="selected.course" class="course_listing_heading">Selected Course</h2>
+		<h2 wicket:id="selected.lecture" class="course_listing_heading">Selected Lecture</h2><a wicket:id="lecture.edit" href="#">[edit]</a>
+		<div id="competency_resources" wicket:id="competency.resources">Video</div>
+		<div id="competency_description" wicket:id="competency.description">Description</div>
+	</div>
+</wicket:extend>

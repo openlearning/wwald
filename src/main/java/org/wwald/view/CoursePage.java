@@ -3,26 +3,30 @@ package org.wwald.view;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.DataFacade;
 import org.wwald.model.Mentor;
 
-public class CoursePage extends WebPage{
-	
+public class CoursePage extends BasePage {
+	Course selectedCourse;
 	private static Logger cLogger = Logger.getLogger(CoursePage.class);
 	
 	public CoursePage(final PageParameters parameters) {
-		Course selectedCourse = getSelectedCourse(parameters);
+		super(parameters);
+		this.selectedCourse = getSelectedCourse(parameters);
+		replaceSidebar(getSidebar());
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
 		if(parameters.getString(HomePage.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
 			parameters.add(HomePage.SELECTED_COMPETENCY, String.valueOf(selectedCompetency.getId()));
@@ -49,17 +53,6 @@ public class CoursePage extends WebPage{
 			add(new Label("selected.lecture", selectedCompetency.getTitle()));
 			add(new Label("competency.resources", selectedCompetency.getResource()).setEscapeModelStrings(false));
 			add(new Label("competency.description", selectedCompetency.getDescription()));
-			Mentor mentor = selectedCourse.getMentor();
-			if(mentor != null) {
-				add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMiddleInitial() + " " + mentor.getLastName()));
-				add(new Label("mentor.qanswered", "7 xxx"));
-				add(new Label("mentor.lastlogin", "some date"));
-			}
-			else {
-				add(new Label("mentor.name", ""));
-				add(new Label("mentor.qanswered", "7 xxx"));
-				add(new Label("mentor.lastlogin", "some date"));
-			}
 		}
 		else {
 			setResponsePage(EditCompetencies.class, parameters);
@@ -114,5 +107,17 @@ public class CoursePage extends WebPage{
 			}
 			
 		};
+	}
+
+	@Override
+	public Panel getSidebar() {
+		if(this.selectedCourse == null) {
+			return new EmptyPanel("rhs_sidebar");
+		}
+		else {
+			Mentor mentor = selectedCourse.getMentor();
+			return new CourseDetailsPanel(mentor, "rhs_sidebar");
+		}
+		
 	}
 }

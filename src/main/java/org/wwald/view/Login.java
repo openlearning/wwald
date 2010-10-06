@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 
 public class Login extends BasePage {
 
@@ -28,7 +29,7 @@ public class Login extends BasePage {
 	}
 	
 	@Override
-	public Component getSidebar() {
+	public Panel getSidebar() {
 		return new EmptyPanel("rhs_sidebar");
 	}
 

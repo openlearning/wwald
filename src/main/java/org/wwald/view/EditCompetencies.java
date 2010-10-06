@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 
@@ -41,7 +42,7 @@ public class EditCompetencies extends BasePage {
 	}
 
 	@Override
-	public Component getSidebar() {
+	public Panel getSidebar() {
 		return new EmptyPanel("rhs_sidebar");
 	}
 }
