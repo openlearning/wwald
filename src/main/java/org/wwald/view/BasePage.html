@@ -31,51 +31,13 @@
 		</div> <!-- header -->	
 
 		<div id="content">
-			<div id="main">
-				<h2 class="course_listing_heading"><span>Courses</span><a wicket:id="courses.edit" href="#">[edit]</a></h2>
-				
-				<div id="course-listing">
-
-					<div wicket:id="courses" id="course-details">
-						<div class="course_title">
-							<a wicket:id="goto.course" href="#"><span wicket:id="course.title">Course 1 Title</span></a>
-						</div>
-						<div class="course_description">
-							<span wicket:id="course.description">Course 1 Description</span>
-						</div>
-					</div>
-					<wicket:remove>
-						<div id="course-details">
-							<div class="course_title">
-								<a href="/courses/course/show/INTROCS/"><span>Course 2 Title</span></a>
-							</div>
-							<div class="course_description">
-								<span>Course 2 Description</span>
-							</div>
-						</div>
-					</wicket:remove>
-
-				</div>
-			</div>
-			
-			<div id="status_updates">
-				<h2 class="status_updates_heading">Site Updates</h2>
-				
-				<div wicket:id="status_updates" id="status_update">
-					<span wicket:id="status_update_text">Daniel learned HTML lists and blogged his learnings.</span>
-				</div>
-				
-				<wicket:remove>
-					<div id="status_update">
-						Parag took a quiz on Java programming.
-					</div>
-				</wicket:remove>
-			</div>
+			<wicket:child />
 			
 		</div>
 		<div id="rhs_sidebar">
-				
+			<div wicket:id="rhs_sidebar"></div>		
 		</div>
+		
 		
 		
 		<div id="footer">	
