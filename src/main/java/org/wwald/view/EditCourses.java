@@ -1,13 +1,16 @@
 package org.wwald.view;
 
-import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.Component;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 
-public class EditCourses extends WebPage {
-	public EditCourses() {
+public class EditCourses extends BasePage {
+	public EditCourses(PageParameters parameters) {
+		super(parameters);
 		add(getCoursesEditForm());
 	}
 
@@ -29,5 +32,10 @@ public class EditCourses extends WebPage {
 	private String getCoursesWikiContents() {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		return app.getDataStore().getCoursesWikiContents();
+	}
+
+	@Override
+	public Component getSidebar() {
+		return new EmptyPanel("rhs_sidebar");
 	}
 }
