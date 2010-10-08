@@ -1,8 +1,6 @@
 package org.wwald.view;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -10,13 +8,14 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDConstants;
 import org.wwald.model.Competency;
 
 public class EditLecture extends BasePage {
 	public EditLecture(PageParameters pageParams) {
 		super(pageParams);
-		String courseId = pageParams.getString(HomePage.SELECTED_COURSE);
-		String sCompetencyId = pageParams.getString(HomePage.SELECTED_COMPETENCY);
+		String courseId = pageParams.getString(WWALDConstants.SELECTED_COURSE);
+		String sCompetencyId = pageParams.getString(WWALDConstants.SELECTED_COMPETENCY);
 		Competency competency = getCompetency(courseId, sCompetencyId);
 		add(new Label("course.name", courseId));
 		add(getCompetencyEditForm(courseId, competency, pageParams));

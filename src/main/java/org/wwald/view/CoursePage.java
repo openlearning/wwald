@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDConstants;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.DataFacadeRDBMSImpl;
@@ -28,8 +29,8 @@ public class CoursePage extends BasePage {
 		this.selectedCourse = getSelectedCourse(parameters);
 		replaceSidebar(getSidebar());
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
-		if(parameters.getString(HomePage.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
-			parameters.add(HomePage.SELECTED_COMPETENCY, String.valueOf(selectedCompetency.getId()));
+		if(parameters.getString(WWALDConstants.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
+			parameters.add(WWALDConstants.SELECTED_COMPETENCY, String.valueOf(selectedCompetency.getId()));
 		}
 		if(selectedCourse != null) {
 			
@@ -62,7 +63,7 @@ public class CoursePage extends BasePage {
 	private Course getSelectedCourse(PageParameters parameters) {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		DataFacadeRDBMSImpl dataStore = app.getDataFacade();
-		String selectedCourseId = parameters.getString(HomePage.SELECTED_COURSE);
+		String selectedCourseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
 		Course course = dataStore.retreiveCourse(selectedCourseId); 
 		return course;
 	}
@@ -74,7 +75,7 @@ public class CoursePage extends BasePage {
 		if(selectedCourse == null) {
 			throw new NullPointerException("selectedCourse cannot be null");
 		}
-		String selectedCompetencyId = parameters.getString(HomePage.SELECTED_COMPETENCY);
+		String selectedCompetencyId = parameters.getString(WWALDConstants.SELECTED_COMPETENCY);
 		Competency competency = null; 
 		if(selectedCompetencyId == null) {
 			List<Competency> competencies = selectedCourse.getCompetencies();
@@ -99,8 +100,8 @@ public class CoursePage extends BasePage {
 					item.add(new SimpleAttributeModifier("class", "selected_lecture"));
 				}
 				PageParameters pars = new PageParameters();
-				pars.add(HomePage.SELECTED_COURSE, selectedCourse.getId());
-				pars.add(HomePage.SELECTED_COMPETENCY, String.valueOf(competency.getId()));
+				pars.add(WWALDConstants.SELECTED_COURSE, selectedCourse.getId());
+				pars.add(WWALDConstants.SELECTED_COMPETENCY, String.valueOf(competency.getId()));
 				BookmarkablePageLink competencyLink = new BookmarkablePageLink("goto.competency", CoursePage.class, pars);				
 				competencyLink.add(new Label("competency.title",competency.getTitle()));
 				item.add(competencyLink);

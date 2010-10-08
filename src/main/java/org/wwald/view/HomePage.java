@@ -1,12 +1,10 @@
 package org.wwald.view;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -14,6 +12,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.wwald.WWALDConstants;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.Course;
@@ -32,10 +31,6 @@ public class HomePage extends BasePage implements Serializable {
 	private transient IDataFacade dataFacade;
 	
 	private static Logger cLogger = Logger.getLogger(HomePage.class);
-	
-	public static String SELECTED_COURSE = "course";
-	public static String SELECTED_COURSE_TITLE = "title";
-	public static String SELECTED_COMPETENCY = "competency";
 
 	// TODO Add any page properties or variables here
 
@@ -73,7 +68,7 @@ public class HomePage extends BasePage implements Serializable {
 							WWALDApplication app = (WWALDApplication)(getApplication());
 							app.getDataFacade().insertCourse(course);
 							PageParameters pageParameters = new PageParameters();
-							pageParameters.add(SELECTED_COURSE, course.getId());
+							pageParameters.add(WWALDConstants.SELECTED_COURSE, course.getId());
 							setResponsePage(EditCompetencies.class, pageParameters);
 						}
 					};
@@ -83,7 +78,7 @@ public class HomePage extends BasePage implements Serializable {
 				}
 				else {
 					BookmarkablePageLink courseLink = new BookmarkablePageLink(WicketIdConstants.GOTO_COURSE, CoursePage.class);
-					courseLink.setParameter(SELECTED_COURSE, course.getId());
+					courseLink.setParameter(WWALDConstants.SELECTED_COURSE, course.getId());
 					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
 					item.add(courseLink);
 					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));

@@ -12,11 +12,12 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDConstants;
 
 public class EditCompetencies extends BasePage {
 	public EditCompetencies(PageParameters parameters) {
 		super(parameters);
-		String courseId = parameters.getString(HomePage.SELECTED_COURSE);
+		String courseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
 		add(new Label("course.name", courseId));
 		add(getCoursesEditForm(courseId, parameters));
 	}
