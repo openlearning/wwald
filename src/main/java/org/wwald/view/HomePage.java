@@ -56,7 +56,7 @@ public class HomePage extends BasePage implements Serializable {
     
     private ListView getCoursesListView() {
     	WWALDApplication app = (WWALDApplication)(getApplication());
-    	List<Course> allCoursesToDisplay = app.getDataStore().getAllCoursesToDisplay(); 
+    	List<Course> allCoursesToDisplay = app.getDataFacade().getAllCoursesToDisplay(); 
     	return
     	new ListView("courses", allCoursesToDisplay) {
 
@@ -68,7 +68,7 @@ public class HomePage extends BasePage implements Serializable {
 						@Override
 						public void onClick() {
 							WWALDApplication app = (WWALDApplication)(getApplication());
-							Course newCourse = app.getDataStore().createCourse(course);
+							Course newCourse = app.getDataFacade().createCourse(course);
 							PageParameters pageParameters = new PageParameters();
 							pageParameters.add(SELECTED_COURSE, newCourse.getId());
 							setResponsePage(EditCompetencies.class, pageParameters);

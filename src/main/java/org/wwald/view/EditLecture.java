@@ -33,7 +33,7 @@ public class EditLecture extends BasePage {
 				
 				competency.setDescription((String)editCompetencyDescriptionTextArea.getModelObject());
 				competency.setResource((String)editCompetencyResourcesTextArea.getModelObject());
-				app.getDataStore().updateCompetency(courseId, competency);
+				app.getDataFacade().updateCompetency(courseId, competency);
 				
 				setResponsePage(CoursePage.class, pageParams);
 			}
@@ -50,7 +50,7 @@ public class EditLecture extends BasePage {
 
 	private Competency getCompetency(String courseId, String sCompetencyId) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		Competency competency = app.getDataStore().getCompetency(courseId, sCompetencyId);
+		Competency competency = app.getDataFacade().getCompetency(courseId, sCompetencyId);
 		return competency;
 	}
 

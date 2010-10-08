@@ -61,7 +61,7 @@ public class CoursePage extends BasePage {
 	
 	private Course getSelectedCourse(PageParameters parameters) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		DataFacade dataStore = app.getDataStore();
+		DataFacade dataStore = app.getDataFacade();
 		String selectedCourseId = parameters.getString(HomePage.SELECTED_COURSE);
 		Course course = dataStore.getCourse(selectedCourseId); 
 		return course;

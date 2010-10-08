@@ -27,7 +27,7 @@ public class EditCompetencies extends BasePage {
 			public void onSubmit() {
 				TextArea textArea = (TextArea)get(0);
 				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataStore().updateCompetenciesWikiContents(courseId, textArea.getModelObject());
+				app.getDataFacade().updateCompetenciesWikiContents(courseId, textArea.getModelObject());
 				setResponsePage(CoursePage.class, pageParams);
 			}
 		};
@@ -38,7 +38,7 @@ public class EditCompetencies extends BasePage {
 
 	private Serializable getCompetenciesWikiContents(String courseId) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataStore().getCompetenciesWikiContents(courseId);
+		return app.getDataFacade().getCompetenciesWikiContents(courseId);
 	}
 
 	@Override

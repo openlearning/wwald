@@ -45,7 +45,7 @@ public class WWALDApplication extends WebApplication
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 	}
 	
-	public DataFacade getDataStore() {
+	public DataFacade getDataFacade() {
 		return this.dataStore;
 	}
 
