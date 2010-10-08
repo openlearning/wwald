@@ -30,7 +30,7 @@ public class DataStoreTest {
 	
 	@Test
 	public void testGetAllCourses() {
-		List<Course> courses = dataStore.getAllCourses();
+		List<Course> courses = dataStore.retreiveCourses();
 		assertNotNull(courses);
 		assertEquals(4, courses.size());
 		
