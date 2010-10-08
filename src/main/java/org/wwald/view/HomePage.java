@@ -45,7 +45,7 @@ public class HomePage extends BasePage implements Serializable {
     	this.dataFacade = ((WWALDApplication)getApplication()).getDataFacade();
     	add(getEditCoursesLink());
     	add(getCoursesListView());
-    	add(getStatusUpdateListView());
+    	add(getStatusUpdatesPanel());
     }
 
 	private Link getEditCoursesLink() {
@@ -87,21 +87,13 @@ public class HomePage extends BasePage implements Serializable {
     	};
     }
         
-    private ListView getStatusUpdateListView() {
-    	return
-    	new ListView(WicketIdConstants.STATUS_UPDATES, this.dataFacade.getStatusUpdates()) {
-
-			@Override
-			protected void populateItem(ListItem item) {
-				StatusUpdate statusUpdate = (StatusUpdate)item.getModelObject();
-				item.add(new Label(WicketIdConstants.STATUS_UPDATE_TEXT, statusUpdate.getText()));
-			}
-    		
-    	};
+    private Panel getStatusUpdatesPanel() {
+    	return new StatusUpdatesPanel(WicketIdConstants.STATUS_UPDATES_PANEL);
     }
-        
+
 	@Override
 	public Panel getSidebar() {
 		return new EmptyPanel(WicketIdConstants.RHS_SIDEBAR);
 	}
+	
 }
