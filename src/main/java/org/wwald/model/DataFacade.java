@@ -2,8 +2,6 @@ package org.wwald.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,6 +20,8 @@ public class DataFacade {
 	private static final String user = "SA";
 	private static final String password = "";
 	private Connection conn;
+	
+	private static int nextCompetencyId = 10;
 	
 	private static Logger cLogger = Logger.getLogger(DataFacade.class);
 	
@@ -54,29 +54,6 @@ public class DataFacade {
 		}
 		return courses;
 	}
-	
-	private void buildCourseObjectsFromCoursesWikiContent(List<Course> courses, 
-														  String wikiContent) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new StringReader(wikiContent));
-		String line = null;
-		while((line = bufferedReader.readLine()) != null) {
-			String lineTokens[] = line.split("\\|");
-			String courseId = lineTokens[0];
-			String courseTitle = lineTokens[1];
-			//It does not matter if the courseTitle is null, but as a rule we want the wikiContent
-			//to contain both for each course
-			if(courseId != null && courseTitle != null) {
-				Course course = getCourse(courseId.trim());
-				if(course == null) {
-					course = new NonExistentCourse(courseId, courseTitle);
-				}
-				//TODO If we change the courseTitle in the wiki page then there should be a way to change it 
-				//in the database as well
-				courses.add(course);
-			}
-			
-		}
-	}
 
 	public List<Course> getAllCourses() {
 		List<Course> courses = null;
@@ -97,6 +74,22 @@ public class DataFacade {
 		}
 		
 		return courses;
+	}
+
+	public String getCoursesWikiContents() {
+		String wikiContents = "";
+		String sql = "SELECT * FROM COURSES_WIKI;";
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				wikiContents = rs.getString(2);
+			}
+		} catch(SQLException sqle) {
+			cLogger.warn("Could not fetch courses wiki contents from the database", sqle);
+		}
+		return wikiContents;
 	}
 
 	public Course getCourse(String id) {
@@ -124,6 +117,141 @@ public class DataFacade {
 		}
 		
 		return course;
+	}
+	
+	public Course createCourse(Course course) {
+		Course newCourse = null;
+		Statement stmt = null;
+		int rowsUpdated = 0;
+		try {
+			//create course
+			String sqlToCreateCourse = "INSERT INTO COURSE (id, title) VALUES (%s,%s)";
+			stmt = conn.createStatement();
+			rowsUpdated = stmt.executeUpdate(String.format(sqlToCreateCourse, Data.wrapForSQL(course.getId()), Data.wrapForSQL(course.getTitle())));
+			cLogger.info("Rows updated after inserting course " + rowsUpdated);
+			
+			//create course_competency_wiki 
+			stmt = conn.createStatement();
+			String sqlToCreateCourseCompetency = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
+			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, Data.wrapForSQL(course.getId())));
+			cLogger.info("Rows updated after inserting course_competencies_wiki " + rowsUpdated);
+			
+			newCourse = getCourse(course.getId());
+		} catch(SQLException sqle) {
+			cLogger.error("Could not create new course " + course, sqle);
+		}
+		return newCourse;
+	}
+
+	public void updateCoursesWikiContents(Object modelObject) {
+		String coursesWikiContents = (String)modelObject;
+		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, Data.wrapForSQL(coursesWikiContents)));
+			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
+			else cLogger.info("CoursesWiki not updated");
+		} catch(SQLException sqle) {
+			cLogger.error("Could not update CoursesWiki with new data", sqle);
+		}
+	}
+
+	public String getCompetenciesWikiContents(String courseId) {
+		String wikiContents = "";
+		String sql = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(String.format(sql, Data.wrapForSQL(courseId)));
+			if(rs.next()) {
+				wikiContents = rs.getString(2);
+			}
+		} catch(SQLException sqle) {
+			cLogger.error("Could not get contents of CompetenciesWiki table", sqle);
+		}
+		return wikiContents;
+	}
+
+	public Competency getCompetency(String courseId, String sCompetencyId) {
+		Competency competency = null;
+		Course course = getCourse(courseId);
+		competency = course.getCompetency(sCompetencyId);
+		return competency;
+	}
+
+	public void updateCompetenciesWikiContents(String courseId, Object modelObject) {
+		String competenciesWikiContents = (String)modelObject;
+		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, Data.wrapForSQL(competenciesWikiContents), Data.wrapForSQL(courseId)));
+			if(rowsUpdated > 0) { 
+				cLogger.info("CompetenciesWiki updated");
+			}
+			else { 
+				cLogger.info("CompetenciesWiki not updated");
+			}
+		} catch(SQLException sqle) {
+			cLogger.error("Could not update CompetenciesWiki with new data", sqle);
+		}
+	}
+	
+	public void updateCompetency(String courseId, Competency competency) {
+		String sql = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			String finalSql = String.format(sql, Data.wrapForSQL(competency.getDescription()), Data.wrapForSQL(competency.getResource()), String.valueOf(competency.getId()));
+			stmt.executeUpdate(finalSql);
+		} catch (SQLException e) {
+			cLogger.error("Could not update competency with these new values ", e);
+		}
+		
+	}
+
+	public Competency buildCompetencyFromTitle(String competencyTitle) {
+		Competency competency = null;
+		String sql = "INSERT INTO COMPETENCY (id, title, description, resources) VALUES (%s, %s, '', '');";
+		String sCompetencyId = String.valueOf(++nextCompetencyId);
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, sCompetencyId, Data.wrapForSQL(competencyTitle)));
+			if(rowsUpdated > 0) {
+				competency = new Competency(nextCompetencyId, competencyTitle, "", "");
+			}
+		} catch(SQLException sqle) {
+			cLogger.error("Could not insert competency for title '" + competencyTitle + "'", sqle);
+		}
+		return competency;
+	}
+
+	private void buildCourseObjectsFromCoursesWikiContent(List<Course> courses,
+														  String wikiContent) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new StringReader(
+				wikiContent));
+		String line = null;
+		while ((line = bufferedReader.readLine()) != null) {
+			String lineTokens[] = line.split("\\|");
+			String courseId = lineTokens[0];
+			String courseTitle = lineTokens[1];
+			// It does not matter if the courseTitle is null, but as a rule we
+			// want the wikiContent
+			// to contain both for each course
+			if (courseId != null && courseTitle != null) {
+				Course course = getCourse(courseId.trim());
+				if (course == null) {
+					course = new NonExistentCourse(courseId, courseTitle);
+				}
+				// TODO If we change the courseTitle in the wiki page then there
+				// should be a way to change it
+				// in the database as well
+				courses.add(course);
+			}
+
+		}
 	}
 	
 	private void initData() {
@@ -262,131 +390,4 @@ public class DataFacade {
 		}
 		return mentors;
 	}
-
-	public String getCoursesWikiContents() {
-		String wikiContents = "";
-		String sql = "SELECT * FROM COURSES_WIKI;";
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			if(rs.next()) {
-				wikiContents = rs.getString(2);
-			}
-		} catch(SQLException sqle) {
-			cLogger.warn("Could not fetch courses wiki contents from the database", sqle);
-		}
-		return wikiContents;
-	}
-
-	public void updateCoursesWikiContents(Object modelObject) {
-		String coursesWikiContents = (String)modelObject;
-		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, Data.wrapForSQL(coursesWikiContents)));
-			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
-			else cLogger.info("CoursesWiki not updated");
-		} catch(SQLException sqle) {
-			cLogger.error("Could not update CoursesWiki with new data", sqle);
-		}
-	}
-
-	public String getCompetenciesWikiContents(String courseId) {
-		String wikiContents = "";
-		String sql = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sql, Data.wrapForSQL(courseId)));
-			if(rs.next()) {
-				wikiContents = rs.getString(2);
-			}
-		} catch(SQLException sqle) {
-			cLogger.error("Could not get contents of CompetenciesWiki table", sqle);
-		}
-		return wikiContents;
-	}
-
-	public void updateCompetenciesWikiContents(String courseId, Object modelObject) {
-		String competenciesWikiContents = (String)modelObject;
-		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, Data.wrapForSQL(competenciesWikiContents), Data.wrapForSQL(courseId)));
-			if(rowsUpdated > 0) { 
-				cLogger.info("CompetenciesWiki updated");
-			}
-			else { 
-				cLogger.info("CompetenciesWiki not updated");
-			}
-		} catch(SQLException sqle) {
-			cLogger.error("Could not update CompetenciesWiki with new data", sqle);
-		}
-	}
-
-	private static int nextCompetencyId = 10;
-	private Competency buildCompetencyFromTitle(String competencyTitle) {
-		Competency competency = null;
-		String sql = "INSERT INTO COMPETENCY (id, title, description, resources) VALUES (%s, %s, '', '');";
-		String sCompetencyId = String.valueOf(++nextCompetencyId);
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, sCompetencyId, Data.wrapForSQL(competencyTitle)));
-			if(rowsUpdated > 0) {
-				competency = new Competency(nextCompetencyId, competencyTitle, "", "");
-			}
-		} catch(SQLException sqle) {
-			cLogger.error("Could not insert competency for title '" + competencyTitle + "'", sqle);
-		}
-		return competency;
-	}
-
-	public Competency getCompetency(String courseId, String sCompetencyId) {
-		Competency competency = null;
-		Course course = getCourse(courseId);
-		competency = course.getCompetency(sCompetencyId);
-		return competency;
-	}
-
-	public void updateCompetency(String courseId, Competency competency) {
-		String sql = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			String finalSql = String.format(sql, Data.wrapForSQL(competency.getDescription()), Data.wrapForSQL(competency.getResource()), String.valueOf(competency.getId()));
-			stmt.executeUpdate(finalSql);
-		} catch (SQLException e) {
-			cLogger.error("Could not update competency with these new values ", e);
-		}
-		
-	}
-
-	public Course createCourse(Course course) {
-		Course newCourse = null;
-		Statement stmt = null;
-		int rowsUpdated = 0;
-		try {
-			//create course
-			String sqlToCreateCourse = "INSERT INTO COURSE (id, title) VALUES (%s,%s)";
-			stmt = conn.createStatement();
-			rowsUpdated = stmt.executeUpdate(String.format(sqlToCreateCourse, Data.wrapForSQL(course.getId()), Data.wrapForSQL(course.getTitle())));
-			cLogger.info("Rows updated after inserting course " + rowsUpdated);
-			
-			//create course_competency_wiki 
-			stmt = conn.createStatement();
-			String sqlToCreateCourseCompetency = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
-			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, Data.wrapForSQL(course.getId())));
-			cLogger.info("Rows updated after inserting course_competencies_wiki " + rowsUpdated);
-			
-			newCourse = getCourse(course.getId());
-		} catch(SQLException sqle) {
-			cLogger.error("Could not create new course " + course, sqle);
-		}
-		return newCourse;
-	}
-
 }
