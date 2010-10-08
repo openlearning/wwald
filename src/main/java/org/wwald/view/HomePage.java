@@ -15,9 +15,12 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
+import org.wwald.WicketIdConstants;
 import org.wwald.model.Course;
+import org.wwald.model.IDataFacade;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.StatusUpdate;
+import org.wwald.view.components.SimpleViewPageLink;
 
 /**
  * Homepage
@@ -25,6 +28,8 @@ import org.wwald.model.StatusUpdate;
 public class HomePage extends BasePage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	private transient IDataFacade dataFacade;
 	
 	private static Logger cLogger = Logger.getLogger(HomePage.class);
 	
@@ -42,31 +47,29 @@ public class HomePage extends BasePage implements Serializable {
 	 */
     public HomePage(final PageParameters parameters) {
     	super(parameters);
-    	add(new Link("courses.edit", null){
-
-			@Override
-			public void onClick() {
-				setResponsePage(EditCourses.class);
-			}
-    		
-    	});
+    	this.dataFacade = ((WWALDApplication)getApplication()).getDataFacade();
+    	add(getEditCoursesLink());
     	add(getCoursesListView());
     	add(getStatusUpdateListView());
     }
+
+	private Link getEditCoursesLink() {
+		return new SimpleViewPageLink(WicketIdConstants.COURSES_EDIT, EditCourses.class);
+	}
     
     private ListView getCoursesListView() {
-    	WWALDApplication app = (WWALDApplication)(getApplication());
-    	List<Course> allCoursesToDisplay = app.getDataFacade().retreiveCouresesListedInCourseWiki(); 
+    	List<Course> allCoursesToDisplay = this.dataFacade.retreiveCouresesListedInCourseWiki(); 
     	return
-    	new ListView("courses", allCoursesToDisplay) {
+    	new ListView(WicketIdConstants.COURSES, allCoursesToDisplay) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				final Course course = (Course)item.getModelObject();
 				if(course instanceof NonExistentCourse) {
-					Link courseLink = new Link("goto.course", null) {
+					Link courseLink = new Link(WicketIdConstants.GOTO_COURSE) {
 						@Override
 						public void onClick() {
+							//TODO: Why can't we access dataFacade from HomePage?
 							WWALDApplication app = (WWALDApplication)(getApplication());
 							app.getDataFacade().insertCourse(course);
 							PageParameters pageParameters = new PageParameters();
@@ -74,16 +77,16 @@ public class HomePage extends BasePage implements Serializable {
 							setResponsePage(EditCompetencies.class, pageParameters);
 						}
 					};
-					courseLink.add(new Label("course.title", course.getTitle()));
+					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
 					item.add(courseLink);
-					item.add(new Label("course.description", course.getDescription()));
+					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));
 				}
 				else {
-					BookmarkablePageLink courseLink = new BookmarkablePageLink("goto.course", CoursePage.class);
+					BookmarkablePageLink courseLink = new BookmarkablePageLink(WicketIdConstants.GOTO_COURSE, CoursePage.class);
 					courseLink.setParameter(SELECTED_COURSE, course.getId());
-					courseLink.add(new Label("course.title", course.getTitle()));
+					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
 					item.add(courseLink);
-					item.add(new Label("course.description", course.getDescription()));
+					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));
 				}
 			}
     	};
@@ -91,25 +94,17 @@ public class HomePage extends BasePage implements Serializable {
         
     private ListView getStatusUpdateListView() {
     	return
-    	new ListView("status_updates", getStatusUpdates()) {
+    	new ListView(WicketIdConstants.STATUS_UPDATES, this.dataFacade.getStatusUpdates()) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				StatusUpdate statusUpdate = (StatusUpdate)item.getModelObject();
-				item.add(new Label("status_update_text", statusUpdate.getText()));
+				item.add(new Label(WicketIdConstants.STATUS_UPDATE_TEXT, statusUpdate.getText()));
 			}
     		
     	};
     }
         
-    private List<StatusUpdate> getStatusUpdates() {
-    	List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
-    	statusUpdates.add(new StatusUpdate("Daniel learned HTML lists and blogged his learnings. "));
-    	statusUpdates.add(new StatusUpdate("Parag took a quiz on Java programming. "));
-    	statusUpdates.add(new StatusUpdate("Joe finished watching a lecture on sorting algorithms."));
-    	return statusUpdates;
-    }
-
 	@Override
 	public Panel getSidebar() {
 		return new EmptyPanel("rhs_sidebar");

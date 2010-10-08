@@ -299,6 +299,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new RuntimeException("method not implemented");
 		}
 	}
+	
+	public List<StatusUpdate> getStatusUpdates() {
+		List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
+    	statusUpdates.add(new StatusUpdate("Daniel learned HTML lists and blogged his learnings. "));
+    	statusUpdates.add(new StatusUpdate("Parag took a quiz on Java programming. "));
+    	statusUpdates.add(new StatusUpdate("Joe finished watching a lecture on sorting algorithms."));
+    	return statusUpdates; 
+	}
 
 	private void buildCourseObjectsFromCoursesWikiContent(List<Course> courses,
 														  String wikiContent) throws IOException {

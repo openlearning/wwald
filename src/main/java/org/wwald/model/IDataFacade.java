@@ -32,4 +32,7 @@ public interface IDataFacade {
 	public void upsertMentor(Mentor mentor);
 	public void deleteMentor(Mentor mentor);
 	
+	//Status updates
+	public List<StatusUpdate> getStatusUpdates();
+	
 }
