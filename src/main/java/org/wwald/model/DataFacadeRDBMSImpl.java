@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 
-public class DataFacade {
+public class DataFacadeRDBMSImpl implements IDataFacade {
 	
 	private static final String url = "jdbc:hsqldb:mem:mymemdb";
 	private static final String user = "SA";
@@ -23,14 +23,14 @@ public class DataFacade {
 	
 	private static int nextCompetencyId = 10;
 	
-	private static Logger cLogger = Logger.getLogger(DataFacade.class);
+	private static Logger cLogger = Logger.getLogger(DataFacadeRDBMSImpl.class);
 	
-	public DataFacade(Connection conn) {
+	public DataFacadeRDBMSImpl(Connection conn) {
 		this.conn = conn;
 		initData();
 	}
 	
-	public DataFacade() {		
+	public DataFacadeRDBMSImpl() {		
 		try {
 			Class.forName("org.hsqldb.jdbcDriver");
 			conn = DriverManager.getConnection(url, user, password);
@@ -42,9 +42,9 @@ public class DataFacade {
 		}
 	}
 
-	public List<Course> getAllCoursesToDisplay() {
+	public List<Course> retreiveCouresesListedInCourseWiki() {
 		List<Course> courses = new ArrayList<Course>();
-		String wikiContent = getCoursesWikiContents();
+		String wikiContent = retreiveCourseWiki();
 		try {
 			if(wikiContent != null && !wikiContent.trim().equals("")) {
 				buildCourseObjectsFromCoursesWikiContent(courses, wikiContent);
@@ -55,7 +55,7 @@ public class DataFacade {
 		return courses;
 	}
 
-	public List<Course> getAllCourses() {
+	public List<Course> retreiveCourses() {
 		List<Course> courses = null;
 		
 		String sqlToFetchAllCourses = "SELECT * FROM COURSE;";
@@ -76,7 +76,7 @@ public class DataFacade {
 		return courses;
 	}
 
-	public String getCoursesWikiContents() {
+	public String retreiveCourseWiki() {
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSES_WIKI;";
 		Statement stmt = null;
@@ -92,7 +92,7 @@ public class DataFacade {
 		return wikiContents;
 	}
 
-	public Course getCourse(String id) {
+	public Course retreiveCourse(String id) {
 		Course course = null;
 		try {
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
@@ -119,8 +119,7 @@ public class DataFacade {
 		return course;
 	}
 	
-	public Course createCourse(Course course) {
-		Course newCourse = null;
+	public void insertCourse(Course course) {
 		Statement stmt = null;
 		int rowsUpdated = 0;
 		try {
@@ -135,16 +134,13 @@ public class DataFacade {
 			String sqlToCreateCourseCompetency = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
 			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, Data.wrapForSQL(course.getId())));
 			cLogger.info("Rows updated after inserting course_competencies_wiki " + rowsUpdated);
-			
-			newCourse = getCourse(course.getId());
 		} catch(SQLException sqle) {
 			cLogger.error("Could not create new course " + course, sqle);
 		}
-		return newCourse;
 	}
 
-	public void updateCoursesWikiContents(Object modelObject) {
-		String coursesWikiContents = (String)modelObject;
+	public void updateCourseWiki(String wikiContents) {
+		String coursesWikiContents = (String)wikiContents;
 		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
 		Statement stmt = null;
 		try {
@@ -157,7 +153,7 @@ public class DataFacade {
 		}
 	}
 
-	public String getCompetenciesWikiContents(String courseId) {
+	public String retreiveCompetenciesWiki(String courseId) {
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
 		Statement stmt = null;
@@ -175,7 +171,7 @@ public class DataFacade {
 
 	public Competency getCompetency(String courseId, String sCompetencyId) {
 		Competency competency = null;
-		Course course = getCourse(courseId);
+		Course course = retreiveCourse(courseId);
 		competency = course.getCompetency(sCompetencyId);
 		return competency;
 	}
@@ -211,7 +207,7 @@ public class DataFacade {
 		
 	}
 
-	public Competency buildCompetencyFromTitle(String competencyTitle) {
+	public Competency insertCompetency(String competencyTitle) {
 		Competency competency = null;
 		String sql = "INSERT INTO COMPETENCY (id, title, description, resources) VALUES (%s, %s, '', '');";
 		String sCompetencyId = String.valueOf(++nextCompetencyId);
@@ -227,6 +223,82 @@ public class DataFacade {
 		}
 		return competency;
 	}
+	
+	public void deleteCompetency(Competency competency) {
+		throw new RuntimeException("method not implemented");
+	}
+
+	public void deleteMentor(Mentor mentor) {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+	}
+
+	public void insertMentor(Mentor mentor) {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+	}
+
+	public List<Mentor> retreiveMentorsForCompetency() {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public List<Competency> retreiveAllCompetencies() {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public List<Mentor> retreiveAllMentors() {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public List<Competency> retreiveCompetenciesForCourse(Course course) {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public List<Mentor> retreiveMentorsForCourse() {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public void updateCourse(Course course) {
+		throw new RuntimeException("method not implemented");
+		
+	}
+
+	public void updateMentor(Mentor mentor) {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+	}
+
+	public void upsertCompetency(Competency competency) {
+		throw new RuntimeException("method not implemented");
+	}
+
+	public void upsertCourse(Course course) {
+		throw new RuntimeException("method not implemented");
+	}
+
+	public void upsertMentor(Mentor mentor) {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+	}
 
 	private void buildCourseObjectsFromCoursesWikiContent(List<Course> courses,
 														  String wikiContent) throws IOException {
@@ -241,7 +313,7 @@ public class DataFacade {
 			// want the wikiContent
 			// to contain both for each course
 			if (courseId != null && courseTitle != null) {
-				Course course = getCourse(courseId.trim());
+				Course course = retreiveCourse(courseId.trim());
 				if (course == null) {
 					course = new NonExistentCourse(courseId, courseTitle);
 				}
@@ -348,7 +420,7 @@ public class DataFacade {
 					competencies.add(competency);
 				}
 				else {
-					Competency competency = buildCompetencyFromTitle(competencyTitle);
+					Competency competency = insertCompetency(competencyTitle);
 					if(competency != null) {
 						competencies.add(competency);
 					}
@@ -390,4 +462,5 @@ public class DataFacade {
 		}
 		return mentors;
 	}
+
 }

@@ -16,7 +16,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
-import org.wwald.model.DataFacade;
+import org.wwald.model.DataFacadeRDBMSImpl;
 import org.wwald.model.Mentor;
 
 public class CoursePage extends BasePage {
@@ -61,9 +61,9 @@ public class CoursePage extends BasePage {
 	
 	private Course getSelectedCourse(PageParameters parameters) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		DataFacade dataStore = app.getDataFacade();
+		DataFacadeRDBMSImpl dataStore = app.getDataFacade();
 		String selectedCourseId = parameters.getString(HomePage.SELECTED_COURSE);
-		Course course = dataStore.getCourse(selectedCourseId); 
+		Course course = dataStore.retreiveCourse(selectedCourseId); 
 		return course;
 	}
 

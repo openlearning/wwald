@@ -38,7 +38,7 @@ public class EditCompetencies extends BasePage {
 
 	private Serializable getCompetenciesWikiContents(String courseId) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().getCompetenciesWikiContents(courseId);
+		return app.getDataFacade().retreiveCompetenciesWiki(courseId);
 	}
 
 	@Override

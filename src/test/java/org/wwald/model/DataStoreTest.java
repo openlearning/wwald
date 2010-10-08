@@ -19,13 +19,13 @@ public class DataStoreTest {
 	private static final String password = "";
 	private Connection conn;
 	
-	private DataFacade dataStore;
+	private DataFacadeRDBMSImpl dataStore;
 	
 	@Before
 	public void setUp() throws Exception {
 		Class.forName("org.hsqldb.jdbcDriver");
 		this.conn = DriverManager.getConnection(url, user, password);
-		this.dataStore = new DataFacade();
+		this.dataStore = new DataFacadeRDBMSImpl();
 	}
 	
 	@Test

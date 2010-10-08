@@ -20,7 +20,7 @@ public class EditCourses extends BasePage {
 			public void onSubmit() {
 				TextArea textArea = (TextArea)get(0);
 				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataFacade().updateCoursesWikiContents(textArea.getModelObject());
+				app.getDataFacade().updateCourseWiki(textArea.getModelObject());
 				setResponsePage(HomePage.class);
 			}
 		};
