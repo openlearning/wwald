@@ -102,6 +102,6 @@ public class HomePage extends BasePage implements Serializable {
         
 	@Override
 	public Panel getSidebar() {
-		return new EmptyPanel("rhs_sidebar");
+		return new EmptyPanel(WicketIdConstants.RHS_SIDEBAR);
 	}
 }

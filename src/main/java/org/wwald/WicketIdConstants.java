@@ -9,4 +9,6 @@ public class WicketIdConstants {
 	
 	public static final String STATUS_UPDATES = "status_updates";
 	public static final String STATUS_UPDATE_TEXT = "status_update_text";
+	
+	public static final String RHS_SIDEBAR = "rhs_sidebar";
 }
