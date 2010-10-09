@@ -1,0 +1,16 @@
+<wicket:panel>
+	<div id="lecture_list">
+		<h2 class="course_listing_heading">Lectures<a wicket:id="competencies.edit" href="#">[edit]</a></h2>
+		<p wicket:id="competencies" class="competency"><a wicket:id="goto.competency" href="#"><span wicket:id="competency.title">Competency 1 Title</span></a></p>
+		<wicket:remove>
+			<p class="competency"><a href="#"><span>Competency 2 Title</span></a></p>
+		</wicket:remove>
+	</div>
+	
+	<div id="lecture">
+		<h2 wicket:id="selected.course" class="course_listing_heading">Selected Course</h2>
+		<h2 wicket:id="selected.lecture" class="course_listing_heading">Selected Lecture</h2><a wicket:id="lecture.edit" href="#">[edit]</a>
+		<div id="competency_resources" wicket:id="competency.resources">Video</div>
+		<div id="competency_description" wicket:id="competency.description">Description</div>
+	</div>
+</wicket:panel>

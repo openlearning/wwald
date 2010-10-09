@@ -15,4 +15,6 @@ public class WicketIdConstants {
 	
 	public static final String COURSES_PANEL = "courses_panel";
 	
+	public static final String COURSE_COMPETENCIES_PANEL = "course_competencies_panel";
+	
 }
