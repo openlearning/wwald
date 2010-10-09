@@ -2,26 +2,7 @@
 			<div id="main">
 				<h2 class="course_listing_heading"><span>Courses</span><a wicket:id="courses.edit" href="#">[edit]</a></h2>
 				
-				<div id="course-listing">
-
-					<div wicket:id="courses" id="course-details">
-						<div class="course_title">
-							<a wicket:id="goto.course" href="#"><span wicket:id="course.title">Course 1 Title</span></a>
-						</div>
-						<div class="course_description">
-							<span wicket:id="course.description">Course 1 Description</span>
-						</div>
-					</div>
-					<wicket:remove>
-						<div id="course-details">
-							<div class="course_title">
-								<a href="/courses/course/show/INTROCS/"><span>Course 2 Title</span></a>
-							</div>
-							<div class="course_description">
-								<span>Course 2 Description</span>
-							</div>
-						</div>
-					</wicket:remove>
+				<div wicket:id="courses_panel" id="course-listing">
 
 				</div>
 			</div>

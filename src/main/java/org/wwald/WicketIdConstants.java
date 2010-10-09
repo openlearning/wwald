@@ -13,4 +13,6 @@ public class WicketIdConstants {
 	
 	public static final String RHS_SIDEBAR = "rhs_sidebar";
 	
+	public static final String COURSES_PANEL = "courses_panel";
+	
 }

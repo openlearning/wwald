@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -44,49 +45,18 @@ public class HomePage extends BasePage implements Serializable {
     	super(parameters);
     	this.dataFacade = ((WWALDApplication)getApplication()).getDataFacade();
     	add(getEditCoursesLink());
-    	add(getCoursesListView());
+    	add(getCoursesPanel());
     	add(getStatusUpdatesPanel());
     }
+
+	private Component getCoursesPanel() {
+		return new CoursesPanel(WicketIdConstants.COURSES_PANEL);
+	}
 
 	private Link getEditCoursesLink() {
 		return new SimpleViewPageLink(WicketIdConstants.COURSES_EDIT, EditCourses.class);
 	}
-    
-    private ListView getCoursesListView() {
-    	List<Course> allCoursesToDisplay = this.dataFacade.retreiveCouresesListedInCourseWiki(); 
-    	return
-    	new ListView(WicketIdConstants.COURSES, allCoursesToDisplay) {
-
-			@Override
-			protected void populateItem(ListItem item) {
-				final Course course = (Course)item.getModelObject();
-				if(course instanceof NonExistentCourse) {
-					Link courseLink = new Link(WicketIdConstants.GOTO_COURSE) {
-						@Override
-						public void onClick() {
-							//TODO: Why can't we access dataFacade from HomePage?
-							WWALDApplication app = (WWALDApplication)(getApplication());
-							app.getDataFacade().insertCourse(course);
-							PageParameters pageParameters = new PageParameters();
-							pageParameters.add(WWALDConstants.SELECTED_COURSE, course.getId());
-							setResponsePage(EditCompetencies.class, pageParameters);
-						}
-					};
-					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
-					item.add(courseLink);
-					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));
-				}
-				else {
-					BookmarkablePageLink courseLink = new BookmarkablePageLink(WicketIdConstants.GOTO_COURSE, CoursePage.class);
-					courseLink.setParameter(WWALDConstants.SELECTED_COURSE, course.getId());
-					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
-					item.add(courseLink);
-					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));
-				}
-			}
-    	};
-    }
-        
+            
     private Panel getStatusUpdatesPanel() {
     	return new StatusUpdatesPanel(WicketIdConstants.STATUS_UPDATES_PANEL);
     }
