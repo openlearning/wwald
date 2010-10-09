@@ -1,0 +1,23 @@
+#status_updates {
+    width: 35%;
+    float: left;
+    padding-bottom: 4em;
+	padding-right: 10px;
+}
+
+.status_updates_heading {
+	background: #BDDDED; 
+	padding-left: 5px;
+}
+
+#status_update {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-bottom: 5px;
+	background: #F9F9F9;
+	border: 1px solid #EEEEEE;
+	font-weight: bold;
+}
+
