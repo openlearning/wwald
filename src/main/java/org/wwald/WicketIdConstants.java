@@ -1,6 +1,10 @@
 package org.wwald;
 
 public class WicketIdConstants {
+	public static final String HEADER_PANEL = "header_panel";
+	
+	public static final String FOOTER_PANEL = "footer_panel";
+	
 	public static final String COURSES = "courses";
 	public static final String COURSES_EDIT = "courses.edit";
 	public static final String GOTO_COURSE = "goto.course";

@@ -15,22 +15,12 @@
 		<link rel="stylesheet" type="text/css" href="css/status_update_styles.css" />
 		<link rel="stylesheet" type="text/css" href="css/course_details_panel_styles.css" />
 		<link rel="stylesheet" type="text/css" href="css/course_competencies_panel_styles.css" />
+		<link rel="stylesheet" type="text/css" href="css/header_panel_styles.css" />
+		<link rel="stylesheet" type="text/css" href="css/footer_panel_styles.css" />
 
     </head>
     <body class="about">
-        <div id="header">
-			<div id="header-main">
-				<img src="images/summer_sky.jpg" />
-			</div> <!-- header-main -->
-			<div id="nav-main">
-				<ul>
-					<li><a href="/wwald">Home .</a></li>
-					<li><a href="/wwald/about/">About .</a></li>
-					<li><a href="/wwald/login/">Login .</a></li>
-					<li><a href="/wwald/register/">Register .</a></li>
-				</ul>
-				
-			</div> <!-- nav-main -->
+        <div wicket:id="header_panel">
 		</div> <!-- header -->	
 
 		<div id="content">
@@ -41,16 +31,7 @@
 			<div wicket:id="rhs_sidebar"></div>		
 		</div>
 		
-		
-		
-		<div id="footer">	
-			<div class="chunk" id="footer">
-				<ul>
-					<li><a href="/terms-of-service">Terms Of Service</a></li>
-					<li><a href="/privacy-policy">Privacy Policy</a></li>
-					<li><a href="mailto:admin@adaptivelearningonline.net">Contact</a></li>
-				</ul>
-			</div>
+		<div wicket:id="footer_panel">	
 		</div> 
     </body>
 </html>

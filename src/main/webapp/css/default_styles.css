@@ -11,47 +11,6 @@ body {
 	font-family: Arial,helvetica,sans-serif;
 }
 
-#header {
-	background: #fff none repeat scroll 0 0;
-    overflow: hidden;
-	margin-bottom: 10px;
-    border-bottom: 1px solid #266FAD;
-	width: 1024px;
-}
-
-#header #header-main {
-}
-
-#nav-main {
-	background-color: #4867D6;
-	color: #ff7373;
-	padding-left: 16px;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	overflow: none;
-	font-size: 12px;
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-weight: bold;
-	border-top: 1px solid #F0F8FF;
-}
-
-#nav-main ul li {
-	display: inline;
-	margin: 5px;
-}
-
-#nav-main a:link {
-	color: #fff;
-}
-
-#nav-main a:visited {
-	color: #fff;
-}
-
-#nav-main a:hover {
-	color: #EC665D;
-}
-
 h2 {
     font-size: 1.3em;
     color: #0000B8;
@@ -96,54 +55,6 @@ a:visited {
 	margin: 10px;
 	margin-top: 5px;
 	line-height: 1.4;
-}
-
-#footer {
-    clear: left;
-    background-color: #4169E1;
-    color: #fff;
-    margin-top: 2em;
-    width: 1024px;
-    overflow: auto;
-}
-
-#footer a:link {
-	color: #fff;
-	font-size: 11px;
-	font-weight: bold;
-}
-#footer a:visited {
-	color: #fff;
-	font-size: 11px;
-	font-weight: bold;
-}
-#footer a:hover {
-	color: #ddd;
-	font-size: 11px;
-	font-weight: bold;
-}
-
-#footer div.chunk {
-    margin-top: 1em;
-    margin-left: 20px;
-    width: 15%;
-    float: left;
-    margin-bottom: 2em;
-}
-
-#footer div.chunk h3 {
-    font-size: 110%;
-}
-
-#footer div.chunk ul {
-    list-style-type: none;
-}
-
-#footer #copyright {
-    clear: left;
-    padding-top: 1em;
-    margin-bottom: 1em;
-    margin-left: 20px;
 }
 
 a {
