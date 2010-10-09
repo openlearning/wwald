@@ -85,35 +85,11 @@ a:visited {
 	padding-right: 10px;
 }
 
-#content #lecture_list {
-    width: 25%;
-    float: left;
-    padding-bottom: 4em;
-	padding-right: 10px;
-}
-
 #content #lecture {
     width: 70%;
     float: left;
     padding-bottom: 4em;
 	padding-right: 10px;
-}
-
-.selected_lecture {
-	background-color: #cccccc;	
-}
-
-#competency_resources {
-	margin-bottom: 30px;
-}
-
-#competency_description {
-	margin-bottom: 30px;
-}
-
-.competency {
-    padding-bottom: 4px;
-	font-weight: bold;
 }
 
 #blog-posts {

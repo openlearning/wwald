@@ -16,5 +16,15 @@ public class WicketIdConstants {
 	public static final String COURSES_PANEL = "courses_panel";
 	
 	public static final String COURSE_COMPETENCIES_PANEL = "course_competencies_panel";
+	public static final String COURSE_COMPETENCIES_EDIT = "competencies.edit";
+	public static final String COMPETENCIES = "competencies";
+	public static final String GOTO_COMPETENCY = "goto.competency";
+	public static final String LECTURE_EDIT = "lecture.edit";
+	public static final String SELECTED_COURSE = "selected.course";
+	public static final String SELECTED_LECTURE = "selected.lecture";
+	public static final String SELECTED_LECTURE_CLASS = "selected_lecture";
+	public static final String COMPETENCY_TITLE = "competency.title";
+	public static final String COMPETENCY_RESOURCES = "competency.resources";
+	public static final String COMPETENCY_DESCRIPTION = "competency.description";
 	
 }
