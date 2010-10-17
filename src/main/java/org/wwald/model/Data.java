@@ -59,6 +59,12 @@ public class Data {
 					{"PROGPAR","1"},
 			   };
 	
+	public static String users[][] = {
+		{"John", "M", "Woods", "jwoods", "jwoods", "2010-10-01", "STUDENT"},
+		{"Bill", "", "Forrest", "bforrest", "bforrest", "2010-10-01", "MENTOR"},
+		{"Steve", "", "Meadows", "smeadows", "smeadows", "2010-10-01", "ADMIN"},
+	};
+	
 	public static String SQL_CREATE_COURSE_COMPETENCIES_WIKI = 
 		" CREATE TABLE COURSE_COMPETENCIES_WIKI ( " +
 	   	"	course_id VARCHAR(16) NOT NULL PRIMARY KEY," +
@@ -75,6 +81,17 @@ public class Data {
 		" 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
 		" 	title VARCHAR(128) NOT NULL," +
 		" 	description LONGVARCHAR);";
+	
+	public static String SQL_CREATE_USER = 
+		" CREATE TABLE USER (" +
+		" 	first_name VARCHAR(32)," +
+		"	mi VARCHAR(1)," +
+		"	last_name VARCHAR(32)," +
+		"	username VARCHAR(16) NOT NULL," +
+		"	password VARCHAR(16) NOT NULL," +
+		"	join_date DATE NOT NULL," +
+		"	role VARCHAR(32)" + 
+		" );";
 	
 	public static void init(Connection conn) {
 		try {
@@ -95,6 +112,8 @@ public class Data {
 		s.executeUpdate(SQL_CREATE_COURSE);
 		
 		s.executeUpdate(SQL_CREATE_COURSE_COMPETENCIES_WIKI);
+		
+		s.executeUpdate(SQL_CREATE_USER);
 		
 		sql = getSqlToCreateCompetencyTable();
 		s.executeUpdate(sql);
@@ -144,15 +163,16 @@ public class Data {
 	}
 	
 	private static void populateTables(Connection conn) throws SQLException {
+		Statement stmt = null;
 		//create courses wiki content
 		String sqlToAddCoursesWiki = "INSERT INTO COURSES_WIKI (id, content) VALUES (1, %s);";
-		Statement stmt0 = conn.createStatement();
-		stmt0.execute(String.format(sqlToAddCoursesWiki, wrapForSQL(Data.courseWiki)));
+		stmt = conn.createStatement();
+		stmt.execute(String.format(sqlToAddCoursesWiki, wrapForSQL(Data.courseWiki)));
 		
 		//create courses
 		String sqlToAddCourses = 
 			"INSERT INTO COURSE(id, title, description) VALUES (%s,%s,%s)";
-		Statement stmt = conn.createStatement();
+		stmt = conn.createStatement();
 		for(int i = 0; i < Data.courses.length; i++) {
 			stmt.execute(String.format(sqlToAddCourses, 
 									   wrapForSQL(Data.courses[i][0]), wrapForSQL(Data.courses[i][1]), wrapForSQL(Data.courses[i][2])));
@@ -161,51 +181,65 @@ public class Data {
 		//create competencies
 		String sqlToAddCompetencies = 
 			"INSERT INTO COMPETENCY(id, title, description, resources) VALUES (%s,%s,%s,%s)";
-		Statement stmt1 = conn.createStatement();
+		stmt = conn.createStatement();
 		for(int i = 0; i < Data.competencies.length; i++) {
-			stmt1.execute(String.format(sqlToAddCompetencies, 
+			stmt.execute(String.format(sqlToAddCompetencies, 
 										Data.competencies[i][0], wrapForSQL(Data.competencies[i][1]), wrapForSQL(Data.competencies[i][2]), wrapForSQL(Data.competencies[i][3])));
 		}
 		
 		//create mentors
 		String sqlToAddMentors = 
 			"INSERT INTO MENTOR(id, first_name, middle_initial, last_name, short_bio) VALUES (%s,%s,%s,%s,%s)";
-		Statement stmt2 = conn.createStatement();
+		stmt = conn.createStatement();
 		for(int i = 0; i < Data.mentors.length; i++) {
-			stmt2.execute(String.format(sqlToAddMentors, 
+			stmt.execute(String.format(sqlToAddMentors, 
 										Data.mentors[i][0], wrapForSQL(Data.mentors[i][1]), wrapForSQL(Data.mentors[i][2]), wrapForSQL(Data.mentors[i][3]), wrapForSQL(Data.mentors[i][4])));
 		}
 		
 		//create course_competencies table
 		String sqlToAddCourseCompetency = 
 			"INSERT INTO COURSE_COMPETENCY(course_id, competency_id) VALUES (%s,%s);";
-		Statement stmt3 = conn.createStatement();
+		stmt = conn.createStatement();
 		for(int i = 0; i < Data.courseCompetencies.length; i++) {
-			stmt3.execute(String.format(sqlToAddCourseCompetency, 
+			stmt.execute(String.format(sqlToAddCourseCompetency, 
 										wrapForSQL(Data.courseCompetencies[i][0]), Data.courseCompetencies[i][1]));
 		}
 		
 		//add data to course competency wiki
 		String sqlToAddToCourseCompetencyWiki = 
 			"INSERT INTO COURSE_COMPETENCIES_WIKI(course_id, contents) VALUES (%s, %s);";
-		Statement stmt3_1 = conn.createStatement();
+		stmt = conn.createStatement();
 		for(int i = 0; i < Data.courseCompetenciesWiki.length; i++) {
-			stmt3_1.execute(String.format(sqlToAddToCourseCompetencyWiki, wrapForSQL(Data.courseCompetenciesWiki[i][0]), wrapForSQL(Data.courseCompetenciesWiki[i][1])));
+			stmt.execute(String.format(sqlToAddToCourseCompetencyWiki, wrapForSQL(Data.courseCompetenciesWiki[i][0]), wrapForSQL(Data.courseCompetenciesWiki[i][1])));
 		}
 		
 		//create course_mentors table
 		String sqlToAddCourseMentors = 
 			"INSERT INTO COURSE_MENTORS(course_id, mentor_id) VALUES (%s,%s);";
-		Statement stmt4 = conn.createStatement();
+		stmt = conn.createStatement();
 		for(int i = 0; i < Data.courseMentors.length; i++) {
-			stmt3.execute(String.format(sqlToAddCourseMentors, 
+			stmt.execute(String.format(sqlToAddCourseMentors, 
 										wrapForSQL(Data.courseMentors[i][0]), Data.courseMentors[i][1]));
 		}
+		
+		//create users
+		String sqlToAddUser = 
+			"INSERT INTO USER VALUES(%s, %s, %s, %s, %s, %s);";
+		stmt = conn.createStatement();
+		for(int i = 0; i < Data.users.length; i++) {
+			stmt.execute(String.format(sqlToAddUser, wrapForSQL(Data.users[0][0]),
+													  wrapForSQL(Data.users[0][1]),
+													  wrapForSQL(Data.users[0][2]),
+													  wrapForSQL(Data.users[0][3]),
+													  wrapForSQL(Data.users[0][4]),
+													  wrapForSQL(Data.users[0][5])));
+			
+		}
+		
 	}
 
 	public static String wrapForSQL(String s) {
 		return "'" + s + "'";
 	}
 	
-
 }

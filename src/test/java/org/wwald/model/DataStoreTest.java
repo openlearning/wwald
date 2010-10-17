@@ -46,7 +46,7 @@ public class DataStoreTest {
 			
 			for(int j = 0; j < 2; j++) {
 				Competency competency = competencies.get(j);
-				assertEquals(Data.competencies[j][0], competency.getId());
+				assertEquals(Integer.valueOf(Data.competencies[j][0]).intValue(), competency.getId());
 				assertEquals(Data.competencies[j][1], competency.getTitle());
 				assertEquals(Data.competencies[j][2], competency.getDescription());
 				assertEquals(Data.competencies[j][3], competency.getResource());

@@ -3,6 +3,7 @@ package org.wwald;
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
+import org.wwald.model.ApplicationFacade;
 import org.wwald.model.DataFacadeRDBMSImpl;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
@@ -20,12 +21,14 @@ public class WWALDApplication extends WebApplication
 	private static Logger cLogger = Logger.getLogger(WWALDApplication.class);
 	
 	private DataFacadeRDBMSImpl dataStore;
+	private ApplicationFacade applicationFacade;
     /**
      * Constructor
      */
 	public WWALDApplication()
 	{
 		this.dataStore = new DataFacadeRDBMSImpl();
+		this.applicationFacade = new ApplicationFacade();
 	}
 	
 	/**
@@ -47,6 +50,10 @@ public class WWALDApplication extends WebApplication
 	
 	public DataFacadeRDBMSImpl getDataFacade() {
 		return this.dataStore;
+	}
+	
+	public ApplicationFacade getApplicationFacade() {
+		return this.applicationFacade;
 	}
 
 }
