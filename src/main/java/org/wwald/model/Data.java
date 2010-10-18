@@ -206,7 +206,7 @@ public class Data {
 					  wrapForSQL(Data.users[i][4]),
 					  wrapForSQL(Data.users[i][5]),
 					  wrapForSQL(Data.users[i][6]));
-			int rowsUpdated = stmt.executeUpdate(addUserSql);
+			stmt.executeUpdate(addUserSql);
 			
 		}
 		
