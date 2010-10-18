@@ -5,6 +5,8 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDSession;
+import org.wwald.model.User;
 
 public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
@@ -18,5 +20,15 @@ public class HeaderPanel extends Panel {
 				setResponsePage(HomePage.class);
 			}
 		});
+		add(new Label("user", getLogginInUserName()));
+	}
+
+	private String getLogginInUserName() {
+		String username = "";
+		User user = WWALDSession.get().getUser();
+		if(user != null) {
+			username = user.getUsername();
+		}
+		return username;
 	}
 }
