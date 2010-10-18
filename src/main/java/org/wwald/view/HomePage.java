@@ -19,6 +19,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.Course;
 import org.wwald.model.IDataFacade;
 import org.wwald.model.NonExistentCourse;
+import org.wwald.model.Role;
 import org.wwald.model.StatusUpdate;
 import org.wwald.view.components.SimpleViewPageLink;
 
@@ -54,7 +55,10 @@ public class HomePage extends BasePage implements Serializable {
 	}
 
 	private Link getEditCoursesLink() {
-		return new SimpleViewPageLink(WicketIdConstants.COURSES_EDIT, EditCourses.class);
+		Link link = new SimpleViewPageLink(WicketIdConstants.COURSES_EDIT, 
+										   EditCourses.class,
+										   new Role[]{Role.ADMIN});
+		return link; 
 	}
             
     private Panel getStatusUpdatesPanel() {

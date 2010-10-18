@@ -1,7 +1,11 @@
 package org.wwald;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Request;
+import org.apache.wicket.Response;
+import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
 import org.wwald.model.ApplicationFacade;
 import org.wwald.model.DataFacadeRDBMSImpl;
@@ -28,15 +32,21 @@ public class WWALDApplication extends WebApplication
 	public WWALDApplication()
 	{
 		this.dataStore = new DataFacadeRDBMSImpl();
-		this.applicationFacade = new ApplicationFacade();
+		this.applicationFacade = new ApplicationFacade(this.dataStore);
 	}
 	
 	/**
 	 * @see org.apache.wicket.Application#getHomePage()
 	 */
+	@Override
 	public Class<HomePage> getHomePage()
 	{
 		return HomePage.class;
+	}
+	
+	@Override
+	public Session newSession(Request request, Response response) {
+		return new WWALDSession(request);
 	}
 	
 	@Override

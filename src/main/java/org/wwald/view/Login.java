@@ -9,16 +9,18 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDSession;
+import org.wwald.WicketIdConstants;
 import org.wwald.model.User;
 
 public class Login extends BasePage {
 
 	public Login(PageParameters parameters) {
 		super(parameters);
-		add(getLoginForm());
+		add(getLoginForm(parameters));
 	}
 	
-	public Form getLoginForm() {
+	public Form getLoginForm(final PageParameters parameters) {
 		Form loginForm = new Form("login") {
 			@Override
 			public void onSubmit() {
@@ -27,7 +29,15 @@ public class Login extends BasePage {
 				User user = 
 					((WWALDApplication)getApplication()).
 						getApplicationFacade().login(username, password);
-				System.out.println(user);
+				WWALDSession.get().setUser(user);
+				if(user != null) {
+					setResponsePage(HomePage.class);
+				}
+				else {
+					parameters.add(WicketIdConstants.MESSAGES, 
+								   "Incorrect username or password, please try again.");
+					setResponsePage(Login.class, parameters);
+				}
 			}
 		};
 		Label usernameLabel = new Label("username_label", "username");

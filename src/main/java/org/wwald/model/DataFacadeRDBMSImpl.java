@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -306,6 +307,27 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
     	statusUpdates.add(new StatusUpdate("Parag took a quiz on Java programming. "));
     	statusUpdates.add(new StatusUpdate("Joe finished watching a lecture on sorting algorithms."));
     	return statusUpdates; 
+	}
+	
+	public User retreiveUser(String username, String password) {
+		User user = null;
+		try {
+			Statement stmt = conn.createStatement();
+			String query = String.format(Sql.RETREIVE_USER, Data.wrapForSQL(username), Data.wrapForSQL(password));
+			ResultSet rs  = stmt.executeQuery(query);
+			if(rs.next()) {
+				String firstName = rs.getString("first_name");
+				String mi = rs.getString("mi");
+				String lastName = rs.getString("last_name");
+				String userName = rs.getString("username");
+				Date dateJoined = rs.getDate("join_date");
+				String role = rs.getString("role");
+				user = new User(firstName,mi,lastName,userName,dateJoined,Role.valueOf(role));
+			}
+		} catch(SQLException sqle) {
+			cLogger.error("Could not retreive User from database", sqle);
+		}
+		return user; 
 	}
 
 	private void buildCourseObjectsFromCoursesWikiContent(List<Course> courses,

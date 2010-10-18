@@ -1,8 +1,12 @@
 package org.wwald.view;
 
+import java.io.Serializable;
+
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.wwald.WicketIdConstants;
 
 
@@ -14,8 +18,9 @@ public abstract class BasePage extends WebPage {
 		add(this.sidebar);
 		add(new HeaderPanel(WicketIdConstants.HEADER_PANEL));
 		add(new FooterPanel(WicketIdConstants.FOOTER_PANEL));
+		add(new Label(WicketIdConstants.MESSAGES, new Model(getMessages(parameters))));
 	}
-	
+
 	public void replaceSidebar(Panel sidebar) {
 		Panel temp = this.sidebar;
 		temp.replaceWith(sidebar);
@@ -23,4 +28,9 @@ public abstract class BasePage extends WebPage {
 	}
 	
 	public abstract Panel getSidebar();
+	
+	private Serializable getMessages(PageParameters parameters) {
+		String messages = parameters.getString(WicketIdConstants.MESSAGES);
+		return messages ==  null ? "" : messages; 
+	}
 }

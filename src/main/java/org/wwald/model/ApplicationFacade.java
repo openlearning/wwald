@@ -4,7 +4,13 @@ import java.util.Date;
 
 public class ApplicationFacade {
 	
+	private IDataFacade dataFacade;
+	
+	public ApplicationFacade(IDataFacade dataFacade) {
+		this.dataFacade = dataFacade;
+	}
+	
 	public User login(String username, String password) {
-		return new User("", "", "", username, new Date(), Role.STUDENT);
+		return dataFacade.retreiveUser(username, password);
 	}
 }

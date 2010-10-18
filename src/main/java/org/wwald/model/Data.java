@@ -65,34 +65,6 @@ public class Data {
 		{"Steve", "", "Meadows", "smeadows", "smeadows", "2010-10-01", "ADMIN"},
 	};
 	
-	public static String SQL_CREATE_COURSE_COMPETENCIES_WIKI = 
-		" CREATE TABLE COURSE_COMPETENCIES_WIKI ( " +
-	   	"	course_id VARCHAR(16) NOT NULL PRIMARY KEY," +
-	   	"	contents LONGVARCHAR," +
-	   	"	CONSTRAINT course_competencies_wiki_fk1 FOREIGN KEY (course_id) REFERENCES COURSE(id));";
-	
-	public static String SQL_CREATE_COURSES_WIKI = 
-		" CREATE TABLE COURSES_WIKI (" +
-		" 	id INTEGER NOT NULL PRIMARY KEY," +
-		"	content LONGVARCHAR);";
-	
-	public static String SQL_CREATE_COURSE = 
-		" CREATE TABLE COURSE (" +
-		" 	id VARCHAR(16) NOT NULL PRIMARY KEY," +
-		" 	title VARCHAR(128) NOT NULL," +
-		" 	description LONGVARCHAR);";
-	
-	public static String SQL_CREATE_USER = 
-		" CREATE TABLE USER (" +
-		" 	first_name VARCHAR(32)," +
-		"	mi VARCHAR(1)," +
-		"	last_name VARCHAR(32)," +
-		"	username VARCHAR(16) NOT NULL," +
-		"	password VARCHAR(16) NOT NULL," +
-		"	join_date DATE NOT NULL," +
-		"	role VARCHAR(32)" + 
-		" );";
-	
 	public static void init(Connection conn) {
 		try {
 			createTables(conn);
@@ -107,13 +79,13 @@ public class Data {
 		Statement s = conn.createStatement();
 		String sql = null;
 		
-		s.executeUpdate(SQL_CREATE_COURSES_WIKI);
+		s.executeUpdate(Sql.CREATE_COURSES_WIKI);
 		
-		s.executeUpdate(SQL_CREATE_COURSE);
+		s.executeUpdate(Sql.CREATE_COURSE);
 		
-		s.executeUpdate(SQL_CREATE_COURSE_COMPETENCIES_WIKI);
+		s.executeUpdate(Sql.CREATE_COURSE_COMPETENCIES_WIKI);
 		
-		s.executeUpdate(SQL_CREATE_USER);
+		s.executeUpdate(Sql.CREATE_USER);
 		
 		sql = getSqlToCreateCompetencyTable();
 		s.executeUpdate(sql);
@@ -224,15 +196,19 @@ public class Data {
 		
 		//create users
 		String sqlToAddUser = 
-			"INSERT INTO USER VALUES(%s, %s, %s, %s, %s, %s);";
+			"INSERT INTO USER VALUES(%s, %s, %s, %s, %s, %s, %s);";
 		stmt = conn.createStatement();
 		for(int i = 0; i < Data.users.length; i++) {
-			stmt.execute(String.format(sqlToAddUser, wrapForSQL(Data.users[0][0]),
-													  wrapForSQL(Data.users[0][1]),
-													  wrapForSQL(Data.users[0][2]),
-													  wrapForSQL(Data.users[0][3]),
-													  wrapForSQL(Data.users[0][4]),
-													  wrapForSQL(Data.users[0][5])));
+			String addUserSql = String.format(sqlToAddUser, wrapForSQL(Data.users[0][0]),
+					  wrapForSQL(Data.users[i][1]),
+					  wrapForSQL(Data.users[i][2]),
+					  wrapForSQL(Data.users[i][3]),
+					  wrapForSQL(Data.users[i][4]),
+					  wrapForSQL(Data.users[i][5]),
+					  wrapForSQL(Data.users[i][6]));
+			System.out.println("Added user " + addUserSql);
+			int rowsUpdated = stmt.executeUpdate(addUserSql);
+			System.out.println("rows updated : " + rowsUpdated);
 			
 		}
 		

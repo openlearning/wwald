@@ -35,4 +35,7 @@ public interface IDataFacade {
 	//Status updates
 	public List<StatusUpdate> getStatusUpdates();
 	
+	//User
+	public User retreiveUser(String userName, String password);
+	
 }
