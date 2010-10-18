@@ -13,6 +13,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.Role;
+import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.SimpleViewPageLink;
 
 public class CourseCompetenciesPanel extends Panel {
@@ -22,7 +23,7 @@ public class CourseCompetenciesPanel extends Panel {
 								   final Competency competency, 
 								   final PageParameters parameters) {
 		super(id);
-		Link editCompetenciesLink = new SimpleViewPageLink(WicketIdConstants.COURSE_COMPETENCIES_EDIT, 
+		Link editCompetenciesLink = new AccessControlledViewPageLink(WicketIdConstants.COURSE_COMPETENCIES_EDIT, 
 														   new Role[]{Role.ADMIN}) {
 			@Override
 			public void onClick() {
@@ -30,7 +31,7 @@ public class CourseCompetenciesPanel extends Panel {
 			}
 		};
 		add(editCompetenciesLink);
-		Link editLecture = new SimpleViewPageLink(WicketIdConstants.LECTURE_EDIT,
+		Link editLecture = new AccessControlledViewPageLink(WicketIdConstants.LECTURE_EDIT,
 												  new Role[]{Role.ADMIN}) {
 			@Override
 			public void onClick() {

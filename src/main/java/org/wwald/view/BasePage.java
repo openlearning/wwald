@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.Role;
 
 
 public abstract class BasePage extends WebPage {

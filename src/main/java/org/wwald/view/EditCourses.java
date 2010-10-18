@@ -7,8 +7,9 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
+import org.wwald.model.Permission;
 
-public class EditCourses extends BasePage {
+public class EditCourses extends AccessControlledPage {
 	public EditCourses(PageParameters parameters) {
 		super(parameters);
 		add(getCoursesEditForm());
@@ -37,5 +38,10 @@ public class EditCourses extends BasePage {
 	@Override
 	public Panel getSidebar() {
 		return new EmptyPanel("rhs_sidebar");
+	}
+
+	@Override
+	protected Permission getRequiredPermission() {
+		return Permission.EDIT_COURSES;
 	}
 }

@@ -10,8 +10,9 @@ import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.model.Competency;
+import org.wwald.model.Permission;
 
-public class EditLecture extends BasePage {
+public class EditLecture extends AccessControlledPage {
 	public EditLecture(PageParameters pageParams) {
 		super(pageParams);
 		String courseId = pageParams.getString(WWALDConstants.SELECTED_COURSE);
@@ -56,5 +57,10 @@ public class EditLecture extends BasePage {
 	@Override
 	public Panel getSidebar() {
 		return new EmptyPanel("rhs_sidebar");
+	}
+
+	@Override
+	protected Permission getRequiredPermission() {
+		return Permission.EDIT_COURSE;
 	}
 }

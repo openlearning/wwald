@@ -13,8 +13,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
+import org.wwald.model.Permission;
 
-public class EditCompetencies extends BasePage {
+public class EditCompetencies extends AccessControlledPage {
 	public EditCompetencies(PageParameters parameters) {
 		super(parameters);
 		String courseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
@@ -45,5 +46,10 @@ public class EditCompetencies extends BasePage {
 	@Override
 	public Panel getSidebar() {
 		return new EmptyPanel("rhs_sidebar");
+	}
+
+	@Override
+	protected Permission getRequiredPermission() {
+		return Permission.EDIT_COURSE;
 	}
 }

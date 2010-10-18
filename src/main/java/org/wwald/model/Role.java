@@ -1,6 +1,8 @@
 package org.wwald.model;
 
 public enum Role {
+	ALL,
+	UNAUTHENTICATED_USER,
 	STUDENT, 
 	MENTOR(Permission.EDIT_COURSE), 
 	ADMIN(Permission.EDIT_COURSE, Permission.EDIT_COURSES);
