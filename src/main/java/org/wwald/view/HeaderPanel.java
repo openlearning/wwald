@@ -11,16 +11,36 @@ import org.wwald.model.User;
 public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
 		super(id);
-		add(new BookmarkablePageLink("login_link", Login.class));
-		add(new BookmarkablePageLink("register_link", Register.class));
-		add(new Link("logout_link") {
+		
+		Link loginLink = new BookmarkablePageLink("login_link", Login.class); 
+		add(loginLink);
+		
+		Link registerLink = new BookmarkablePageLink("register_link", Register.class); 
+		add(registerLink);
+		
+		Link logoutLink = new Link("logout_link") {
 			@Override
 			public void onClick() {
 				((WWALDApplication)getApplication()).getApplicationFacade().logout();
 				setResponsePage(HomePage.class);
 			}
-		});
+		}; 
+		add(logoutLink);
+		
 		add(new Label("user", getLogginInUserName()));
+		
+		if(userLoggedIn()) {
+			loginLink.setVisible(false);
+			registerLink.setVisible(false);
+		}
+		else {
+			logoutLink.setVisible(false);
+		}
+	}
+
+	private boolean userLoggedIn() {
+		User user = WWALDSession.get().getUser();
+		return (!(user == null));
 	}
 
 	private String getLogginInUserName() {
@@ -31,4 +51,6 @@ public class HeaderPanel extends Panel {
 		}
 		return username;
 	}
+	
+	
 }
