@@ -13,7 +13,6 @@ import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.DataFacadeRDBMSImpl;
 import org.wwald.model.Mentor;
-import org.wwald.model.Role;
 
 public class CoursePage extends BasePage {
 	Course selectedCourse;
@@ -21,6 +20,7 @@ public class CoursePage extends BasePage {
 	
 	public CoursePage(final PageParameters parameters) {
 		super(parameters);
+		System.out.println("CoursePage created");
 		this.selectedCourse = getSelectedCourse(parameters);
 		replaceSidebar(getSidebar());
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);

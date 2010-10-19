@@ -39,7 +39,7 @@ public class AccessControlledViewPageLink extends SimpleViewPageLink {
 		}
 	}
 
-	private boolean hasPermission() {
+	protected boolean hasPermission() {
 		boolean retVal = false;
 		if(this.roles != null) {
 			User user = WWALDSession.get().getUser();

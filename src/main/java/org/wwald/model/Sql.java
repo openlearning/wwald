@@ -23,11 +23,25 @@ public class Sql {
 		" 	first_name VARCHAR(32)," +
 		"	mi VARCHAR(1)," +
 		"	last_name VARCHAR(32)," +
-		"	username VARCHAR(16) NOT NULL," +
+		"	username VARCHAR(16) NOT NULL PRIMARY KEY," +
 		"	password VARCHAR(16) NOT NULL," +
 		"	join_date DATE NOT NULL," +
 		"	role VARCHAR(32)" + 
 		" );";
+	
+	public static String CREATE_COURSE_ENROLLMENT_ACTIONS = 
+		"CREATE TABLE COURSE_ENROLLMENT_ACTIONS (" +
+		"	course_id VARCHAR(16) NOT NULL," +
+		"	username VARCHAR(16) NOT NULL," +
+		"	course_enrollment_action_id INTEGER NOT NULL," +
+		"	tstamp DATE, " + 
+		"		CONSTRAINT course_id_fk1 FOREIGN KEY (course_id) REFERENCES COURSE(id)," +
+		"		CONSTRAINT username_fk2 FOREIGN KEY (username) REFERENCES USER(username));";
+	
+	public static String CREATE_COURSE_ENROLLMENT_STATUS_MASTER = 
+		"CREATE TABLE COURSE_ENOLLMENT_STATUS_MASTER (" +
+		"	id INTEGER NOT NULL PRIMARY KEY," +
+		"	status VARCHAR(16));";
 	
 	public static String RETREIVE_USER =
 		"SELECT * FROM USER WHERE username=%s AND password=%s;";

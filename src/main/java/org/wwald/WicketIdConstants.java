@@ -32,5 +32,8 @@ public class WicketIdConstants {
 	public static final String COMPETENCY_TITLE = "competency.title";
 	public static final String COMPETENCY_RESOURCES = "competency.resources";
 	public static final String COMPETENCY_DESCRIPTION = "competency.description";
-	
+	public static final String COURSE_STATUS_PANEL = "course_status_panel";
+	public static final String COURSE_STATUS_ACTIONS = "course_status_actions";
+	public static final String COURSE_STATUS_ACTION_LINK = "course_status_action_link";
+	public static final String COURSE_STATUS_ACTION_LABEL = "course_status_action_label";
 }

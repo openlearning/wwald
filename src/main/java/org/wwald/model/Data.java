@@ -65,6 +65,12 @@ public class Data {
 		{"Steve", "", "Meadows", "smeadows", "smeadows", "2010-10-01", "ADMIN"},
 	};
 	
+	public static String courseEnrollmentStatus[][] = {
+		{"1", "UNENROLLED"},
+		{"2", "ENROLLED"},
+		{"3", "COMPLETED"},
+	};
+	
 	public static void init(Connection conn) {
 		try {
 			createTables(conn);
@@ -86,6 +92,10 @@ public class Data {
 		s.executeUpdate(Sql.CREATE_COURSE_COMPETENCIES_WIKI);
 		
 		s.executeUpdate(Sql.CREATE_USER);
+		
+		s.executeUpdate(Sql.CREATE_COURSE_ENROLLMENT_ACTIONS);
+		
+		s.executeUpdate(Sql.CREATE_COURSE_ENROLLMENT_STATUS_MASTER);
 		
 		sql = getSqlToCreateCompetencyTable();
 		s.executeUpdate(sql);
@@ -210,6 +220,15 @@ public class Data {
 			
 		}
 		
+		String sqlToAddCourseEnrollmentActionMaster = "INSERT INTO COURSE_ENOLLMENT_STATUS_MASTER VALUES(%s, %s);";
+		stmt = conn.createStatement();
+		for(int i=0; i<Data.courseEnrollmentStatus.length; i++) {
+			String addCourseEnrollmentActionSql = 
+				String.format(sqlToAddCourseEnrollmentActionMaster, 
+							  Data.courseEnrollmentStatus[i][0],
+							  wrapForSQL(Data.courseEnrollmentStatus[i][1]));
+			stmt.executeUpdate(addCourseEnrollmentActionSql);
+		}
 	}
 
 	public static String wrapForSQL(String s) {

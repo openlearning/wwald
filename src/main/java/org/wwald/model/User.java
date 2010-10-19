@@ -1,8 +1,9 @@
 package org.wwald.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class User {	
+public class User implements Serializable{	
 	private String firstName;
 	private String mi;
 	private String lastName;
@@ -48,6 +49,14 @@ public class User {
 		return role;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return this.firstName + " " + 
+			   this.mi + " " + 
+			   this.lastName + " " + 
+			   this.username + " " + 
+			   this.joinDate + " " + 
+			   this.role;
+	}
 	
 }

@@ -153,6 +153,55 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			cLogger.error("Could not update CoursesWiki with new data", sqle);
 		}
 	}
+	
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(User user, Course course) {
+		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s;";
+		String sql = String.format(sqlTemplate,
+								   Data.wrapForSQL(course.getId()),
+								   Data.wrapForSQL(user.getUsername()));
+		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				String courseId = rs.getString("course_id");
+				String username = rs.getString("username");
+				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
+				Date tstamp = rs.getDate("tstamp");
+				statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+			}
+			
+		} catch(SQLException sqle) {
+			String msg = "Could not get course enrollment status for course_id " + 
+						 course.getId() + " username " + user.getUsername();
+			cLogger.error(msg, sqle);
+		}
+		//TODO: Fix this code to make to real
+		if(statuses.size() > 0) {
+			return statuses.get(0);
+		}
+		else {
+			return new CourseEnrollmentStatus(course.getId(), user.getUsername(), UserCourseStatus.UNENROLLED, null);
+		}
+	}
+	
+	public void addCourseEnrollmentAction(CourseEnrollmentStatus courseEnrollmentStatus) {
+		String sqlTemplate = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
+		//TODO: Remove hardcoded date
+		String sql = String.format(sqlTemplate, 
+								   Data.wrapForSQL(courseEnrollmentStatus.getCourseId()),
+								   Data.wrapForSQL(courseEnrollmentStatus.getUsername()),
+								   courseEnrollmentStatus.getUserCourseStatus().getId(),
+								   Data.wrapForSQL("2010-10-01"));
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not add CourseEnrollmentStatus " + courseEnrollmentStatus;
+			cLogger.error(msg, sqle);
+		}
+	}
 
 	public String retreiveCompetenciesWiki(String courseId) {
 		String wikiContents = "";
@@ -302,10 +351,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 	
 	public List<StatusUpdate> getStatusUpdates() {
+		List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses();
 		List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
-    	statusUpdates.add(new StatusUpdate("Daniel learned HTML lists and blogged his learnings. "));
-    	statusUpdates.add(new StatusUpdate("Parag took a quiz on Java programming. "));
-    	statusUpdates.add(new StatusUpdate("Joe finished watching a lecture on sorting algorithms."));
+		for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
+			statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getUsername() + " " + courseEnrollmentStatus.getUserCourseStatus() + " course " + courseEnrollmentStatus.getCourseId() + " at " + courseEnrollmentStatus.getTimestamp()));
+		}    	
     	return statusUpdates; 
 	}
 	
@@ -491,6 +541,29 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			}
 		}
 		return mentors;
+	}
+	
+	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses() {
+		//TODO: Limit this query to 5 rows
+		String sql = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";
+		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				String courseId = rs.getString("course_id");
+				String username = rs.getString("username");
+				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
+				Date tstamp = rs.getDate("tstamp");
+				statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+			}
+			
+		} catch(SQLException sqle) {
+			String msg = "Could not get all course enrollment statuses";
+			cLogger.error(msg, sqle);
+		}
+		return statuses;
 	}
 
 }

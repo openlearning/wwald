@@ -1,5 +1,6 @@
 package org.wwald.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface IDataFacade {
@@ -13,6 +14,8 @@ public interface IDataFacade {
 	public void insertCourse(Course course);
 	public void upsertCourse(Course course);
 	public void updateCourseWiki(String wikiContents);
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(User user, Course course);
+	public void addCourseEnrollmentAction(CourseEnrollmentStatus courseEnrollmentStatus);
 	
 	//Competencies
 	public List<Competency> retreiveAllCompetencies();
