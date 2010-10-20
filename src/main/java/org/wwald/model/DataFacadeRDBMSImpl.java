@@ -259,14 +259,17 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 	}
 
-	public Competency insertCompetency(String competencyTitle) {
+	public Competency insertCompetency(Course course, String competencyTitle) {
 		Competency competency = null;
-		String sql = "INSERT INTO COMPETENCY (id, title, description, resources) VALUES (%s, %s, '', '');";
+		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');";
 		String sCompetencyId = String.valueOf(++nextCompetencyId);
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, sCompetencyId, Data.wrapForSQL(competencyTitle)));
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, 
+															   sCompetencyId,
+															   Data.wrapForSQL(course.getId()),
+															   Data.wrapForSQL(competencyTitle)));
 			if(rowsUpdated > 0) {
 				competency = new Competency(nextCompetencyId, competencyTitle, "", "");
 			}
@@ -433,7 +436,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sql, Data.wrapForSQL(course.getId())));
-			List<Competency> competencies = buildCompetencyObjectsFromResultSet(rs);
+			List<Competency> competencies = buildCompetencyObjectsFromResultSet(course, rs);
 			course.setCompetencies(competencies);
 			
 		}
@@ -478,8 +481,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 //		}
 //		return competencies;
 //	}
-	
-	private List<Competency> buildCompetencyObjectsFromResultSet(ResultSet rs) throws SQLException {
+	//TODO: course is being pased all round the place.... make safe
+	private List<Competency> buildCompetencyObjectsFromResultSet(Course course, ResultSet rs) throws SQLException {
 		if(rs == null) {
 			return null;
 		}
@@ -489,20 +492,22 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String competencyTitles[] = parseForCompetencyTitles(competencyWikiContents);
 			
 			for(String competencyTitle : competencyTitles) {
-				String sqlToFetchCompetency = "SELECT * FROM COMPETENCY WHERE COMPETENCY.title=%s";
+				String sqlToFetchCompetency = "SELECT * FROM COMPETENCY WHERE COMPETENCY.course_id=%s AND COMPETENCY.title=%s";
 				Statement stmt = conn.createStatement();
-				String finalSql = String.format(sqlToFetchCompetency, Data.wrapForSQL(competencyTitle));
+				String finalSql = String.format(sqlToFetchCompetency, 
+												Data.wrapForSQL(course.getId()),
+												Data.wrapForSQL(competencyTitle));
 				ResultSet rsForCompetencies = stmt.executeQuery(finalSql);
 				if(rsForCompetencies.next()) {
 					int id = rsForCompetencies.getInt(1);
-					String title = rsForCompetencies.getString(2);
-					String description = rsForCompetencies.getString(3);
-					String resource = rsForCompetencies.getString(4);
+					String title = rsForCompetencies.getString(3);
+					String description = rsForCompetencies.getString(4);
+					String resource = rsForCompetencies.getString(5);
 					Competency competency = new Competency(id, title, description, resource);
 					competencies.add(competency);
 				}
 				else {
-					Competency competency = insertCompetency(competencyTitle);
+					Competency competency = insertCompetency(course, competencyTitle);
 					if(competency != null) {
 						competencies.add(competency);
 					}

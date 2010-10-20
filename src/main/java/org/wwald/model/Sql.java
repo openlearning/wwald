@@ -18,6 +18,16 @@ public class Sql {
 		" 	title VARCHAR(128) NOT NULL," +
 		" 	description LONGVARCHAR);";
 	
+	public static String CREATE_COMPETENCY = 
+		" CREATE TABLE COMPETENCY (" +
+		" 	id INTEGER NOT NULL," +
+		"	course_id VARCHAR(16) NOT NULL," +
+		"	title VARCHAR(128) NOT NULL," +
+		"	description LONGVARCHAR," +
+		"	resources LONGVARCHAR," +
+		" 		PRIMARY KEY(id, course_id)," +
+		"		CONSTRAINT course_id_fk FOREIGN KEY (course_id) REFERENCES COURSE(id));";
+	
 	public static String CREATE_USER = 
 		" CREATE TABLE USER (" +
 		" 	first_name VARCHAR(32)," +

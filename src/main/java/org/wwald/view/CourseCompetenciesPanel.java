@@ -51,8 +51,9 @@ public class CourseCompetenciesPanel extends Panel {
 		add(getCourseStatusPanel(course));
 		
 		add(new Label(WicketIdConstants.SELECTED_LECTURE, competency.getTitle()));
+		//TODO: Can we use something other than labels out here
 		add(new Label(WicketIdConstants.COMPETENCY_RESOURCES, competency.getTransformedResources()).setEscapeModelStrings(false));
-		add(new Label(WicketIdConstants.COMPETENCY_DESCRIPTION, competency.getDescription()));
+		add(new Label(WicketIdConstants.COMPETENCY_DESCRIPTION, competency.getTranformedDescription()).setEscapeModelStrings(false));
 	}
 	
 	private Component getCourseStatusPanel(Course course) {

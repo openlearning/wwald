@@ -21,7 +21,7 @@ public interface IDataFacade {
 	public List<Competency> retreiveCompetenciesForCourse(Course course);
 	public String retreiveCompetenciesWiki(String courseId);
 	public void updateCompetency(String courseId, Competency competency);
-	public Competency insertCompetency(String title);
+	public Competency insertCompetency(Course course, String title);
 	public void upsertCompetency(Competency competency);
 	public void deleteCompetency(Competency competency);
 	
