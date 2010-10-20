@@ -44,7 +44,21 @@ public class ApplicationFacade {
 	}
 	
 	public void dropCourse(User user, Course course) {
-		cLogger.info("unenrolled user " + user + " from course " + course);
+		UserCourseStatus userCourseStatus = getUserCourseStatus(user, course);
+		if(userCourseStatus.equals(UserCourseStatus.ENROLLED)) {
+			CourseEnrollmentStatus courseEnrollmentStatus = 
+				new CourseEnrollmentStatus(course.getId(), 
+										   user.getUsername(), 
+										   UserCourseStatus.DROPPED,
+										   new Timestamp((new Date()).getTime()));
+			this.dataFacade.addCourseEnrollmentAction(courseEnrollmentStatus);
+		}
+		else {
+			String msg = "Cannot drop user " + user + 
+			 " from course " + course + 
+			 " because user is not enrolled in this course";
+			cLogger.warn(msg);
+		}
 	}
 	
 	public UserCourseStatus getUserCourseStatus(User user, Course course) {

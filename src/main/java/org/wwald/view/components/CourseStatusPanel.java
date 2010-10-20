@@ -51,7 +51,6 @@ public class CourseStatusPanel extends Panel implements Serializable {
 						public void onClick() {
 							if(hasPermission()) {
 								appFacade.enrollInCourse(user, course);
-								//setResponsePage(CoursePage.class);
 							}
 						}
 					};
@@ -124,15 +123,14 @@ public class CourseStatusPanel extends Panel implements Serializable {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		ApplicationFacade appFacade = app.getApplicationFacade();
 		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(user, course);
-		System.out.println("UserCourseStatus " + userCourseStatus);
 		//TODO: Can we use a map here instead of multiple if...else???
-		if(UserCourseStatus.UNENROLLED.equals(userCourseStatus)) {
+		if(UserCourseStatus.UNENROLLED.equals(userCourseStatus) || 
+		   UserCourseStatus.DROPPED.equals(userCourseStatus)) {
 			retVal = new UnenrolledCourseStatus();
 		}
 		else if(UserCourseStatus.ENROLLED.equals(userCourseStatus)) {
 			retVal = new EnrolledCourseStatus();
 		}
-		System.out.println("course status for user is " + retVal);
 		return retVal;
 	}
 	

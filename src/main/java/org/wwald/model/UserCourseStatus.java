@@ -3,7 +3,8 @@ package org.wwald.model;
 public enum UserCourseStatus {
 	UNENROLLED(1),
 	ENROLLED(2),
-	COMPLETED(3);
+	COMPLETED(3),
+	DROPPED(4);
 	
 	private int id;
 	

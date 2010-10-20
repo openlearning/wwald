@@ -69,6 +69,7 @@ public class Data {
 		{"1", "UNENROLLED"},
 		{"2", "ENROLLED"},
 		{"3", "COMPLETED"},
+		{"4", "DROPPED"},
 	};
 	
 	public static void init(Connection conn) {

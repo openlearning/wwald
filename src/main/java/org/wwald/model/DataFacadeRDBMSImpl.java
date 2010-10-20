@@ -156,7 +156,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 	
 	public CourseEnrollmentStatus getCourseEnrollmentStatus(User user, Course course) {
-		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s;";
+		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s ORDER BY tstamp DESC;";
 		String sql = String.format(sqlTemplate,
 								   Data.wrapForSQL(course.getId()),
 								   Data.wrapForSQL(user.getUsername()));
