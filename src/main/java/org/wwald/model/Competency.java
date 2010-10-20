@@ -2,6 +2,11 @@ package org.wwald.model;
 
 import java.io.Serializable;
 
+import org.apache.wicket.Application;
+import org.wwald.WWALDApplication;
+
+import com.cforcoding.jmd.MarkDown;
+
 public class Competency implements Serializable {
 	
 	private int id;
@@ -31,6 +36,11 @@ public class Competency implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+	
+	public String getTranformedDescription() {
+		WWALDApplication app = (WWALDApplication)Application.get();
+		return app.getMarkDown().transform(this.description);
+	}
 
 	public void setDescription(String description) {
 		this.description = description;
@@ -38,6 +48,11 @@ public class Competency implements Serializable {
 
 	public String getResource() {
 		return resource;
+	}
+	
+	public String getTransformedResources() {
+		WWALDApplication app = (WWALDApplication)Application.get();
+		return app.getMarkDown().transform(this.resource);
 	}
 
 	public void setResource(String resource) {

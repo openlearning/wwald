@@ -20,7 +20,6 @@ public class CoursePage extends BasePage {
 	
 	public CoursePage(final PageParameters parameters) {
 		super(parameters);
-		System.out.println("CoursePage created");
 		this.selectedCourse = getSelectedCourse(parameters);
 		replaceSidebar(getSidebar());
 		Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);

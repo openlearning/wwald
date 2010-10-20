@@ -15,6 +15,8 @@ import org.wwald.view.HomePage;
 import org.wwald.view.Login;
 import org.wwald.view.Register;
 
+import com.cforcoding.jmd.MarkDown;
+
 /**
  * Application object for your web application. If you want to run this application without deploying, run the Start class.
  * 
@@ -26,6 +28,8 @@ public class WWALDApplication extends WebApplication
 	
 	private DataFacadeRDBMSImpl dataStore;
 	private ApplicationFacade applicationFacade;
+	
+	private MarkDown markDown;
     /**
      * Constructor
      */
@@ -33,6 +37,7 @@ public class WWALDApplication extends WebApplication
 	{
 		this.dataStore = new DataFacadeRDBMSImpl();
 		this.applicationFacade = new ApplicationFacade(this.dataStore);
+		markDown = new MarkDown();
 	}
 	
 	/**
@@ -64,6 +69,10 @@ public class WWALDApplication extends WebApplication
 	
 	public ApplicationFacade getApplicationFacade() {
 		return this.applicationFacade;
+	}
+	
+	public synchronized MarkDown getMarkDown() {
+		return this.markDown;
 	}
 
 }
