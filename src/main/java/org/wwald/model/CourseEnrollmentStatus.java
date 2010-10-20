@@ -1,5 +1,6 @@
 package org.wwald.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class CourseEnrollmentStatus {
@@ -7,12 +8,12 @@ public class CourseEnrollmentStatus {
 	private String courseId;
 	private String username;
 	private UserCourseStatus userCourseStatus;
-	private Date timestamp;
+	private Timestamp timestamp;
 	
 	public CourseEnrollmentStatus(String courseId,
 								  String username,
 								  UserCourseStatus userCourseStatus,
-								  Date timestamp) {
+								  Timestamp timestamp) {
 		this.courseId = courseId;
 		this.username = username;
 		this.userCourseStatus = userCourseStatus;
@@ -31,7 +32,7 @@ public class CourseEnrollmentStatus {
 		return userCourseStatus;
 	}
 
-	public Date getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}	
 }

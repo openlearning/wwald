@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -168,7 +169,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				String courseId = rs.getString("course_id");
 				String username = rs.getString("username");
 				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
-				Date tstamp = rs.getDate("tstamp");
+				Timestamp tstamp = rs.getTimestamp("tstamp");
 				statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
 			}
 			
@@ -189,11 +190,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public void addCourseEnrollmentAction(CourseEnrollmentStatus courseEnrollmentStatus) {
 		String sqlTemplate = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
 		//TODO: Remove hardcoded date
+		Timestamp timestamp = new Timestamp((new Date()).getTime());
 		String sql = String.format(sqlTemplate, 
 								   Data.wrapForSQL(courseEnrollmentStatus.getCourseId()),
 								   Data.wrapForSQL(courseEnrollmentStatus.getUsername()),
 								   courseEnrollmentStatus.getUserCourseStatus().getId(),
-								   Data.wrapForSQL("2010-10-01"));
+								   Data.wrapForSQL(timestamp.toString()));
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -555,7 +557,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				String courseId = rs.getString("course_id");
 				String username = rs.getString("username");
 				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
-				Date tstamp = rs.getDate("tstamp");
+				Timestamp tstamp = rs.getTimestamp("tstamp");
 				statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
 			}
 			

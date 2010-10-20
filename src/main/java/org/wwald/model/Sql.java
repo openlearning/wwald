@@ -34,7 +34,7 @@ public class Sql {
 		"	course_id VARCHAR(16) NOT NULL," +
 		"	username VARCHAR(16) NOT NULL," +
 		"	course_enrollment_action_id INTEGER NOT NULL," +
-		"	tstamp DATE, " + 
+		"	tstamp TIMESTAMP, " + 
 		"		CONSTRAINT course_id_fk1 FOREIGN KEY (course_id) REFERENCES COURSE(id)," +
 		"		CONSTRAINT username_fk2 FOREIGN KEY (username) REFERENCES USER(username));";
 	

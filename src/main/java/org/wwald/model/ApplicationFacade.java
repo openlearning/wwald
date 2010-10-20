@@ -1,6 +1,7 @@
 package org.wwald.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -25,14 +26,13 @@ public class ApplicationFacade {
 	}
 	
 	public void enrollInCourse(User user, Course course) {
-		System.out.println("enrolling in course");
 		UserCourseStatus userCourseStatus = getUserCourseStatus(user, course);
 		if(!userCourseStatus.equals(UserCourseStatus.ENROLLED)) {
 			CourseEnrollmentStatus courseEnrollmentStatus = 
 				new CourseEnrollmentStatus(course.getId(), 
 										   user.getUsername(), 
 										   UserCourseStatus.ENROLLED,
-										   new Date());
+										   new Timestamp((new Date()).getTime()));
 			this.dataFacade.addCourseEnrollmentAction(courseEnrollmentStatus);
 		}
 		else {
@@ -44,7 +44,7 @@ public class ApplicationFacade {
 	}
 	
 	public void dropCourse(User user, Course course) {
-		System.out.println("unenrolled user " + user + " from course " + course);
+		cLogger.info("unenrolled user " + user + " from course " + course);
 	}
 	
 	public UserCourseStatus getUserCourseStatus(User user, Course course) {
