@@ -10,6 +10,7 @@ import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.model.Competency;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
 
 public class EditLecture extends AccessControlledPage {
@@ -33,7 +34,7 @@ public class EditLecture extends AccessControlledPage {
 				
 				competency.setDescription((String)editCompetencyDescriptionTextArea.getModelObject());
 				competency.setResource((String)editCompetencyResourcesTextArea.getModelObject());
-				app.getDataFacade().updateCompetency(courseId, competency);
+				app.getDataFacade().updateCompetency(ConnectionPool.getConnection(), courseId, competency);
 				
 				setResponsePage(CoursePage.class, pageParams);
 			}
@@ -50,7 +51,7 @@ public class EditLecture extends AccessControlledPage {
 
 	private Competency getCompetency(String courseId, String sCompetencyId) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		Competency competency = app.getDataFacade().getCompetency(courseId, sCompetencyId);
+		Competency competency = app.getDataFacade().getCompetency(ConnectionPool.getConnection(), courseId, sCompetencyId);
 		return competency;
 	}
 

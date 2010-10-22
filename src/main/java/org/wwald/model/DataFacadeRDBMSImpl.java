@@ -21,35 +21,21 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	private static final String url = "jdbc:hsqldb:mem:mymemdb";
 	private static final String user = "SA";
 	private static final String password = "";
-	private Connection conn;
 	
 	private static int nextCompetencyId = 10;
 	
 	private static Logger cLogger = Logger.getLogger(DataFacadeRDBMSImpl.class);
 	
-	public DataFacadeRDBMSImpl(Connection conn) {
-		this.conn = conn;
-		initData();
-	}
-	
 	public DataFacadeRDBMSImpl() {		
-		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-			conn = DriverManager.getConnection(url, user, password);
-			initData();
-		} catch (ClassNotFoundException cnfe) {
-			cLogger.error("Could not load database driver", cnfe);
-		} catch(SQLException sqle) {
-			cLogger.error("Could not obtain database connection", sqle);
-		}
+			
 	}
 
-	public List<Course> retreiveCouresesListedInCourseWiki() {
+	public List<Course> retreiveCouresesListedInCourseWiki(Connection conn) {
 		List<Course> courses = new ArrayList<Course>();
-		String wikiContent = retreiveCourseWiki();
+		String wikiContent = retreiveCourseWiki(conn);
 		try {
 			if(wikiContent != null && !wikiContent.trim().equals("")) {
-				buildCourseObjectsFromCoursesWikiContent(courses, wikiContent);
+				buildCourseObjectsFromCoursesWikiContent(conn, courses, wikiContent);
 			}
 		} catch(IOException ioe) {
 			cLogger.warn("Could not parse wiki contents", ioe);
@@ -57,7 +43,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 
-	public List<Course> retreiveCourses() {
+	public List<Course> retreiveCourses(Connection conn) {
 		List<Course> courses = null;
 		
 		String sqlToFetchAllCourses = "SELECT * FROM COURSE;";
@@ -67,8 +53,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs = stmt.executeQuery(sqlToFetchAllCourses);
 			
 			courses = buildCourseObjectsFromResultSet(rs);
-			buildCompetenciesForCourses(courses);
-			buildMentorsForCourses(courses);
+			buildCompetenciesForCourses(conn, courses);
+			buildMentorsForCourses(conn, courses);
 		} catch(SQLException sqle) {
 			//TODO: At some point of time we need to send this exception to the view page which should then
 			//redirect to a standard error page with an error message
@@ -78,7 +64,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 
-	public String retreiveCourseWiki() {
+	public String retreiveCourseWiki(Connection conn) {
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSES_WIKI;";
 		Statement stmt = null;
@@ -94,7 +80,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
-	public Course retreiveCourse(String id) {
+	public Course retreiveCourse(Connection conn, String id) {
 		Course course = null;
 		try {
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
@@ -107,8 +93,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				if(course != null) {
 					List<Course> courses = new ArrayList<Course>();
 					courses.add(course);
-					buildCompetenciesForCourses(courses);
-					buildMentorsForCourses(courses);
+					buildCompetenciesForCourses(conn, courses);
+					buildMentorsForCourses(conn, courses);
 					course = courses.get(0);
 				}
 			}
@@ -121,7 +107,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return course;
 	}
 	
-	public void insertCourse(Course course) {
+	public void insertCourse(Connection conn, Course course) {
 		Statement stmt = null;
 		int rowsUpdated = 0;
 		try {
@@ -141,7 +127,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public void updateCourseWiki(String wikiContents) {
+	public void updateCourseWiki(Connection conn, String wikiContents) {
 		String coursesWikiContents = (String)wikiContents;
 		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
 		Statement stmt = null;
@@ -155,7 +141,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(User user, Course course) {
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, User user, Course course) {
 		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s ORDER BY tstamp DESC;";
 		String sql = String.format(sqlTemplate,
 								   Data.wrapForSQL(course.getId()),
@@ -187,7 +173,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void addCourseEnrollmentAction(CourseEnrollmentStatus courseEnrollmentStatus) {
+	public void addCourseEnrollmentAction(Connection conn, CourseEnrollmentStatus courseEnrollmentStatus) {
 		String sqlTemplate = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
 		//TODO: Remove hardcoded date
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
@@ -205,7 +191,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public String retreiveCompetenciesWiki(String courseId) {
+	public String retreiveCompetenciesWiki(Connection conn, String courseId) {
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
 		Statement stmt = null;
@@ -221,14 +207,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
-	public Competency getCompetency(String courseId, String sCompetencyId) {
+	public Competency getCompetency(Connection conn, String courseId, String sCompetencyId) {
 		Competency competency = null;
-		Course course = retreiveCourse(courseId);
+		Course course = retreiveCourse(conn, courseId);
 		competency = course.getCompetency(sCompetencyId);
 		return competency;
 	}
 
-	public void updateCompetenciesWikiContents(String courseId, Object modelObject) {
+	public void updateCompetenciesWikiContents(Connection conn, String courseId, Object modelObject) {
 		String competenciesWikiContents = (String)modelObject;
 		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
 		Statement stmt = null;
@@ -246,7 +232,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void updateCompetency(String courseId, Competency competency) {
+	public void updateCompetency(Connection conn, String courseId, Competency competency) {
 		String sql = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
 		Statement stmt = null;
 		try {
@@ -259,7 +245,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 	}
 
-	public Competency insertCompetency(Course course, String competencyTitle) {
+	public Competency insertCompetency(Connection conn, Course course, String competencyTitle) {
 		Competency competency = null;
 		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');";
 		String sCompetencyId = String.valueOf(++nextCompetencyId);
@@ -279,84 +265,84 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return competency;
 	}
 	
-	public void deleteCompetency(Competency competency) {
+	public void deleteCompetency(Connection conn, Competency competency) {
 		throw new RuntimeException("method not implemented");
 	}
 
-	public void deleteMentor(Mentor mentor) {
+	public void deleteMentor(Connection conn, Mentor mentor) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public void insertMentor(Mentor mentor) {
+	public void insertMentor(Connection conn, Mentor mentor) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public List<Mentor> retreiveMentorsForCompetency() {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
-		return null;
-	}
-
-	public List<Competency> retreiveAllCompetencies() {
+	public List<Mentor> retreiveMentorsForCompetency(Connection conn) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public List<Mentor> retreiveAllMentors() {
+	public List<Competency> retreiveAllCompetencies(Connection conn) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public List<Competency> retreiveCompetenciesForCourse(Course course) {
+	public List<Mentor> retreiveAllMentors(Connection conn) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public List<Mentor> retreiveMentorsForCourse() {
+	public List<Competency> retreiveCompetenciesForCourse(Connection conn, Course course) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public void updateCourse(Course course) {
+	public List<Mentor> retreiveMentorsForCourse(Connection conn) {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public void updateCourse(Connection conn, Course course) {
 		throw new RuntimeException("method not implemented");
 		
 	}
 
-	public void updateMentor(Mentor mentor) {
+	public void updateMentor(Connection conn, Mentor mentor) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public void upsertCompetency(Competency competency) {
+	public void upsertCompetency(Connection conn, Competency competency) {
 		throw new RuntimeException("method not implemented");
 	}
 
-	public void upsertCourse(Course course) {
+	public void upsertCourse(Connection conn, Course course) {
 		throw new RuntimeException("method not implemented");
 	}
 
-	public void upsertMentor(Mentor mentor) {
+	public void upsertMentor(Connection conn, Mentor mentor) {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 	
-	public List<StatusUpdate> getStatusUpdates() {
-		List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses();
+	public List<StatusUpdate> getStatusUpdates(Connection conn) {
+		List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses(conn);
 		List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
 		for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
 			statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getUsername() + " " + courseEnrollmentStatus.getUserCourseStatus() + " course " + courseEnrollmentStatus.getCourseId() + " at " + courseEnrollmentStatus.getTimestamp()));
@@ -364,7 +350,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
     	return statusUpdates; 
 	}
 	
-	public User retreiveUser(String username, String password) {
+	public User retreiveUser(Connection conn, String username, String password) {
 		User user = null;
 		try {
 			Statement stmt = conn.createStatement();
@@ -385,7 +371,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return user; 
 	}
 
-	private void buildCourseObjectsFromCoursesWikiContent(List<Course> courses,
+	private void buildCourseObjectsFromCoursesWikiContent(Connection conn,
+														  List<Course> courses,
 														  String wikiContent) throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(
 				wikiContent));
@@ -398,7 +385,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			// want the wikiContent
 			// to contain both for each course
 			if (courseId != null && courseTitle != null) {
-				Course course = retreiveCourse(courseId.trim());
+				Course course = retreiveCourse(conn, courseId.trim());
 				if (course == null) {
 					course = new NonExistentCourse(courseId, courseTitle);
 				}
@@ -411,10 +398,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	private void initData() {
-		Data.init(conn);
-	}
-
 	private List<Course> buildCourseObjectsFromResultSet(ResultSet rs) throws SQLException {
 		if(rs == null) {
 			return null;
@@ -430,24 +413,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 	
-	private void buildCompetenciesForCourses(List<Course> courses) throws SQLException {
+	private void buildCompetenciesForCourses(Connection conn, List<Course> courses) throws SQLException {
 //		String sqlToGetCompetencyIdsForCourse = "SELECT (competency_id) FROM COURSE_COMPETENCY WHERE course_id = %s";
 		String sql = "SELECT (contents) FROM COURSE_COMPETENCIES_WIKI WHERE course_id = %s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sql, Data.wrapForSQL(course.getId())));
-			List<Competency> competencies = buildCompetencyObjectsFromResultSet(course, rs);
+			List<Competency> competencies = buildCompetencyObjectsFromResultSet(conn, course, rs);
 			course.setCompetencies(competencies);
 			
 		}
 	}
 
-	private void buildMentorsForCourses(List<Course> courses) throws SQLException {
+	private void buildMentorsForCourses(Connection conn, List<Course> courses) throws SQLException {
 		String sqlToGetMentorIdsForCourse = "SELECT (mentor_id) FROM COURSE_MENTORS WHERE course_id=%s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, Data.wrapForSQL(course.getId())));
-			List<Mentor> mentors = buildMentorObjectsFromResultSet(rs);
+			List<Mentor> mentors = buildMentorObjectsFromResultSet(conn, rs);
 			if(mentors.size() != 0) {
 				course.setMentor(mentors.get(0));
 			}
@@ -482,7 +465,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 //		return competencies;
 //	}
 	//TODO: course is being pased all round the place.... make safe
-	private List<Competency> buildCompetencyObjectsFromResultSet(Course course, ResultSet rs) throws SQLException {
+	private List<Competency> buildCompetencyObjectsFromResultSet(Connection conn, Course course, ResultSet rs) throws SQLException {
 		if(rs == null) {
 			return null;
 		}
@@ -507,7 +490,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 					competencies.add(competency);
 				}
 				else {
-					Competency competency = insertCompetency(course, competencyTitle);
+					Competency competency = insertCompetency(conn, course, competencyTitle);
 					if(competency != null) {
 						competencies.add(competency);
 					}
@@ -531,7 +514,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return titlesList.toArray(new String[titlesList.size()]);
 	}
 
-	private List<Mentor> buildMentorObjectsFromResultSet(ResultSet rs) throws SQLException {
+	private List<Mentor> buildMentorObjectsFromResultSet(Connection conn, ResultSet rs) throws SQLException {
 		List<Mentor> mentors = new ArrayList<Mentor>();
 		while(rs.next()) {
 			int mentorId = rs.getInt(1);
@@ -550,7 +533,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return mentors;
 	}
 	
-	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses() {
+	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses(Connection conn) {
 		//TODO: Limit this query to 5 rows
 		String sql = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";
 		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();

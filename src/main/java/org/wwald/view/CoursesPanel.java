@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
@@ -26,7 +27,8 @@ public class CoursesPanel extends Panel {
 	}
 	
 	private ListView getCoursesListView() {
-    	List<Course> allCoursesToDisplay =  ((WWALDApplication)getApplication()).getDataFacade().retreiveCouresesListedInCourseWiki(); 
+    	List<Course> allCoursesToDisplay =  
+    		((WWALDApplication)getApplication()).getDataFacade().retreiveCouresesListedInCourseWiki(ConnectionPool.getConnection() ); 
     	return
     	new ListView(WicketIdConstants.COURSES, allCoursesToDisplay) {
 
@@ -40,7 +42,7 @@ public class CoursesPanel extends Panel {
 						public void onClick() {
 							//TODO: Why can't we access dataFacade from HomePage?
 							WWALDApplication app = (WWALDApplication)(getApplication());
-							app.getDataFacade().insertCourse(course);
+							app.getDataFacade().insertCourse(ConnectionPool.getConnection(), course);
 							PageParameters pageParameters = new PageParameters();
 							pageParameters.add(WWALDConstants.SELECTED_COURSE, course.getId());
 							setResponsePage(EditCompetencies.class, pageParameters);

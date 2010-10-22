@@ -4,8 +4,6 @@ package org.wwald.model;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.List;
 
 import org.junit.After;
@@ -14,23 +12,17 @@ import org.junit.Test;
 
 public class DataStoreTest {
 
-	private static final String url = "jdbc:hsqldb:mem:mymemdb";
-	private static final String user = "SA";
-	private static final String password = "";
-	private Connection conn;
-	
 	private DataFacadeRDBMSImpl dataStore;
 	
 	@Before
 	public void setUp() throws Exception {
-		Class.forName("org.hsqldb.jdbcDriver");
-		this.conn = DriverManager.getConnection(url, user, password);
 		this.dataStore = new DataFacadeRDBMSImpl();
+		Data.init(ConnectionPool.getConnection());
 	}
 	
 	@Test
 	public void testGetAllCourses() {
-		List<Course> courses = dataStore.retreiveCourses();
+		List<Course> courses = dataStore.retreiveCourses(ConnectionPool.getConnection());
 		assertNotNull(courses);
 		assertEquals(4, courses.size());
 		
@@ -58,9 +50,6 @@ public class DataStoreTest {
 
 	@After
 	public void tearDown() throws Exception {
-		if(conn != null) {
-			conn.close();
-		}
 	}
 
 }

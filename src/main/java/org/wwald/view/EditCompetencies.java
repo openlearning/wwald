@@ -13,6 +13,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
 
 public class EditCompetencies extends AccessControlledPage {
@@ -29,7 +30,7 @@ public class EditCompetencies extends AccessControlledPage {
 			public void onSubmit() {
 				TextArea textArea = (TextArea)get(0);
 				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataFacade().updateCompetenciesWikiContents(courseId, textArea.getModelObject());
+				app.getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), courseId, textArea.getModelObject());
 				setResponsePage(CoursePage.class, pageParams);
 			}
 		};
@@ -40,7 +41,7 @@ public class EditCompetencies extends AccessControlledPage {
 
 	private Serializable getCompetenciesWikiContents(String courseId) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().retreiveCompetenciesWiki(courseId);
+		return app.getDataFacade().retreiveCompetenciesWiki(ConnectionPool.getConnection(), courseId);
 	}
 
 	@Override

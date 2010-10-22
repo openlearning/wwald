@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
 
 public class EditCourses extends AccessControlledPage {
@@ -21,7 +22,7 @@ public class EditCourses extends AccessControlledPage {
 			public void onSubmit() {
 				TextArea textArea = (TextArea)get(0);
 				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataFacade().updateCourseWiki((String)textArea.getModelObject());
+				app.getDataFacade().updateCourseWiki(ConnectionPool.getConnection(), (String)textArea.getModelObject());
 				setResponsePage(HomePage.class);
 			}
 		};
@@ -32,7 +33,7 @@ public class EditCourses extends AccessControlledPage {
 
 	private String getCoursesWikiContents() {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().retreiveCourseWiki();
+		return app.getDataFacade().retreiveCourseWiki(ConnectionPool.getConnection());
 	}
 
 	@Override

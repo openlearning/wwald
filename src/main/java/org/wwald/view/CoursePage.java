@@ -10,6 +10,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.Competency;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.DataFacadeRDBMSImpl;
 import org.wwald.model.Mentor;
@@ -41,7 +42,7 @@ public class CoursePage extends BasePage {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		DataFacadeRDBMSImpl dataStore = app.getDataFacade();
 		String selectedCourseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
-		Course course = dataStore.retreiveCourse(selectedCourseId); 
+		Course course = dataStore.retreiveCourse(ConnectionPool.getConnection(),selectedCourseId); 
 		return course;
 	}
 

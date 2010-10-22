@@ -18,7 +18,7 @@ public class ApplicationFacade {
 	}
 	
 	public User login(String username, String password) {
-		return dataFacade.retreiveUser(username, password);
+		return dataFacade.retreiveUser(ConnectionPool.getConnection(), username, password);
 	}
 	
 	public void logout() {
@@ -33,7 +33,7 @@ public class ApplicationFacade {
 										   user.getUsername(), 
 										   UserCourseStatus.ENROLLED,
 										   new Timestamp((new Date()).getTime()));
-			this.dataFacade.addCourseEnrollmentAction(courseEnrollmentStatus);
+			this.dataFacade.addCourseEnrollmentAction(ConnectionPool.getConnection(), courseEnrollmentStatus);
 		}
 		else {
 			String msg = "Cannot enroll user " + user + 
@@ -51,7 +51,7 @@ public class ApplicationFacade {
 										   user.getUsername(), 
 										   UserCourseStatus.DROPPED,
 										   new Timestamp((new Date()).getTime()));
-			this.dataFacade.addCourseEnrollmentAction(courseEnrollmentStatus);
+			this.dataFacade.addCourseEnrollmentAction(ConnectionPool.getConnection(), courseEnrollmentStatus);
 		}
 		else {
 			String msg = "Cannot drop user " + user + 
@@ -63,7 +63,7 @@ public class ApplicationFacade {
 	
 	public UserCourseStatus getUserCourseStatus(User user, Course course) {
 		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(user, course);
+			this.dataFacade.getCourseEnrollmentStatus(ConnectionPool.getConnection(), user, course);
 		return courseEnrollmentStatus.getUserCourseStatus();
 	}
 }

@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.StatusUpdate;
 
 public class StatusUpdatesPanel extends Panel {
@@ -17,7 +18,7 @@ public class StatusUpdatesPanel extends Panel {
 	
 	private ListView getStatusUpdateListView() {
     	return
-    	new ListView(WicketIdConstants.STATUS_UPDATES, ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates()) {
+    	new ListView(WicketIdConstants.STATUS_UPDATES, ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection())) {
 
 			@Override
 			protected void populateItem(ListItem item) {
