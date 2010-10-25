@@ -24,6 +24,8 @@ public class Course implements Serializable {
 	
 	private static Logger cLogger = Logger.getLogger(Course.class);
 	
+	public Course() {}
+	
 	public Course(String id, String title, String description) {
 		this.id = id;
 		this.title = title;
@@ -35,7 +37,7 @@ public class Course implements Serializable {
 		return this.id;
 	}
 	
-	public void setId() {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
@@ -73,7 +75,21 @@ public class Course implements Serializable {
 	
 	@Override
 	public String toString() {
-		return this.id + " " + this.title;
+		StringBuffer buff = new StringBuffer();
+		buff.append(this.id + " ");
+		buff.append(this.title);
+		buff.append("\n");
+		buff.append(this.description);
+		buff.append("Mentor: ");
+		buff.append(this.mentor);
+		buff.append("\n");
+		buff.append("Competencies");
+		buff.append("\n");
+		for(Competency competency : this.competencies) {
+			buff.append(competency);
+			buff.append("\n");
+		}
+		return buff.toString();
 	}
 
 	public Competency getCompetency(int id) {

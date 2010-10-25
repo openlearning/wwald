@@ -55,4 +55,7 @@ public class Sql {
 	
 	public static String RETREIVE_USER =
 		"SELECT * FROM USER WHERE username=%s AND password=%s;";
+	
+	public static String INSERT_MENTOR = 
+		"INSERT INTO MENTOR (first_name, middle_initial, last_name, short_bio) VALUES (%s, %s, %s, %s);";
 }

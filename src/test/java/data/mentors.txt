@@ -1,0 +1,15 @@
+[mentor]
+David J. Malan
+//the bio can be a multiline bio
+Short bio for David Malan
+
+[mentor]
+Bill J. Gates
+Short bio for Bill Gates
+
+[mentor]
+Mark K. Shuttleworth
+Short bio for Mark Shuttleworth
+
+//this last mentor tag is required to end the file
+[mentor]

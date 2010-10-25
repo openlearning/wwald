@@ -14,6 +14,8 @@ public class Competency implements Serializable {
 	private String description;
 	private String resource;
 	
+	public Competency() {}
+	
 	public Competency(int id, String title, String description, String resource) {
 		this.id = id;
 		this.title = title;
@@ -31,6 +33,9 @@ public class Competency implements Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+		if(this.id == 0) {
+			this.id = title.hashCode();
+		}
 	}
 
 	public String getDescription() {

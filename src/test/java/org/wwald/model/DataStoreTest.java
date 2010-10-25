@@ -10,6 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import util.DataInitializer;
+
 public class DataStoreTest {
 
 	private DataFacadeRDBMSImpl dataStore;
@@ -17,7 +19,8 @@ public class DataStoreTest {
 	@Before
 	public void setUp() throws Exception {
 		this.dataStore = new DataFacadeRDBMSImpl();
-		Data.init(ConnectionPool.getConnection());
+		DataInitializer di = new DataInitializer();
+		di.initData(ConnectionPool.getConnection());
 	}
 	
 	@Test
@@ -28,9 +31,9 @@ public class DataStoreTest {
 		
 		for(int i = 0; i < 3; i++) {
 			Course course = courses.get(i);
-			assertEquals(Data.courses[i][0], course.getId());
-			assertEquals(Data.courses[i][1], course.getTitle());
-			assertEquals(Data.courses[i][2], course.getDescription());
+			assertEquals(DataInitializer.courses[i][0], course.getId());
+			assertEquals(DataInitializer.courses[i][1], course.getTitle());
+			assertEquals(DataInitializer.courses[i][2], course.getDescription());
 			
 			List<Competency> competencies = course.getCompetencies();
 			assertNotNull(competencies);
@@ -38,10 +41,10 @@ public class DataStoreTest {
 			
 			for(int j = 0; j < 2; j++) {
 				Competency competency = competencies.get(j);
-				assertEquals(Integer.valueOf(Data.competencies[j][0]).intValue(), competency.getId());
-				assertEquals(Data.competencies[j][2], competency.getTitle());
-				assertEquals(Data.competencies[j][3], competency.getDescription());
-				assertEquals(Data.competencies[j][4], competency.getResource());
+				assertEquals(Integer.valueOf(DataInitializer.competencies[j][0]).intValue(), competency.getId());
+				assertEquals(DataInitializer.competencies[j][2], competency.getTitle());
+				assertEquals(DataInitializer.competencies[j][3], competency.getDescription());
+				assertEquals(DataInitializer.competencies[j][4], competency.getResource());
 			}
 			
 		}

@@ -85,7 +85,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		try {
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, Data.wrapForSQL(id)));
+			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, wrapForSQL(id)));
 			while(rs.next()) {
 				String title = rs.getString(2);
 				String description = rs.getString(3);
@@ -114,13 +114,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			//create course
 			String sqlToCreateCourse = "INSERT INTO COURSE (id, title) VALUES (%s,%s)";
 			stmt = conn.createStatement();
-			rowsUpdated = stmt.executeUpdate(String.format(sqlToCreateCourse, Data.wrapForSQL(course.getId()), Data.wrapForSQL(course.getTitle())));
+			rowsUpdated = stmt.executeUpdate(String.format(sqlToCreateCourse, wrapForSQL(course.getId()), wrapForSQL(course.getTitle())));
 			cLogger.info("Rows updated after inserting course " + rowsUpdated);
 			
 			//create course_competency_wiki 
 			stmt = conn.createStatement();
 			String sqlToCreateCourseCompetency = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
-			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, Data.wrapForSQL(course.getId())));
+			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, wrapForSQL(course.getId())));
 			cLogger.info("Rows updated after inserting course_competencies_wiki " + rowsUpdated);
 		} catch(SQLException sqle) {
 			cLogger.error("Could not create new course " + course, sqle);
@@ -133,7 +133,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, Data.wrapForSQL(coursesWikiContents)));
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, wrapForSQL(coursesWikiContents)));
 			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
 			else cLogger.info("CoursesWiki not updated");
 		} catch(SQLException sqle) {
@@ -144,8 +144,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, User user, Course course) {
 		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s ORDER BY tstamp DESC;";
 		String sql = String.format(sqlTemplate,
-								   Data.wrapForSQL(course.getId()),
-								   Data.wrapForSQL(user.getUsername()));
+								   wrapForSQL(course.getId()),
+								   wrapForSQL(user.getUsername()));
 		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
 		try {
 			Statement stmt = conn.createStatement();
@@ -178,10 +178,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		//TODO: Remove hardcoded date
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
 		String sql = String.format(sqlTemplate, 
-								   Data.wrapForSQL(courseEnrollmentStatus.getCourseId()),
-								   Data.wrapForSQL(courseEnrollmentStatus.getUsername()),
+								   wrapForSQL(courseEnrollmentStatus.getCourseId()),
+								   wrapForSQL(courseEnrollmentStatus.getUsername()),
 								   courseEnrollmentStatus.getUserCourseStatus().getId(),
-								   Data.wrapForSQL(timestamp.toString()));
+								   wrapForSQL(timestamp.toString()));
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -197,7 +197,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sql, Data.wrapForSQL(courseId)));
+			ResultSet rs = stmt.executeQuery(String.format(sql, wrapForSQL(courseId)));
 			if(rs.next()) {
 				wikiContents = rs.getString(2);
 			}
@@ -220,7 +220,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, Data.wrapForSQL(competenciesWikiContents), Data.wrapForSQL(courseId)));
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, wrapForSQL(competenciesWikiContents), wrapForSQL(courseId)));
 			if(rowsUpdated > 0) { 
 				cLogger.info("CompetenciesWiki updated");
 			}
@@ -237,7 +237,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			String finalSql = String.format(sql, Data.wrapForSQL(competency.getDescription()), Data.wrapForSQL(competency.getResource()), String.valueOf(competency.getId()));
+			String finalSql = String.format(sql, wrapForSQL(competency.getDescription()), wrapForSQL(competency.getResource()), String.valueOf(competency.getId()));
 			stmt.executeUpdate(finalSql);
 		} catch (SQLException e) {
 			cLogger.error("Could not update competency with these new values ", e);
@@ -254,8 +254,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			stmt = conn.createStatement();
 			int rowsUpdated = stmt.executeUpdate(String.format(sql, 
 															   sCompetencyId,
-															   Data.wrapForSQL(course.getId()),
-															   Data.wrapForSQL(competencyTitle)));
+															   wrapForSQL(course.getId()),
+															   wrapForSQL(competencyTitle)));
 			if(rowsUpdated > 0) {
 				competency = new Competency(nextCompetencyId, competencyTitle, "", "");
 			}
@@ -354,7 +354,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		User user = null;
 		try {
 			Statement stmt = conn.createStatement();
-			String query = String.format(Sql.RETREIVE_USER, Data.wrapForSQL(username), Data.wrapForSQL(password));
+			String query = String.format(Sql.RETREIVE_USER, wrapForSQL(username), wrapForSQL(password));
 			ResultSet rs  = stmt.executeQuery(query);
 			if(rs.next()) {
 				String firstName = rs.getString("first_name");
@@ -418,7 +418,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		String sql = "SELECT (contents) FROM COURSE_COMPETENCIES_WIKI WHERE course_id = %s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sql, Data.wrapForSQL(course.getId())));
+			ResultSet rs = stmt.executeQuery(String.format(sql, wrapForSQL(course.getId())));
 			List<Competency> competencies = buildCompetencyObjectsFromResultSet(conn, course, rs);
 			course.setCompetencies(competencies);
 			
@@ -429,7 +429,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		String sqlToGetMentorIdsForCourse = "SELECT (mentor_id) FROM COURSE_MENTORS WHERE course_id=%s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, Data.wrapForSQL(course.getId())));
+			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, wrapForSQL(course.getId())));
 			List<Mentor> mentors = buildMentorObjectsFromResultSet(conn, rs);
 			if(mentors.size() != 0) {
 				course.setMentor(mentors.get(0));
@@ -451,7 +451,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 //			String sqlToFetchCompetency = "SELECT * FROM COMPETENCY WHERE COMPETENCY.id=%s";
 //			
 //			Statement stmt = conn.createStatement();
-//			ResultSet rsForCompetencies = stmt.executeQuery(String.format(sqlToFetchCompetency, Data.wrapForSQL(competency_id)));
+//			ResultSet rsForCompetencies = stmt.executeQuery(String.format(sqlToFetchCompetency, wrapForSQL(competency_id)));
 //			
 //			while(rsForCompetencies.next()) {
 //				int id = rsForCompetencies.getInt(1);
@@ -478,8 +478,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				String sqlToFetchCompetency = "SELECT * FROM COMPETENCY WHERE COMPETENCY.course_id=%s AND COMPETENCY.title=%s";
 				Statement stmt = conn.createStatement();
 				String finalSql = String.format(sqlToFetchCompetency, 
-												Data.wrapForSQL(course.getId()),
-												Data.wrapForSQL(competencyTitle));
+												wrapForSQL(course.getId()),
+												wrapForSQL(competencyTitle));
 				ResultSet rsForCompetencies = stmt.executeQuery(finalSql);
 				if(rsForCompetencies.next()) {
 					int id = rsForCompetencies.getInt(1);
@@ -554,6 +554,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			cLogger.error(msg, sqle);
 		}
 		return statuses;
+	}
+	
+	public static String wrapForSQL(String s) {
+		return "'" + s + "'";
 	}
 
 }

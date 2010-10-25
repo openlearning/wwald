@@ -10,6 +10,10 @@ public class Mentor implements Serializable {
 	private String lastName;
 	private String shortBio;
 	
+	public Mentor() {
+		
+	}
+	
 	public Mentor(int id, String firstName, String middleInitial, String lastName, String shortBio) {
 		this.id = id;
 		this.firstName = firstName;
@@ -58,4 +62,9 @@ public class Mentor implements Serializable {
 		this.shortBio = shortBio;
 	}
 	
+	@Override
+	public String toString() {
+		//StringBuffer buff = new StringBuffer();
+		return this.firstName;
+	}
 }

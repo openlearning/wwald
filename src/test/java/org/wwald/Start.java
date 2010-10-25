@@ -1,9 +1,14 @@
 package org.wwald;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
+
+import util.DataInitializer;
 
 public class Start {
 
@@ -33,6 +38,9 @@ public class Start {
 		try {
 			System.out.println(">>> STARTING EMBEDDED JETTY SERVER, PRESS ANY KEY TO STOP");
 			server.start();
+			
+			initData();
+			
 			System.in.read();
 			System.out.println(">>> STOPPING EMBEDDED JETTY SERVER"); 
             // while (System.in.available() == 0) {
@@ -44,5 +52,9 @@ public class Start {
 			e.printStackTrace();
 			System.exit(100);
 		}
+	}
+
+	private static void initData() throws IOException {
+		
 	}
 }
