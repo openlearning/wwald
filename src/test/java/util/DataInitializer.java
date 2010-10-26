@@ -1,31 +1,169 @@
 package util;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import org.wwald.model.Competency;
 import org.wwald.model.ConnectionPool;
+import org.wwald.model.Course;
 import org.wwald.model.Mentor;
 import org.wwald.model.Sql;
+import org.wwald.model.User;
 
 public class DataInitializer {
+
+	private ClassLoader appClassLoader;
 	
-	public void initData(Connection conn) throws IOException, SQLException {
-		ClassLoader appClassLoader = DataInitializer.class.getClassLoader(); 
-		URL tableCreationSqlFileUrl = appClassLoader.getResource("data/create_tables_sql.txt");
-		URL mentorsCreationSqlFileUrl = appClassLoader.getResource("data/mentors.txt");
-
-		createTables(conn, tableCreationSqlFileUrl);
-		populateTables(conn, mentorsCreationSqlFileUrl);
+	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
+	
+	private static final String BASE_PATH = "data/";
+	private static final String COURSES_BASE_PATH = BASE_PATH + "course/";
+	private static final String TABLES_DATA_FILE = "create_tables_sql.txt";
+	private static final String MENTORS_DATA_FILE = "mentors.txt";
+	
+	public DataInitializer() {
+		this.appClassLoader = DataInitializer.class.getClassLoader();
+	}
+	
+	public void initData(Connection conn) throws IOException, SQLException, DataFileSyntaxException {		
+		createTables(conn);
+		populateTables(conn);
 	}
 
-	private void populateTables(Connection conn, URL mentorsCreationSqlFileUrl) {
-		populateMentors(conn, mentorsCreationSqlFileUrl);
+	private void populateTables(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
+		populateMentors(conn);
+		populateCourses(conn);
+		populateUsers(conn);
 	}
 
-	private void populateMentors(Connection conn, URL url) {
+	private void populateUsers(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
+		URL url = appClassLoader.getResource(BASE_PATH + "users.txt");
+		UsersFileParser parser = new UsersFileParser(url);
+		User users[] = parser.parse();
+		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+		if(users != null) {
+			for(User user : users) {
+				String sql = String.format(Sql.INSERT_USER, 
+										   wrapForSQL(user.getFirstName()),
+										   wrapForSQL(user.getMi()),
+										   wrapForSQL(user.getLastName()),
+										   wrapForSQL(user.getUsername()),
+										   wrapForSQL(user.getPassword()),
+										   wrapForSQL(df.format(user.getJoinDate())),
+										   wrapForSQL(user.getRole().toString()));
+				Statement stmt = conn.createStatement();
+				stmt.executeUpdate(sql);
+			}
+		}
+		else {
+			System.out.println("coulnd not insert users in the database because users[] is null");
+		}
+	}
+
+	private void populateCourses(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
+		URL coursesDirUrl = appClassLoader.getResource(COURSES_BASE_PATH);
+		File coursesDataDir = new File(coursesDirUrl.getPath());
+		File courseDataFiles[] = coursesDataDir.listFiles();
+		List<Course> coursesList = new ArrayList<Course>();
+		for(File courseDataFile : courseDataFiles) {
+			String courseFileName = courseDataFile.getName();
+			URL courseDataFileUrl = appClassLoader.getResource(COURSES_BASE_PATH + courseFileName);
+			CourseFileParser parser = new CourseFileParser(courseDataFileUrl);
+			Course course = parser.parse();
+			coursesList.add(course);
+		}
+		
+		populateCoursesWiki(coursesList, conn);
+		
+		populateCourse(coursesList, conn);
+		
+		populateCourseCompetenciesWiki(coursesList, conn);
+		
+		populateCompetency(coursesList, conn);
+	}
+
+	private void populateCompetency(List<Course> coursesList, Connection conn) throws SQLException {
+		for(Course course : coursesList) {
+			
+			List<Competency> competencies = course.getCompetencies();
+			for(Competency competency : competencies) {
+				if(competency != null) {
+					String sql = String.format(Sql.INSERT_COMPETENCY, 
+							   				   String.valueOf(competency.getId()), 
+							   				   wrapForSQL(course.getId()),
+							   				   wrapForSQL(competency.getTitle()),
+							   				   wrapForSQL(competency.getDescription()),
+							   				   wrapForSQL(competency.getResource()));
+					Statement stmt = conn.createStatement();
+					System.out.println(sql);
+					stmt.executeUpdate(sql);
+				}
+			}
+		}
+
+	}
+
+	private void populateCourseCompetenciesWiki(List<Course> coursesList, Connection conn) throws SQLException {
+		for(Course course : coursesList) {
+			
+			StringBuffer buff = new StringBuffer("");
+			List<Competency> competencies = course.getCompetencies();
+			for(Competency competency : course.getCompetencies()) {
+				if(competency != null) {
+					buff.append(competency.getTitle());
+					buff.append(LINE_SEPERATOR);
+				}
+			}
+			String sql = String.format(Sql.INSERT_COURSE_COMPETENCIES_WIKI, wrapForSQL(course.getId()), wrapForSQL(buff.toString()));
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		}
+		
+	}
+
+	private void populateCourse(List<Course> coursesList, Connection conn) throws SQLException {
+		
+		for(Course course : coursesList) {
+			if(course != null) {
+				String sql = String.format(Sql.INSERT_COURSE,
+										   wrapForSQL(course.getId()),
+										   wrapForSQL(course.getTitle()),
+										   wrapForSQL(course.getDescription()));
+				Statement stmt = conn.createStatement();
+				stmt.executeUpdate(sql);
+			}
+		}
+	}
+
+	private void populateCoursesWiki(List<Course> coursesList, Connection conn) throws SQLException {
+		StringBuffer buff = new StringBuffer();
+		String sep = " | ";
+		for(Course course : coursesList) {
+			buff.append(course.getId());
+			buff.append(sep);
+			buff.append(course.getTitle());
+			buff.append(LINE_SEPERATOR);
+		}
+		
+		String sql = String.format(Sql.INSERT_COURSES_WIKI,
+								   "1",
+								   wrapForSQL(buff.toString()));
+		
+		Statement stmt = conn.createStatement();
+		stmt.executeUpdate(sql);
+	}
+
+	private void populateMentors(Connection conn) {
+		URL url = appClassLoader.getResource(BASE_PATH + MENTORS_DATA_FILE);
 		MentorsFileParser parser = new MentorsFileParser(url);
 		try {
 			Mentor mentors[] = parser.parse();
@@ -133,10 +271,10 @@ public class DataInitializer {
 //		}
 //	}
 
-	public final void createTables(Connection conn,
-							  URL tableCreationSqlFileUrl)
+	public final void createTables(Connection conn)
 							  throws IOException {
-		String sqls[] = (new CreateTablesFileParser(tableCreationSqlFileUrl)).parse();
+		URL url = appClassLoader.getResource(BASE_PATH + TABLES_DATA_FILE);		
+		String sqls[] = (new CreateTablesFileParser(url)).parse();
 		for(String sql : sqls) {
 			if(sql != null && !sql.trim().equals("")) {
 				try {
@@ -156,8 +294,8 @@ public class DataInitializer {
 	
 	public static void main(String args[]) throws Exception {
 		System.out.println("starting data initializer");
-		DataInitializer dataInitializer = new DataInitializer();
-		dataInitializer.initData(ConnectionPool.getConnection());
+//		DataInitializer dataInitializer = new DataInitializer();
+//		dataInitializer.initData(ConnectionPool.getConnection());
 	}
 	
 	private static String video1 = "<embed src=\"http://blip.tv/play/gtQk6o5MkPxE\" type=\"application/x-shockwave-flash\" width=\"500\" height=\"311\" allowscriptaccess=\"always\" allowfullscreen=\"true\"></embed><p style=\"font-size:11px;font-family:tahoma,arial\">Watch it on <a style=\"text-decoration:underline\" href=\"http://academicearth.org/lectures/malan-hardware/\">Academic Earth</a></p>";

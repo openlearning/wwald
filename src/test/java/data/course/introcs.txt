@@ -36,6 +36,6 @@ Lecture 4
 [desc]
 Description of lecture 4
 [resources]
-Resources for lecture 4
+Resource for lecture 4
 
 [end]

@@ -8,8 +8,11 @@ public class User implements Serializable{
 	private String mi;
 	private String lastName;
 	private String username;
+	private String password;
 	private Date joinDate;
 	private Role role;
+	
+	public User() {}
 	
 	public User(String firstName, 
 				String mi, 
@@ -25,26 +28,58 @@ public class User implements Serializable{
 		this.role = role;
 	}
 
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
 
+	public void setMi(String mi) {
+		this.mi = mi;
+	}
+	
 	public String getMi() {
 		return mi;
 	}
 
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	
 	public String getLastName() {
 		return lastName;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	public String getUsername() {
 		return this.username;
 	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public String getPassword() {
+		return this.password;
+	}
 
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
+	}
+	
 	public Date getJoinDate() {
 		return joinDate;
 	}
 
+	public void setRole(Role role) {
+		this.role = role;
+	}
+	
 	public Role getRole() {
 		return role;
 	}

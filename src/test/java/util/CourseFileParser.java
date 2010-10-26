@@ -213,6 +213,10 @@ public class CourseFileParser {
 					}
 					else if(text.trim().equals(endTag)) {
 						ReadingCompetenciesState.this.
+						currentCompetency.
+							setResource(this.resourceBuffer.toString());
+						
+						ReadingCompetenciesState.this.
 						competencies.add(ReadingCompetenciesState.this.currentCompetency);
 			
 						CourseFileParser.this.course.setCompetencies(ReadingCompetenciesState.this.competencies);
