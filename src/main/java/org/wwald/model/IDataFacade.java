@@ -18,8 +18,10 @@ public interface IDataFacade {
 	public void addCourseEnrollmentAction(Connection c, CourseEnrollmentStatus courseEnrollmentStatus);
 	
 	//Competencies
+	public void updateCompetenciesWikiContents(Connection c, String courseId, String contents);	
 	public List<Competency> retreiveAllCompetencies(Connection c);
 	public List<Competency> retreiveCompetenciesForCourse(Connection c, Course course);
+	public Competency retreiveCompetency(Connection c, String courseId, String competencyId);
 	public String retreiveCompetenciesWiki(Connection c, String courseId);
 	public void updateCompetency(Connection c, String courseId, Competency competency);
 	public Competency insertCompetency(Connection c, Course course, String title);

@@ -207,15 +207,15 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
-	public Competency getCompetency(Connection conn, String courseId, String sCompetencyId) {
+	public Competency retreiveCompetency(Connection conn, String courseId, String sCompetencyId) {
 		Competency competency = null;
 		Course course = retreiveCourse(conn, courseId);
 		competency = course.getCompetency(sCompetencyId);
 		return competency;
 	}
 
-	public void updateCompetenciesWikiContents(Connection conn, String courseId, Object modelObject) {
-		String competenciesWikiContents = (String)modelObject;
+	public void updateCompetenciesWikiContents(Connection conn, String courseId, String contents) {
+		String competenciesWikiContents = (String)contents;
 		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
 		Statement stmt = null;
 		try {

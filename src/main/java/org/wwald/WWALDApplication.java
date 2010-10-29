@@ -5,10 +5,10 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
 import org.wwald.model.ApplicationFacade;
 import org.wwald.model.DataFacadeRDBMSImpl;
+import org.wwald.model.IDataFacade;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
 import org.wwald.view.HomePage;
@@ -26,10 +26,9 @@ public class WWALDApplication extends WebApplication
 {
 	private static Logger cLogger = Logger.getLogger(WWALDApplication.class);
 	
-	private DataFacadeRDBMSImpl dataStore;
+	private IDataFacade dataStore;
 	private ApplicationFacade applicationFacade;
-	
-	private MarkDown markDown;
+	private MarkDown markDownLib;
     /**
      * Constructor
      */
@@ -37,7 +36,7 @@ public class WWALDApplication extends WebApplication
 	{
 		this.dataStore = new DataFacadeRDBMSImpl();
 		this.applicationFacade = new ApplicationFacade(this.dataStore);
-		markDown = new MarkDown();
+		this.markDownLib = new MarkDown();
 	}
 	
 	/**
@@ -56,14 +55,13 @@ public class WWALDApplication extends WebApplication
 	
 	@Override
 	public void init() {
-//		mount(new IndexedParamUrlCodingStrategy("courses", CoursePage.class));
 		mountBookmarkablePage("courses", CoursePage.class);
 		mountBookmarkablePage("login", Login.class);
 		mountBookmarkablePage("register", Register.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 	}
 	
-	public DataFacadeRDBMSImpl getDataFacade() {
+	public IDataFacade getDataFacade() {
 		return this.dataStore;
 	}
 	
@@ -72,7 +70,7 @@ public class WWALDApplication extends WebApplication
 	}
 	
 	public synchronized MarkDown getMarkDown() {
-		return this.markDown;
+		return this.markDownLib;
 	}
 
 }

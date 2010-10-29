@@ -51,7 +51,7 @@ public class EditLecture extends AccessControlledPage {
 
 	private Competency getCompetency(String courseId, String sCompetencyId) {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		Competency competency = app.getDataFacade().getCompetency(ConnectionPool.getConnection(), courseId, sCompetencyId);
+		Competency competency = app.getDataFacade().retreiveCompetency(ConnectionPool.getConnection(), courseId, sCompetencyId);
 		return competency;
 	}
 

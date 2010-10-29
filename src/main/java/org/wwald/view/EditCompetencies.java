@@ -30,7 +30,7 @@ public class EditCompetencies extends AccessControlledPage {
 			public void onSubmit() {
 				TextArea textArea = (TextArea)get(0);
 				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), courseId, textArea.getModelObject());
+				app.getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), courseId, (String)textArea.getModelObject());
 				setResponsePage(CoursePage.class, pageParams);
 			}
 		};
