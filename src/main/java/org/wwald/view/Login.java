@@ -12,6 +12,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.User;
+import org.wwald.service.ApplicationException;
 
 public class Login extends BasePage {
 
@@ -24,19 +25,25 @@ public class Login extends BasePage {
 		Form loginForm = new Form("login") {
 			@Override
 			public void onSubmit() {
-				String username = (String)((TextField)get("username")).getModelObject();
-				String password = (String)((TextField)get("password")).getModelObject();
-				User user = 
-					((WWALDApplication)getApplication()).
-						getApplicationFacade().login(username, password);
-				WWALDSession.get().setUser(user);
-				if(user != null) {
-					setResponsePage(HomePage.class);
-				}
-				else {
-					parameters.add(WicketIdConstants.MESSAGES, 
-								   "Incorrect username or password, please try again.");
-					setResponsePage(Login.class, parameters);
+				try {
+					String username = (String)((TextField)get("username")).getModelObject();
+					String password = (String)((TextField)get("password")).getModelObject();
+					User user = 
+						((WWALDApplication)getApplication()).
+							getApplicationFacade().login(username, password);
+					WWALDSession.get().setUser(user);
+					if(user != null) {
+						setResponsePage(HomePage.class);
+					}
+					else {
+						parameters.add(WicketIdConstants.MESSAGES, 
+									   "Incorrect username or password, please try again.");
+						setResponsePage(Login.class, parameters);
+					}
+				} catch(ApplicationException ae) {
+					String msg = "Sorry we could not log you into the application due to an internal error. We will look into this problem as soon as we can";
+					parameters.add(WicketIdConstants.MESSAGES, msg);
+					setResponsePage(ExceptionPage.class, parameters);
 				}
 			}
 		};

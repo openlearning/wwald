@@ -235,3 +235,8 @@ a {
 	font-size: 12px;
 	width: 100px;
 }
+
+.messages {
+	color: RED;
+	font-size: 12px;
+}
