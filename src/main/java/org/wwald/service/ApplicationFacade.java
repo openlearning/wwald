@@ -30,7 +30,6 @@ public class ApplicationFacade {
 			cLogger.error(msg, de);
 			throw new ApplicationException(msg, de);
 		}
-		
 		return user; 
 	}
 	

@@ -43,7 +43,7 @@ public class Login extends BasePage {
 				} catch(ApplicationException ae) {
 					String msg = "Sorry we could not log you into the application due to an internal error. We will look into this problem as soon as we can";
 					parameters.add(WicketIdConstants.MESSAGES, msg);
-					setResponsePage(ExceptionPage.class, parameters);
+					setResponsePage(GenericErrorPage.class, parameters);
 				}
 			}
 		};
