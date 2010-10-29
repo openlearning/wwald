@@ -14,9 +14,9 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.User;
 import org.wwald.service.ApplicationException;
 
-public class Login extends BasePage {
+public class LoginPage extends BasePage {
 
-	public Login(PageParameters parameters) {
+	public LoginPage(PageParameters parameters) {
 		super(parameters);
 		add(getLoginForm(parameters));
 	}
@@ -38,7 +38,7 @@ public class Login extends BasePage {
 					else {
 						parameters.add(WicketIdConstants.MESSAGES, 
 									   "Incorrect username or password, please try again.");
-						setResponsePage(Login.class, parameters);
+						setResponsePage(LoginPage.class, parameters);
 					}
 				} catch(ApplicationException ae) {
 					String msg = "Sorry we could not log you into the application due to an internal error. We will look into this problem as soon as we can";

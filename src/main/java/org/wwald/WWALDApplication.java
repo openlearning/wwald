@@ -12,7 +12,7 @@ import org.wwald.service.IDataFacade;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
 import org.wwald.view.HomePage;
-import org.wwald.view.Login;
+import org.wwald.view.LoginPage;
 import org.wwald.view.Register;
 
 import com.cforcoding.jmd.MarkDown;
@@ -56,7 +56,7 @@ public class WWALDApplication extends WebApplication
 	@Override
 	public void init() {
 		mountBookmarkablePage("courses", CoursePage.class);
-		mountBookmarkablePage("login", Login.class);
+		mountBookmarkablePage("login", LoginPage.class);
 		mountBookmarkablePage("register", Register.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 	}

@@ -12,7 +12,7 @@ public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
 		super(id);
 		
-		Link loginLink = new BookmarkablePageLink("login_link", Login.class); 
+		Link loginLink = new BookmarkablePageLink("login_link", LoginPage.class); 
 		add(loginLink);
 		
 		Link registerLink = new BookmarkablePageLink("register_link", Register.class); 

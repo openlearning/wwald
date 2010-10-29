@@ -240,3 +240,16 @@ a {
 	color: RED;
 	font-size: 12px;
 }
+
+.login-label {
+	width: 4em;
+	float: left;
+	text-align: right;
+	margin-right: 1.0em;
+	display: block
+}
+
+.login-form-line {
+	padding-bottom: 10px;
+	margin-left: 10px;
+}
