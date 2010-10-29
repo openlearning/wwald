@@ -17,10 +17,10 @@ import org.wwald.WWALDConstants;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.Course;
-import org.wwald.model.IDataFacade;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
 import org.wwald.model.StatusUpdate;
+import org.wwald.service.IDataFacade;
 import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.SimpleViewPageLink;
 

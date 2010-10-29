@@ -12,11 +12,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
-import org.wwald.model.ApplicationFacade;
 import org.wwald.model.Course;
 import org.wwald.model.Role;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
+import org.wwald.service.ApplicationFacade;
 import org.wwald.view.CoursePage;
 
 public class CourseStatusPanel extends Panel implements Serializable {

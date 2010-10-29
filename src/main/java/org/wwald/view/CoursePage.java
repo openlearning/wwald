@@ -12,9 +12,9 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.Competency;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
-import org.wwald.model.DataFacadeRDBMSImpl;
-import org.wwald.model.IDataFacade;
 import org.wwald.model.Mentor;
+import org.wwald.service.DataFacadeRDBMSImpl;
+import org.wwald.service.IDataFacade;
 
 public class CoursePage extends BasePage {
 	Course selectedCourse;

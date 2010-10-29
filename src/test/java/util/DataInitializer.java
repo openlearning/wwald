@@ -16,8 +16,8 @@ import org.wwald.model.Competency;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.Mentor;
-import org.wwald.model.Sql;
 import org.wwald.model.User;
+import org.wwald.service.Sql;
 
 public class DataInitializer {
 
