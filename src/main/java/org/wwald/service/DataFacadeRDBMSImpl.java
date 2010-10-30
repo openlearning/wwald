@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -150,7 +151,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, User user, Course course) {
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, User user, Course course) throws DataException {
 		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s ORDER BY tstamp DESC;";
 		String sql = String.format(sqlTemplate,
 								   wrapForSQL(course.getId()),
@@ -172,10 +173,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String msg = "Could not get course enrollment status for course_id " + 
 						 course.getId() + " username " + user.getUsername();
 			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
-		//TODO: Fix this code to make to real
 		if(statuses.size() > 0) {
-			return statuses.get(0);
+			Collections.sort(statuses, CourseEnrollmentStatus.getTimestampComparator());
+			return statuses.get(statuses.size()-1);
 		}
 		else {
 			return new CourseEnrollmentStatus(course.getId(), user.getUsername(), UserCourseStatus.UNENROLLED, null);

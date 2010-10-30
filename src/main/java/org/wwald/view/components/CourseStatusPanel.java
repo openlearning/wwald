@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -16,8 +17,11 @@ import org.wwald.model.Course;
 import org.wwald.model.Role;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
+import org.wwald.service.ApplicationException;
 import org.wwald.service.ApplicationFacade;
+import org.wwald.service.DataException;
 import org.wwald.view.CoursePage;
+import org.wwald.view.GenericErrorPage;
 
 public class CourseStatusPanel extends Panel implements Serializable {
 	
@@ -50,7 +54,15 @@ public class CourseStatusPanel extends Panel implements Serializable {
 														 new Role[]{Role.STUDENT}) {
 						public void onClick() {
 							if(hasPermission()) {
-								appFacade.enrollInCourse(user, course);
+								try {
+									appFacade.enrollInCourse(user, course);
+								} catch(ApplicationException ae) {
+									String msg = "Sorry we could not enroll you in the course due to an internal error. " +
+												 "We will look into this problem as soon as we can.";
+									PageParameters parameters = getPage().getPageParameters();
+									parameters.add(WicketIdConstants.MESSAGES, msg);
+									setResponsePage(GenericErrorPage.class);
+								}
 							}
 						}
 					};
@@ -80,7 +92,15 @@ public class CourseStatusPanel extends Panel implements Serializable {
 						@Override
 						public void onClick() {
 							if(hasPermission()) {
-								appFacade.dropCourse(user, course);						
+								try {
+								appFacade.dropCourse(user, course);
+								} catch(ApplicationException ae) {
+									String msg = "Sorry we could not drop you from the course due to an internal error. " +
+									 			 "We will look into this problem as soon as we can.";
+									PageParameters parameters = getPage().getPageParameters();
+									parameters.add(WicketIdConstants.MESSAGES, msg);
+									setResponsePage(GenericErrorPage.class);
+								}
 							}
 						}
 					};
@@ -113,12 +133,20 @@ public class CourseStatusPanel extends Panel implements Serializable {
 	private void init() {
 		this.user = WWALDSession.get().getUser();
 		if(this.user != null) {
+			
+		try {
+			//TODO: What do we do if this is null... should we introduce another course status?
 			this.courseStatusForUser = getCourseStatusForUser();
+		} catch (DataException e) {
+			//Exception should have been logged in the Data layer
+			//not doing anything here
+		}
+			
 			add(this.courseStatusForUser.getActionLinksListView());
 		}
 	}
 
-	private ICourseStatusForUser getCourseStatusForUser() {
+	private ICourseStatusForUser getCourseStatusForUser() throws DataException {
 		ICourseStatusForUser retVal = null;
 		WWALDApplication app = (WWALDApplication)getApplication();
 		ApplicationFacade appFacade = app.getApplicationFacade();
