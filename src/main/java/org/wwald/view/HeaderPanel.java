@@ -12,6 +12,9 @@ public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
 		super(id);
 		
+		Link homePage = new BookmarkablePageLink("homepage_link", HomePage.class);
+		add(homePage);
+		
 		Link loginLink = new BookmarkablePageLink("login_link", LoginPage.class); 
 		add(loginLink);
 		
