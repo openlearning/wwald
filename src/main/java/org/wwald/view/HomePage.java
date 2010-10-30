@@ -20,6 +20,7 @@ import org.wwald.model.Course;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
 import org.wwald.model.StatusUpdate;
+import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.SimpleViewPageLink;
@@ -47,12 +48,24 @@ public class HomePage extends BasePage implements Serializable {
     	super(parameters);
     	this.dataFacade = ((WWALDApplication)getApplication()).getDataFacade();
     	add(getEditCoursesLink());
-    	add(getCoursesPanel());
+    	add(getCoursesPanel(parameters));
     	add(getStatusUpdatesPanel());
     }
 
-	private Component getCoursesPanel() {
-		return new CoursesPanel(WicketIdConstants.COURSES_PANEL);
+	private Component getCoursesPanel(PageParameters parameters) {
+		//TODO: Should we throw the DataException out of here and let the caller handle it?
+		Panel coursesPanel = null;
+		try {
+			coursesPanel = new CoursesPanel(WicketIdConstants.COURSES_PANEL);
+		} catch(DataException de) {
+			coursesPanel = new EmptyPanel(WicketIdConstants.COURSES_PANEL);
+			String msg = "Sorry but we cannot display the list of courses " +
+						 "due to an internal error. We will look into this " +
+						 "issue very soon.";
+			parameters.add(WicketIdConstants.MESSAGES, msg);
+		}
+		
+		return coursesPanel;
 	}
 
 	private Link getEditCoursesLink() {

@@ -25,7 +25,7 @@ public class DataStoreTest {
 	}
 	
 	@Test
-	public void testGetAllCourses() {
+	public void testGetAllCourses() throws Exception {
 		List<Course> courses = dataStore.retreiveCourses(ConnectionPool.getConnection());
 		assertNotNull(courses);
 		assertEquals(4, courses.size());

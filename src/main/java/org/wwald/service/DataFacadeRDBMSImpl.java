@@ -39,20 +39,22 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			
 	}
 
-	public List<Course> retreiveCouresesListedInCourseWiki(Connection conn) {
-		List<Course> courses = new ArrayList<Course>();
+	public List<Course> retreiveCoursesListedInCourseWiki(Connection conn) throws DataException {
+		List<Course> courses = null;
 		String wikiContent = retreiveCourseWiki(conn);
 		try {
 			if(wikiContent != null && !wikiContent.trim().equals("")) {
-				buildCourseObjectsFromCoursesWikiContent(conn, courses, wikiContent);
+				courses = buildCourseObjectsFromCoursesWikiContent(conn, wikiContent);
 			}
 		} catch(IOException ioe) {
-			cLogger.warn("Could not parse wiki contents", ioe);
+			String msg = "Could not parse wiki contents";
+			cLogger.warn(msg, ioe);
+			throw new DataException(msg, ioe);
 		}
 		return courses;
 	}
 
-	public List<Course> retreiveCourses(Connection conn) {
+	public List<Course> retreiveCourses(Connection conn) throws DataException {
 		List<Course> courses = null;
 		
 		String sqlToFetchAllCourses = "SELECT * FROM COURSE;";
@@ -65,11 +67,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			buildCompetenciesForCourses(conn, courses);
 			buildMentorsForCourses(conn, courses);
 		} catch(SQLException sqle) {
-			//TODO: At some point of time we need to send this exception to the view page which should then
-			//redirect to a standard error page with an error message
-			cLogger.error("Could not build list of courses", sqle);
-		} catch(DataException de) {
-			//propogate
+			String msg = "Could not build courses";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 		
 		return courses;
@@ -141,6 +141,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	public void updateCourseWiki(Connection conn, String wikiContents) {
+		//TODO: If we change the course title then the changes should be reflected in the db
 		String coursesWikiContents = (String)wikiContents;
 		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
 		Statement stmt = null;
@@ -388,9 +389,20 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return user; 
 	}
 
-	private void buildCourseObjectsFromCoursesWikiContent(Connection conn,
-														  List<Course> courses,
+	/**
+	 * This method parses the courses wiki contents and returns a List of Course objects. 
+	 * Every course which exists in the database is returned as a {@link Course} object in  
+	 * the returned List, whereas every course which does not exist in the database is
+	 * represented as a {@link NonExistentCourse} object.
+	 * NOTE: This method should never return a null.
+	 * @param conn Connection to the database
+	 * @param wikiContent The contents of the wiki as a String
+	 * @return courses A List of Course objects which were mentioned in the wiki contents 
+	 * @throws IOException
+	 */
+	private List<Course> buildCourseObjectsFromCoursesWikiContent(Connection conn,
 														  String wikiContent) throws IOException {
+		List<Course> courses = new ArrayList<Course>();
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(
 				wikiContent));
 		String line = null;
@@ -406,13 +418,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				if (course == null) {
 					course = new NonExistentCourse(courseId, courseTitle);
 				}
-				// TODO If we change the courseTitle in the wiki page then there
-				// should be a way to change it
-				// in the database as well
+				
 				courses.add(course);
 			}
 
 		}
+		return courses;
 	}
 	
 	private List<Course> buildCourseObjectsFromResultSet(ResultSet rs) throws SQLException {

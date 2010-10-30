@@ -13,8 +13,8 @@ import org.wwald.model.User;
 public interface IDataFacade {
 	
 	//Course
-	public List<Course> retreiveCourses(Connection c);
-	public List<Course> retreiveCouresesListedInCourseWiki(Connection c);
+	public List<Course> retreiveCourses(Connection c) throws DataException ;
+	public List<Course> retreiveCoursesListedInCourseWiki(Connection c) throws DataException;
 	public Course retreiveCourse(Connection c, String courseId);
 	public String retreiveCourseWiki(Connection c);
 	public void updateCourse(Connection c, Course course);

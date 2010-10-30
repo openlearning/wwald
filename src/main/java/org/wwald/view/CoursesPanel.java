@@ -16,20 +16,28 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
+import org.wwald.service.DataException;
 import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.SimpleViewPageLink;
 
 public class CoursesPanel extends Panel {
 	
-	public CoursesPanel(String id) {
+	public CoursesPanel(String id) throws DataException {
 		super(id);
 		add(getCoursesListView());
 	}
 	
-	private ListView getCoursesListView() {
+	private ListView getCoursesListView() throws DataException {
     	List<Course> allCoursesToDisplay =  
-    		((WWALDApplication)getApplication()).getDataFacade().retreiveCouresesListedInCourseWiki(ConnectionPool.getConnection() ); 
-    	return
+    		((WWALDApplication)getApplication()).
+    			getDataFacade().
+    				retreiveCoursesListedInCourseWiki(ConnectionPool.getConnection() ); 
+
+    	return getCoursesListView(allCoursesToDisplay);
+    }
+
+	private ListView getCoursesListView(List<Course> allCoursesToDisplay) {
+		return
     	new ListView(WicketIdConstants.COURSES, allCoursesToDisplay) {
 
 			@Override
@@ -61,6 +69,6 @@ public class CoursesPanel extends Panel {
 				}
 			}
     	};
-    }
+	}
 
 }
