@@ -14,15 +14,23 @@ public class HeaderPanel extends Panel {
 		super(id);
 		
 		Link homeLink = new BookmarkablePageLink(WicketIdConstants.HOMEPAGE_LINK, HomePage.class);
+		Label homeLabel = new Label(WicketIdConstants.HOMEPAGE_LABEL, "Home .");
+		homeLink.add(homeLabel);
 		add(homeLink);
 		
 		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, HomePage.class);
+		Label aboutLabel = new Label(WicketIdConstants.ABOUT_LABEL, "About .");
+		aboutLink.add(aboutLabel);
 		add(aboutLink);
 		
-		Link loginLink = new BookmarkablePageLink(WicketIdConstants.LOGIN_LINK, LoginPage.class); 
+		Link loginLink = new BookmarkablePageLink(WicketIdConstants.LOGIN_LINK, LoginPage.class);
+		Label loginLabel = new Label(WicketIdConstants.LOGIN_LABEL, "Login .");
+		loginLink.add(loginLabel);
 		add(loginLink);
 		
-		Link registerLink = new BookmarkablePageLink(WicketIdConstants.REGISTER_LINK, Register.class); 
+		Link registerLink = new BookmarkablePageLink(WicketIdConstants.REGISTER_LINK, Register.class);
+		Label registerLabel = new Label(WicketIdConstants.REGISTER_LABEL, "Register .");
+		registerLink.add(registerLabel);
 		add(registerLink);
 		
 		Link logoutLink = new Link(WicketIdConstants.LOGOUT_LINK) {
@@ -31,7 +39,9 @@ public class HeaderPanel extends Panel {
 				((WWALDApplication)getApplication()).getApplicationFacade().logout();
 				setResponsePage(HomePage.class);
 			}
-		}; 
+		};
+		Label logoutLabel = new Label(WicketIdConstants.LOGOUT_LABEL, "Logout .");
+		logoutLink.add(logoutLabel);
 		add(logoutLink);
 		
 		add(new Label("user", getLogginInUserName()));
