@@ -6,22 +6,26 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
+import org.wwald.WicketIdConstants;
 import org.wwald.model.User;
 
 public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
 		super(id);
 		
-		Link homePage = new BookmarkablePageLink("homepage_link", HomePage.class);
-		add(homePage);
+		Link homeLink = new BookmarkablePageLink(WicketIdConstants.HOMEPAGE_LINK, HomePage.class);
+		add(homeLink);
 		
-		Link loginLink = new BookmarkablePageLink("login_link", LoginPage.class); 
+		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, HomePage.class);
+		add(aboutLink);
+		
+		Link loginLink = new BookmarkablePageLink(WicketIdConstants.LOGIN_LINK, LoginPage.class); 
 		add(loginLink);
 		
-		Link registerLink = new BookmarkablePageLink("register_link", Register.class); 
+		Link registerLink = new BookmarkablePageLink(WicketIdConstants.REGISTER_LINK, Register.class); 
 		add(registerLink);
 		
-		Link logoutLink = new Link("logout_link") {
+		Link logoutLink = new Link(WicketIdConstants.LOGOUT_LINK) {
 			@Override
 			public void onClick() {
 				((WWALDApplication)getApplication()).getApplicationFacade().logout();

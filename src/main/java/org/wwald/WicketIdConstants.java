@@ -2,10 +2,18 @@ package org.wwald;
 
 public class WicketIdConstants {
 	public static final String HEADER_PANEL = "header_panel";
+	public static final String HOMEPAGE_LINK  = "homepage_link";
+	public static final String ABOUT_LINK  = "about_link";
+	public static final String LOGIN_LINK  = "login_link";
+	public static final String REGISTER_LINK  = "register_link";
+	public static final String LOGOUT_LINK  = "logout_link";
 	
 	public static final String MESSAGES = "messages";
 	
 	public static final String FOOTER_PANEL = "footer_panel";
+	public static final String TOS_LINK = "tos_link";
+	public static final String PRIVACY_POLICY_LINK  = "privacy_policy_link";
+	public static final String CONTACT_LINK  = "contact_link";
 	
 	public static final String COURSES = "courses";
 	public static final String COURSES_EDIT = "courses.edit";
