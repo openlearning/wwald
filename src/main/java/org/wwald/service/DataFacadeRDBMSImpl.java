@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -32,7 +31,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	private static final String user = "SA";
 	private static final String password = "";
 	
-	private static int nextCompetencyId = 10;
+	//private static int nextCompetencyId = 10;
 	
 	private static Logger cLogger = Logger.getLogger(DataFacadeRDBMSImpl.class);
 	
@@ -69,6 +68,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			//TODO: At some point of time we need to send this exception to the view page which should then
 			//redirect to a standard error page with an error message
 			cLogger.error("Could not build list of courses", sqle);
+		} catch(DataException de) {
+			//propogate
 		}
 		
 		return courses;
@@ -112,6 +113,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			//TODO: At some point of time we need to send this exception to the view page which should then
 			//redirect to a standard error page with an error message
 			cLogger.error("Could not get course", sqle);
+		}  catch(DataException de) {
+			//propogate
 		}
 		
 		return course;
@@ -256,22 +259,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 	}
 
-	public Competency insertCompetency(Connection conn, Course course, String competencyTitle) {
-		Competency competency = null;
-		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');";
-		String sCompetencyId = String.valueOf(++nextCompetencyId);
+	public Competency insertCompetency(Connection conn, Course course, String competencyTitle) throws DataException {
+		Competency competency = new Competency(competencyTitle, "", "");
+		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');"; 
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
 			int rowsUpdated = stmt.executeUpdate(String.format(sql, 
-															   sCompetencyId,
+															   competency.getId(),
 															   wrapForSQL(course.getId()),
 															   wrapForSQL(competencyTitle)));
-			if(rowsUpdated > 0) {
-				competency = new Competency(nextCompetencyId, competencyTitle, "", "");
+			if(rowsUpdated == 0) {
+				String msg = "Could not insert competency '" + competencyTitle + "' in course '" + course.getId() + "'";
+				throw new DataException(msg);
 			}
 		} catch(SQLException sqle) {
-			cLogger.error("Could not insert competency for title '" + competencyTitle + "'", sqle);
+			String msg = "Could not insert competency for title '" + competencyTitle + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 		return competency;
 	}
@@ -425,7 +430,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 	
-	private void buildCompetenciesForCourses(Connection conn, List<Course> courses) throws SQLException {
+	private void buildCompetenciesForCourses(Connection conn, List<Course> courses) throws SQLException, DataException {
 //		String sqlToGetCompetencyIdsForCourse = "SELECT (competency_id) FROM COURSE_COMPETENCY WHERE course_id = %s";
 		String sql = "SELECT (contents) FROM COURSE_COMPETENCIES_WIKI WHERE course_id = %s";
 		for(Course course : courses) {
@@ -477,7 +482,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 //		return competencies;
 //	}
 	//TODO: course is being pased all round the place.... make safe
-	private List<Competency> buildCompetencyObjectsFromResultSet(Connection conn, Course course, ResultSet rs) throws SQLException {
+	private List<Competency> buildCompetencyObjectsFromResultSet(Connection conn, Course course, ResultSet rs) throws SQLException, DataException {
 		if(rs == null) {
 			return null;
 		}

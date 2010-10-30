@@ -16,6 +16,10 @@ public class Competency implements Serializable {
 	
 	public Competency() {}
 	
+	public Competency(String title, String description, String resource) {
+		this(0, title, description, resource);
+	}
+	
 	public Competency(int id, String title, String description, String resource) {
 		this.id = id;
 		this.title = title;
