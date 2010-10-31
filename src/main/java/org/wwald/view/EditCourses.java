@@ -7,16 +7,27 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
+import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
+import org.wwald.service.DataException;
 
 public class EditCourses extends AccessControlledPage {
+	
 	public EditCourses(PageParameters parameters) {
 		super(parameters);
-		add(getCoursesEditForm());
+		try {
+			add(getCoursesEditForm());
+		} catch(DataException de) {
+			String msg = "We cannot display this page because an " +
+						 "internal error has occured. We will look " +
+						 "into this as soon as we can.";
+			parameters.add(WicketIdConstants.MESSAGES, msg);
+			setResponsePage(GenericErrorPage.class, parameters);
+		}
 	}
 
-	private Form getCoursesEditForm() {
+	private Form getCoursesEditForm() throws DataException {
 		Form editCoursesForm = new Form("courses.edit.form") {
 			@Override
 			public void onSubmit() {
@@ -26,14 +37,11 @@ public class EditCourses extends AccessControlledPage {
 				setResponsePage(HomePage.class);
 			}
 		};
-		TextArea editCoursesFormTextArea = new TextArea("courses.edit.form.textarea", new Model(getCoursesWikiContents()));
+		WWALDApplication app = (WWALDApplication)getApplication();
+		String wikiContents = app.getDataFacade().retreiveCourseWiki(ConnectionPool.getConnection());
+		TextArea editCoursesFormTextArea = new TextArea("courses.edit.form.textarea", new Model(wikiContents));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;
-	}
-
-	private String getCoursesWikiContents() {
-		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().retreiveCourseWiki(ConnectionPool.getConnection());
 	}
 
 	@Override

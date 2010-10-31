@@ -60,7 +60,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 
-	public String retreiveCourseWiki(Connection conn) {
+	public String retreiveCourseWiki(Connection conn) throws DataException {
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSES_WIKI;";
 		Statement stmt = null;
@@ -71,7 +71,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				wikiContents = rs.getString(2);
 			}
 		} catch(SQLException sqle) {
-			cLogger.warn("Could not fetch courses wiki contents from the database", sqle);
+			String msg = "Could not fetch courses wiki contents from the database";
+			cLogger.warn(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 		return wikiContents;
 	}
