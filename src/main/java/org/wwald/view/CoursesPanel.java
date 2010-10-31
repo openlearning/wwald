@@ -1,5 +1,7 @@
 package org.wwald.view;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.PageParameters;
@@ -17,22 +19,44 @@ import org.wwald.model.Course;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
 import org.wwald.service.DataException;
+import org.wwald.util.CourseWikiParser;
+import org.wwald.util.ParseException;
+import org.wwald.util.CourseWikiParser.CourseTitlePair;
 import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.SimpleViewPageLink;
 
 public class CoursesPanel extends Panel {
 	
-	public CoursesPanel(String id) throws DataException {
+	public CoursesPanel(String id) throws DataException, ParseException {
 		super(id);
 		add(getCoursesListView());
 	}
 	
-	private ListView getCoursesListView() throws DataException {
-    	List<Course> allCoursesToDisplay =  
-    		((WWALDApplication)getApplication()).
-    			getDataFacade().
-    				retreiveCoursesListedInCourseWiki(ConnectionPool.getConnection() ); 
-
+	private ListView getCoursesListView() throws DataException, ParseException {
+		
+		String wikiContent = ((WWALDApplication)getApplication()).
+									getDataFacade().
+										retreiveCourseWiki(ConnectionPool.getConnection());
+		CourseWikiParser parser = new CourseWikiParser();
+		
+		List<CourseTitlePair> tokens = parser.parse(wikiContent);
+		
+		List<Course> allCoursesToDisplay = new ArrayList<Course>();
+		
+		for(CourseTitlePair ctp : tokens) {
+			Course course = ((WWALDApplication)getApplication()).
+								getDataFacade().
+									retreiveCourse(ConnectionPool.getConnection(),ctp.courseId);
+			if(course != null) {
+				allCoursesToDisplay.add(course);
+			}
+			else {
+				allCoursesToDisplay.add(new NonExistentCourse(ctp.courseId, ctp.courseTitle));
+			}
+		}
+		
+		 
+		
     	return getCoursesListView(allCoursesToDisplay);
     }
 

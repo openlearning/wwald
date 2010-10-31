@@ -39,21 +39,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			
 	}
 
-	public List<Course> retreiveCoursesListedInCourseWiki(Connection conn) throws DataException {
-		List<Course> courses = null;
-		String wikiContent = retreiveCourseWiki(conn);
-		try {
-			if(wikiContent != null && !wikiContent.trim().equals("")) {
-				courses = buildCourseObjectsFromCoursesWikiContent(conn, wikiContent);
-			}
-		} catch(IOException ioe) {
-			String msg = "Could not parse wiki contents";
-			cLogger.warn(msg, ioe);
-			throw new DataException(msg, ioe);
-		}
-		return courses;
-	}
-
 	public List<Course> retreiveCourses(Connection conn) throws DataException {
 		List<Course> courses = null;
 		
