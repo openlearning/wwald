@@ -78,7 +78,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
-	public Course retreiveCourse(Connection conn, String id) {
+	public Course retreiveCourse(Connection conn, String id) throws DataException {
 		Course course = null;
 		try {
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
@@ -97,11 +97,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				}
 			}
 		} catch(SQLException sqle) {
-			//TODO: At some point of time we need to send this exception to the view page which should then
-			//redirect to a standard error page with an error message
-			cLogger.error("Could not get course", sqle);
-		}  catch(DataException de) {
-			//propogate
+			String msg = "Could not retreive course '" + id + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 		
 		return course;
@@ -209,7 +207,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
-	public Competency retreiveCompetency(Connection conn, String courseId, String sCompetencyId) {
+	public Competency retreiveCompetency(Connection conn, String courseId, String sCompetencyId) throws DataException {
+		//TODO: We should not retreive Course to get Competency
 		Competency competency = null;
 		Course course = retreiveCourse(conn, courseId);
 		competency = course.getCompetency(sCompetencyId);
@@ -388,7 +387,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 * @throws IOException
 	 */
 	private List<Course> buildCourseObjectsFromCoursesWikiContent(Connection conn,
-														  String wikiContent) throws IOException {
+														  String wikiContent) throws IOException, DataException {
 		List<Course> courses = new ArrayList<Course>();
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(
 				wikiContent));

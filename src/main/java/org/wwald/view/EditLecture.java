@@ -1,5 +1,7 @@
 package org.wwald.view;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.ParagraphAction;
+
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -9,18 +11,26 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
+import org.wwald.WicketIdConstants;
 import org.wwald.model.Competency;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
+import org.wwald.service.DataException;
 
 public class EditLecture extends AccessControlledPage {
 	public EditLecture(PageParameters pageParams) {
 		super(pageParams);
-		String courseId = pageParams.getString(WWALDConstants.SELECTED_COURSE);
-		String sCompetencyId = pageParams.getString(WWALDConstants.SELECTED_COMPETENCY);
-		Competency competency = getCompetency(courseId, sCompetencyId);
-		add(new Label("course.name", courseId));
-		add(getCompetencyEditForm(courseId, competency, pageParams));
+		try {
+			String courseId = pageParams.getString(WWALDConstants.SELECTED_COURSE);
+			String sCompetencyId = pageParams.getString(WWALDConstants.SELECTED_COMPETENCY);
+			Competency competency = getCompetency(courseId, sCompetencyId);
+			add(new Label("course.name", courseId));
+			add(getCompetencyEditForm(courseId, competency, pageParams));
+		} catch(DataException de) {
+			String msg = "Sorry could not display page because a internal error has occured";
+			pageParams.add(WicketIdConstants.MESSAGES, msg);
+			setResponsePage(GenericErrorPage.class, pageParams);
+		}
 	}
 
 	private Form getCompetencyEditForm(final String courseId, final Competency competency, final PageParameters pageParams) {
@@ -49,7 +59,7 @@ public class EditLecture extends AccessControlledPage {
 		return editCompetencyDescriptionForm;
 	}
 
-	private Competency getCompetency(String courseId, String sCompetencyId) {
+	private Competency getCompetency(String courseId, String sCompetencyId) throws DataException {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		Competency competency = app.getDataFacade().retreiveCompetency(ConnectionPool.getConnection(), courseId, sCompetencyId);
 		return competency;

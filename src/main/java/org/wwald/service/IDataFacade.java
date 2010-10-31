@@ -14,7 +14,7 @@ public interface IDataFacade {
 	
 	//Course
 	public List<Course> retreiveCourses(Connection c) throws DataException ;
-	public Course retreiveCourse(Connection c, String courseId);
+	public Course retreiveCourse(Connection c, String courseId) throws DataException;
 	public String retreiveCourseWiki(Connection c) throws DataException;
 	public void updateCourse(Connection c, Course course);
 	public void insertCourse(Connection c, Course course);
@@ -27,7 +27,7 @@ public interface IDataFacade {
 	public void updateCompetenciesWikiContents(Connection c, String courseId, String contents);	
 	public List<Competency> retreiveAllCompetencies(Connection c);
 	public List<Competency> retreiveCompetenciesForCourse(Connection c, Course course);
-	public Competency retreiveCompetency(Connection c, String courseId, String competencyId);
+	public Competency retreiveCompetency(Connection c, String courseId, String competencyId) throws DataException;
 	public String retreiveCompetenciesWiki(Connection c, String courseId);
 	public void updateCompetency(Connection c, String courseId, Competency competency);
 	public Competency insertCompetency(Connection c, Course course, String title) throws DataException;
