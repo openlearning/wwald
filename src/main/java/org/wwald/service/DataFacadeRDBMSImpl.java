@@ -177,7 +177,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void addCourseEnrollmentAction(Connection conn, CourseEnrollmentStatus courseEnrollmentStatus) {
+	public void addCourseEnrollmentAction(Connection conn, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException {
 		String sqlTemplate = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
 		//TODO: Remove hardcoded date
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
@@ -192,6 +192,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		} catch(SQLException sqle) {
 			String msg = "Could not add CourseEnrollmentStatus " + courseEnrollmentStatus;
 			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 	}
 
