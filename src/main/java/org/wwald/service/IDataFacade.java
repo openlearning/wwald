@@ -24,7 +24,7 @@ public interface IDataFacade {
 	public void addCourseEnrollmentAction(Connection c, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException;
 	
 	//Competencies
-	public void updateCompetenciesWikiContents(Connection c, String courseId, String contents);	
+	public void updateCompetenciesWikiContents(Connection c, String courseId, String contents) throws DataException;	
 	public List<Competency> retreiveAllCompetencies(Connection c);
 	public List<Competency> retreiveCompetenciesForCourse(Connection c, Course course);
 	public Competency retreiveCompetency(Connection c, String courseId, String competencyId) throws DataException;

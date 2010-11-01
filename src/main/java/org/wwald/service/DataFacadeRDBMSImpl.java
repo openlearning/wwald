@@ -222,7 +222,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return competency;
 	}
 
-	public void updateCompetenciesWikiContents(Connection conn, String courseId, String contents) {
+	public void updateCompetenciesWikiContents(Connection conn, String courseId, String contents) throws DataException {
 		String competenciesWikiContents = (String)contents;
 		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
 		Statement stmt = null;
@@ -236,7 +236,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				cLogger.info("CompetenciesWiki not updated");
 			}
 		} catch(SQLException sqle) {
-			cLogger.error("Could not update CompetenciesWiki with new data", sqle);
+			String msg = "Could not update CompetenciesWiki due to an Exception";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 	}
 	

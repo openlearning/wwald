@@ -35,10 +35,18 @@ public class EditCompetencies extends AccessControlledPage {
 		Form editCompetenciesForm = new Form("competencies.edit.form") {
 			@Override
 			public void onSubmit() {
-				TextArea textArea = (TextArea)get(0);
-				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), courseId, (String)textArea.getModelObject());
-				setResponsePage(CoursePage.class, pageParams);
+				try {
+					TextArea textArea = (TextArea)get(0);
+					WWALDApplication app = (WWALDApplication)getApplication();
+					app.getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), courseId, (String)textArea.getModelObject());
+					setResponsePage(CoursePage.class, pageParams);
+				} catch(DataException de) {
+					String msg = "Sorry we could not perform the action you requested " +
+								 "due to an internal error. We will look into this " +
+								 "issue as soon as we can";
+					pageParams.add(WicketIdConstants.MESSAGES, msg);
+					setResponsePage(GenericErrorPage.class, pageParams);
+				}
 			}
 		};
 		TextArea editCompetenciesFormTextArea = new TextArea("competencies.edit.form.textarea", 
