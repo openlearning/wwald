@@ -196,7 +196,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public String retreiveCompetenciesWiki(Connection conn, String courseId) {
+	public String retreiveCompetenciesWiki(Connection conn, String courseId) throws DataException {
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
 		Statement stmt = null;
@@ -207,7 +207,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				wikiContents = rs.getString(2);
 			}
 		} catch(SQLException sqle) {
-			cLogger.error("Could not get contents of CompetenciesWiki table", sqle);
+			String msg = "Could not get contents of CompetenciesWiki table";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 		return wikiContents;
 	}
