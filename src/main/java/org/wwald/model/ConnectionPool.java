@@ -24,6 +24,12 @@ public class ConnectionPool {
 			String password = dbProps.getProperty("db.password");
 			
 			Class.forName("org.hsqldb.jdbcDriver").newInstance();
+			
+			System.out.println("Connecting to the database");
+			System.out.println("url - '" + url + "'");
+			System.out.println("user - '" + username + "'");
+			System.out.println("password - '" + password + "'");
+			
 			conn = DriverManager.getConnection(url, username, password);
 		} catch(Exception e) {
 			System.out.println("COULD NOT INITIALIZE DATABASE CONNECTION " + e);
