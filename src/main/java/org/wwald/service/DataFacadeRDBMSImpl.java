@@ -125,8 +125,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public void updateCourseWiki(Connection conn, String wikiContents) {
+	public void updateCourseWiki(Connection conn, String wikiContents) throws DataException {
 		//TODO: If we change the course title then the changes should be reflected in the db
+		//Also we may want to do some basic validating parsing here... or somewhere before we
+		//save the contents
 		String coursesWikiContents = (String)wikiContents;
 		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
 		Statement stmt = null;
@@ -136,7 +138,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
 			else cLogger.info("CoursesWiki not updated");
 		} catch(SQLException sqle) {
-			cLogger.error("Could not update CoursesWiki with new data", sqle);
+			String msg = "Could not update CoursesWiki with new data '" + wikiContents + "'" ;
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 	}
 	

@@ -31,9 +31,20 @@ public class EditCourses extends AccessControlledPage {
 		Form editCoursesForm = new Form("courses.edit.form") {
 			@Override
 			public void onSubmit() {
-				TextArea textArea = (TextArea)get(0);
-				WWALDApplication app = (WWALDApplication)getApplication();
-				app.getDataFacade().updateCourseWiki(ConnectionPool.getConnection(), (String)textArea.getModelObject());
+				try {
+					//TODO: Get by name and not index
+					TextArea textArea = (TextArea)get(0);
+					WWALDApplication app = (WWALDApplication)getApplication();
+					app.getDataFacade().updateCourseWiki(ConnectionPool.getConnection(), (String)textArea.getModelObject());
+					
+				} catch(DataException de) {
+					String msg = "Sorry we could not perform the action you requested, " +
+								 "due to an internal error. We will look into this issue as soon as we can";
+					PageParameters pageParams = getPage().getPageParameters();
+					if(pageParams != null) {
+						pageParams.add(WicketIdConstants.MESSAGES, msg);
+					}
+				}
 				setResponsePage(HomePage.class);
 			}
 		};
