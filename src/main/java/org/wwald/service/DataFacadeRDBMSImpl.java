@@ -353,13 +353,19 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public List<StatusUpdate> getStatusUpdates(Connection conn) {
-		List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses(conn);
-		List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
-		for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
-			statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getUsername() + " " + courseEnrollmentStatus.getUserCourseStatus() + " course " + courseEnrollmentStatus.getCourseId() + " at " + courseEnrollmentStatus.getTimestamp()));
-		}    	
-    	return statusUpdates; 
+	public List<StatusUpdate> getStatusUpdates(Connection conn) throws DataException {
+		try {
+			List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses(conn);
+			List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
+			for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
+				statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getUsername() + " " + courseEnrollmentStatus.getUserCourseStatus() + " course " + courseEnrollmentStatus.getCourseId() + " at " + courseEnrollmentStatus.getTimestamp()));
+			}    	
+	    	return statusUpdates;
+		} catch(SQLException sqle) {
+			String msg = "Could not get status updates due to an exception";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
 	}
 	
 	public User retreiveUser(Connection conn, String username, String password) throws DataException {
@@ -556,26 +562,22 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return mentors;
 	}
 	
-	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses(Connection conn) {
+	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses(Connection conn) throws SQLException {
 		//TODO: Limit this query to 5 rows
 		String sql = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";
 		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			
-			while(rs.next()) {
-				String courseId = rs.getString("course_id");
-				String username = rs.getString("username");
-				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
-				Timestamp tstamp = rs.getTimestamp("tstamp");
-				statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
-			}
-			
-		} catch(SQLException sqle) {
-			String msg = "Could not get all course enrollment statuses";
-			cLogger.error(msg, sqle);
-		}
+		
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		
+		while(rs.next()) {
+			String courseId = rs.getString("course_id");
+			String username = rs.getString("username");
+			int userCourseStatusId = rs.getInt("course_enrollment_action_id");
+			Timestamp tstamp = rs.getTimestamp("tstamp");
+			statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+		}	
+		 
 		return statuses;
 	}
 	

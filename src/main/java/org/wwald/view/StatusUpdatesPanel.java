@@ -1,5 +1,8 @@
 package org.wwald.view;
 
+import java.util.List;
+
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -8,17 +11,25 @@ import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.StatusUpdate;
+import org.wwald.service.DataException;
 
 public class StatusUpdatesPanel extends Panel {
 
 	public StatusUpdatesPanel(String id) {
 		super(id);
-		add(getStatusUpdateListView());
+		try {
+			add(getStatusUpdateListView());
+		} catch(DataException de) {
+			String msg = "Sorry we could not get status updates, due to an internal error";
+			PageParameters parameters = getPage().getPageParameters();
+			parameters.add(WicketIdConstants.MESSAGES, msg);
+		}
 	}
 	
-	private ListView getStatusUpdateListView() {
+	private ListView getStatusUpdateListView() throws DataException {
+		List<StatusUpdate> statusUpdates = ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection());
     	return
-    	new ListView(WicketIdConstants.STATUS_UPDATES, ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection())) {
+    	new ListView(WicketIdConstants.STATUS_UPDATES, statusUpdates) {
 
 			@Override
 			protected void populateItem(ListItem item) {

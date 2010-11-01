@@ -44,7 +44,7 @@ public interface IDataFacade {
 	public void deleteMentor(Connection c, Mentor mentor);
 	
 	//Status updates
-	public List<StatusUpdate> getStatusUpdates(Connection c);
+	public List<StatusUpdate> getStatusUpdates(Connection c) throws DataException;
 	
 	//User
 	public User retreiveUser(Connection c, String userName, String password) throws DataException ;
