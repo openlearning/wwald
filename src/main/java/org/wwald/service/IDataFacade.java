@@ -16,32 +16,32 @@ public interface IDataFacade {
 	public List<Course> retreiveCourses(Connection c) throws DataException ;
 	public Course retreiveCourse(Connection c, String courseId) throws DataException;
 	public String retreiveCourseWiki(Connection c) throws DataException;
-	public void updateCourse(Connection c, Course course);
+	public void updateCourse(Connection c, Course course) throws DataException;
 	public void insertCourse(Connection c, Course course) throws DataException;
-	public void upsertCourse(Connection c, Course course);
+	public void upsertCourse(Connection c, Course course) throws DataException;
 	public void updateCourseWiki(Connection c, String wikiContents) throws DataException;
 	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, User user, Course course) throws DataException;
 	public void addCourseEnrollmentAction(Connection c, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException;
 	
 	//Competencies
 	public void updateCompetenciesWikiContents(Connection c, String courseId, String contents) throws DataException;	
-	public List<Competency> retreiveAllCompetencies(Connection c);
-	public List<Competency> retreiveCompetenciesForCourse(Connection c, Course course);
+	public List<Competency> retreiveAllCompetencies(Connection c) throws DataException;
+	public List<Competency> retreiveCompetenciesForCourse(Connection c, Course course) throws DataException;
 	public Competency retreiveCompetency(Connection c, String courseId, String competencyId) throws DataException;
 	public String retreiveCompetenciesWiki(Connection c, String courseId) throws DataException;
 	public void updateCompetency(Connection c, String courseId, Competency competency) throws DataException;
 	public Competency insertCompetency(Connection c, Course course, String title) throws DataException;
-	public void upsertCompetency(Connection c, Competency competency);
-	public void deleteCompetency(Connection c, Competency competency);
+	public void upsertCompetency(Connection c, Competency competency) throws DataException;
+	public void deleteCompetency(Connection c, Competency competency) throws DataException;
 	
 	//Mentors
-	public List<Mentor> retreiveAllMentors(Connection c);
-	public List<Mentor> retreiveMentorsForCourse(Connection c);
-	public List<Mentor> retreiveMentorsForCompetency(Connection c);
-	public void updateMentor(Connection c, Mentor mentor);
-	public void insertMentor(Connection c, Mentor mentor);
-	public void upsertMentor(Connection c, Mentor mentor);
-	public void deleteMentor(Connection c, Mentor mentor);
+	public List<Mentor> retreiveAllMentors(Connection c) throws DataException;
+	public List<Mentor> retreiveMentorsForCourse(Connection c) throws DataException;
+	public List<Mentor> retreiveMentorsForCompetency(Connection c) throws DataException;
+	public void updateMentor(Connection c, Mentor mentor) throws DataException;
+	public void insertMentor(Connection c, Mentor mentor) throws DataException;
+	public void upsertMentor(Connection c, Mentor mentor) throws DataException;
+	public void deleteMentor(Connection c, Mentor mentor) throws DataException;
 	
 	//Status updates
 	public List<StatusUpdate> getStatusUpdates(Connection c) throws DataException;

@@ -277,77 +277,77 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return competency;
 	}
 	
-	public void deleteCompetency(Connection conn, Competency competency) {
+	public void deleteCompetency(Connection conn, Competency competency) throws DataException {
 		throw new RuntimeException("method not implemented");
 	}
 
-	public void deleteMentor(Connection conn, Mentor mentor) {
+	public void deleteMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public void insertMentor(Connection conn, Mentor mentor) {
+	public void insertMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public List<Mentor> retreiveMentorsForCompetency(Connection conn) {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
-		return null;
-	}
-
-	public List<Competency> retreiveAllCompetencies(Connection conn) {
+	public List<Mentor> retreiveMentorsForCompetency(Connection conn) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public List<Mentor> retreiveAllMentors(Connection conn) {
+	public List<Competency> retreiveAllCompetencies(Connection conn) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public List<Competency> retreiveCompetenciesForCourse(Connection conn, Course course) {
+	public List<Mentor> retreiveAllMentors(Connection conn) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public List<Mentor> retreiveMentorsForCourse(Connection conn) {
+	public List<Competency> retreiveCompetenciesForCourse(Connection conn, Course course) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
-	public void updateCourse(Connection conn, Course course) {
+	public List<Mentor> retreiveMentorsForCourse(Connection conn) throws DataException {
+		if(true) {
+			throw new RuntimeException("method not implemented");
+		}
+		return null;
+	}
+
+	public void updateCourse(Connection conn, Course course) throws DataException {
 		throw new RuntimeException("method not implemented");
 		
 	}
 
-	public void updateMentor(Connection conn, Mentor mentor) {
+	public void updateMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public void upsertCompetency(Connection conn, Competency competency) {
+	public void upsertCompetency(Connection conn, Competency competency) throws DataException {
 		throw new RuntimeException("method not implemented");
 	}
 
-	public void upsertCourse(Connection conn, Course course) {
+	public void upsertCourse(Connection conn, Course course) throws DataException {
 		throw new RuntimeException("method not implemented");
 	}
 
-	public void upsertMentor(Connection conn, Mentor mentor) {
+	public void upsertMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
