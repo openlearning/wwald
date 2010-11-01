@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import util.DataInitializer;
 
 
 /**
@@ -80,16 +79,17 @@ public class Course implements Serializable {
 		StringBuffer buff = new StringBuffer();
 		buff.append(this.id + " ");
 		buff.append(this.title);
-		buff.append(DataInitializer.LINE_SEPERATOR);
+		//TODO: 
+		buff.append("\n");
 		buff.append(this.description);
 		buff.append("Mentor: ");
 		buff.append(this.mentor);
-		buff.append("DataInitializer.LINE_SEPERATOR");
+		buff.append("\n");
 		buff.append("Competencies");
-		buff.append("DataInitializer.LINE_SEPERATOR");
+		buff.append("\n");
 		for(Competency competency : this.competencies) {
 			buff.append(competency);
-			buff.append("DataInitializer.LINE_SEPERATOR");
+			buff.append("\n");
 		}
 		return buff.toString();
 	}
