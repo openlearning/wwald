@@ -1,9 +1,9 @@
 package org.wwald.view;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -23,9 +23,9 @@ import org.wwald.util.CourseWikiParser;
 import org.wwald.util.ParseException;
 import org.wwald.util.CourseWikiParser.CourseTitlePair;
 import org.wwald.view.components.AccessControlledViewPageLink;
-import org.wwald.view.components.SimpleViewPageLink;
 
 public class CoursesPanel extends Panel {
+	private static final Logger cLogger = Logger.getLogger(CoursesPanel.class);
 	
 	public CoursesPanel(String id) throws DataException, ParseException {
 		super(id);
@@ -73,11 +73,21 @@ public class CoursesPanel extends Panel {
 						@Override
 						public void onClick() {
 							//TODO: Why can't we access dataFacade from HomePage?
-							WWALDApplication app = (WWALDApplication)(getApplication());
-							app.getDataFacade().insertCourse(ConnectionPool.getConnection(), course);
-							PageParameters pageParameters = new PageParameters();
-							pageParameters.add(WWALDConstants.SELECTED_COURSE, course.getId());
-							setResponsePage(EditCompetencies.class, pageParameters);
+							PageParameters pageParameters = getPage().getPageParameters();
+							//TODO: Why would this ever be null?
+							if(pageParameters == null) {
+								pageParameters = new PageParameters();
+							}
+							try {
+								WWALDApplication app = (WWALDApplication)(getApplication());
+								app.getDataFacade().insertCourse(ConnectionPool.getConnection(), course);								
+								pageParameters.add(WWALDConstants.SELECTED_COURSE, course.getId());
+								setResponsePage(EditCompetencies.class, pageParameters);
+							} catch(DataException de) {
+								String msg = "Could not insert course " + course;
+								cLogger.error(msg, de);
+								pageParameters.add(WicketIdConstants.MESSAGES, msg);
+							}							
 						}
 					};
 					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));

@@ -17,7 +17,7 @@ public interface IDataFacade {
 	public Course retreiveCourse(Connection c, String courseId) throws DataException;
 	public String retreiveCourseWiki(Connection c) throws DataException;
 	public void updateCourse(Connection c, Course course);
-	public void insertCourse(Connection c, Course course);
+	public void insertCourse(Connection c, Course course) throws DataException;
 	public void upsertCourse(Connection c, Course course);
 	public void updateCourseWiki(Connection c, String wikiContents);
 	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, User user, Course course) throws DataException;

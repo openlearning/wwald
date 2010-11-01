@@ -105,7 +105,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return course;
 	}
 	
-	public void insertCourse(Connection conn, Course course) {
+	public void insertCourse(Connection conn, Course course) throws DataException {
 		Statement stmt = null;
 		int rowsUpdated = 0;
 		try {
