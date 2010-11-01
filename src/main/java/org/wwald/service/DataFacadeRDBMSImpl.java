@@ -242,7 +242,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void updateCompetency(Connection conn, String courseId, Competency competency) {
+	public void updateCompetency(Connection conn, String courseId, Competency competency) throws DataException {
 		String sql = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
 		Statement stmt = null;
 		try {

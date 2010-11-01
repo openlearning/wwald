@@ -37,16 +37,22 @@ public class EditLecture extends AccessControlledPage {
 		Form editCompetencyDescriptionForm = new Form("lecture.edit.form") {
 			@Override
 			public void onSubmit() {
-				TextArea editCompetencyDescriptionTextArea = (TextArea)get(0);
-				TextArea editCompetencyResourcesTextArea = (TextArea)get(1);
-				
-				WWALDApplication app = (WWALDApplication)getApplication();
-				
-				competency.setDescription((String)editCompetencyDescriptionTextArea.getModelObject());
-				competency.setResource((String)editCompetencyResourcesTextArea.getModelObject());
-				app.getDataFacade().updateCompetency(ConnectionPool.getConnection(), courseId, competency);
-				
-				setResponsePage(CoursePage.class, pageParams);
+				try {
+					TextArea editCompetencyDescriptionTextArea = (TextArea)get(0);
+					TextArea editCompetencyResourcesTextArea = (TextArea)get(1);
+					
+					WWALDApplication app = (WWALDApplication)getApplication();
+					
+					competency.setDescription((String)editCompetencyDescriptionTextArea.getModelObject());
+					competency.setResource((String)editCompetencyResourcesTextArea.getModelObject());
+					app.getDataFacade().updateCompetency(ConnectionPool.getConnection(), courseId, competency);
+					
+					setResponsePage(CoursePage.class, pageParams);
+				} catch(DataException de) {
+					String msg = "Sorry we could not perform the action you requested, due to an internal error. We will look into this problem as soon as we can.";
+					pageParams.add(WicketIdConstants.MESSAGES, msg);
+					setResponsePage(GenericErrorPage.class, pageParams);
+				}
 			}
 		};
 		
