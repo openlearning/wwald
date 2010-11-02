@@ -10,9 +10,13 @@ public class Sql {
 	public static String INSERT_MENTOR = 
 		"INSERT INTO MENTOR (first_name, middle_initial, last_name, short_bio) VALUES (%s, %s, %s, %s);";
 	
+	public static String RETREIVE_MENTOR_BY_NAME = "SELECT * FROM MENTOR WHERE first_name=%s AND middle_initial=%s AND last_name=%s";
+	
 	public static String INSERT_COURSES_WIKI = "INSERT INTO COURSES_WIKI (id, content) VALUES (%s,%s);";
 	
 	public static String INSERT_COURSE = "INSERT INTO COURSE (id, title, description) VALUES (%s, %s, %s);";
+	
+	public static String INSERT_COURSE_MENTOR = "INSERT INTO COURSE_MENTORS (course_id, mentor_id) VALUES (%s, %s);";
 	
 	public static String INSERT_COURSE_COMPETENCIES_WIKI = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s, %s);";
 	

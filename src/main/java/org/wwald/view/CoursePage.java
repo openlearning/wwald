@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -14,7 +12,6 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.Mentor;
 import org.wwald.service.DataException;
-import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
 
 public class CoursePage extends BasePage {
@@ -26,7 +23,7 @@ public class CoursePage extends BasePage {
 		try {
 			this.selectedCourse = getSelectedCourse(parameters);
 			
-			replaceSidebar(getSidebar(this));
+//			replaceSidebar(getSidebar(this));
 			
 			Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
 			if(parameters.getString(WWALDConstants.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
@@ -78,15 +75,11 @@ public class CoursePage extends BasePage {
 		return competency;
 	}
 
-//	@Override
-//	public Panel getSidebar() {
-//		if(this.selectedCourse == null) {
-//			return new EmptyPanel("rhs_sidebar");
-//		}
-//		else {
-//			Mentor mentor = selectedCourse.getMentor();
-//			return new CourseDetailsPanel(mentor, WicketIdConstants.RHS_SIDEBAR);
-//		}
-//		
-//	}
+	public Mentor getMentor() {
+		Mentor mentor = null;
+		if(selectedCourse != null) {
+			mentor = selectedCourse.getMentor();
+		}
+		return mentor;
+	}
 }

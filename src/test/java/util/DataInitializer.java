@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -132,6 +134,8 @@ public class DataInitializer {
 
 	private void populateCourse(List<Course> coursesList, Connection conn) throws SQLException {
 		
+		//SqlUtil.printTableContents("MENTOR", conn);
+		
 		for(Course course : coursesList) {
 			if(course != null) {
 				String sql = String.format(Sql.INSERT_COURSE,
@@ -140,8 +144,50 @@ public class DataInitializer {
 										   wrapForSQL(course.getDescription()));
 				Statement stmt = conn.createStatement();
 				stmt.executeUpdate(sql);
+				
+				Mentor mentor = course.getMentor();
+				
+				if(mentor != null) {
+					try {
+						int mentorId = getMentorId(mentor, conn);
+						if(mentorId != -1) {
+							sql = String.format(Sql.INSERT_COURSE_MENTOR, 
+									wrapForSQL(course.getId()), 
+									mentorId);
+							stmt = conn.createStatement();
+//							System.out.println("populating mentor with");
+//							System.out.println(sql);
+							stmt.executeUpdate(sql);
+						}
+						else {
+							System.out.println("Could not populate mentor for course because mentor id is -1");
+						}
+					} catch(SQLException sqle) {
+						System.out.println("Could not populate mentor for course " + sqle);
+					}
+				}
+				
 			}
 		}
+	}
+
+	
+	private int getMentorId(Mentor mentor, Connection conn) throws SQLException {
+		int id = -1;
+		String sql = String.format(Sql.RETREIVE_MENTOR_BY_NAME,
+								   wrapForSQL(mentor.getFirstName()),
+								   wrapForSQL(mentor.getMiddleInitial()),
+								   wrapForSQL(mentor.getLastName()));
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		if(rs.next()) {
+			id = rs.getInt("id");
+			if(rs.next()) {
+				id = -1;
+			}
+		}
+		
+		return id;
 	}
 
 	private void populateCoursesWiki(List<Course> coursesList, Connection conn) throws SQLException {

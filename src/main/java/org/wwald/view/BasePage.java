@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDConstants;
@@ -22,7 +23,8 @@ public abstract class BasePage extends WebPage {
 	Panel sidebar;
 	
 	public BasePage(PageParameters parameters) {
-		this.sidebar = getSidebar(this);
+		//we add an empty side bar which will be replaced by inheriting pages
+		this.sidebar = new EmptyPanel(WicketIdConstants.RHS_SIDEBAR); 
 		add(this.sidebar);
 		add(new HeaderPanel(WicketIdConstants.HEADER_PANEL));
 		add(new FooterPanel(WicketIdConstants.FOOTER_PANEL));
@@ -33,6 +35,14 @@ public abstract class BasePage extends WebPage {
 		Panel temp = this.sidebar;
 		temp.replaceWith(sidebar);
 		this.sidebar = sidebar;
+	}
+	
+	@Override
+	public void onBeforeRender() {
+		super.onBeforeRender();
+		//we will not replace the default sidebar with the
+		//page specific sidebar
+		replaceSidebar(getSidebar(this));
 	}
 	
 	public final Panel getSidebar(BasePage viewPage) {

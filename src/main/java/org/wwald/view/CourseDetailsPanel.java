@@ -6,18 +6,29 @@ import org.wwald.model.Mentor;
 
 public class CourseDetailsPanel extends Panel {
 
-	public CourseDetailsPanel(Mentor mentor, String id) {
+	public CourseDetailsPanel(String id, BasePage viewPage) {
 		super(id);
-		if(mentor != null) {
-			add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMiddleInitial() + " " + mentor.getLastName()));
-			add(new Label("mentor.qanswered", "7 xxx"));
-			add(new Label("mentor.lastlogin", "some date"));
+		if(viewPage instanceof CoursePage) {
+			CoursePage coursePage = (CoursePage)viewPage;
+			Mentor mentor = coursePage.getMentor();
+			if(mentor != null) {
+				add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMiddleInitial() + " " + mentor.getLastName()));
+				add(new Label("mentor.qanswered", ""));
+				add(new Label("mentor.lastlogin", ""));
+			}
+			else {
+				addBlankMentorDetails();
+			}
 		}
 		else {
-			add(new Label("mentor.name", ""));
-			add(new Label("mentor.qanswered", "7 xxx"));
-			add(new Label("mentor.lastlogin", "some date"));
+			addBlankMentorDetails();
 		}
+	}
+
+	private void addBlankMentorDetails() {
+		add(new Label("mentor.name", ""));
+		add(new Label("mentor.qanswered", "7 xxx"));
+		add(new Label("mentor.lastlogin", "some date"));
 	}
 
 }
