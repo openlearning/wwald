@@ -56,11 +56,6 @@ public class EditCourses extends AccessControlledPage {
 	}
 
 	@Override
-	public Panel getSidebar() {
-		return new EmptyPanel("rhs_sidebar");
-	}
-
-	@Override
 	protected Permission getRequiredPermission() {
 		return Permission.EDIT_COURSES;
 	}

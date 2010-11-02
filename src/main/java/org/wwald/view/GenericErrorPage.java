@@ -17,9 +17,4 @@ public class GenericErrorPage extends BasePage {
 //		add(label);
 	}
 
-	@Override
-	public Panel getSidebar() {
-		return new EmptyPanel(WicketIdConstants.RHS_SIDEBAR);
-	}
-
 }

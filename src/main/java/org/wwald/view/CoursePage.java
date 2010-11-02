@@ -25,7 +25,9 @@ public class CoursePage extends BasePage {
 		super(parameters);
 		try {
 			this.selectedCourse = getSelectedCourse(parameters);
-			replaceSidebar(getSidebar());
+			
+			replaceSidebar(getSidebar(this));
+			
 			Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
 			if(parameters.getString(WWALDConstants.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
 				parameters.add(WWALDConstants.SELECTED_COMPETENCY, String.valueOf(selectedCompetency.getId()));
@@ -76,15 +78,15 @@ public class CoursePage extends BasePage {
 		return competency;
 	}
 
-	@Override
-	public Panel getSidebar() {
-		if(this.selectedCourse == null) {
-			return new EmptyPanel("rhs_sidebar");
-		}
-		else {
-			Mentor mentor = selectedCourse.getMentor();
-			return new CourseDetailsPanel(mentor, WicketIdConstants.RHS_SIDEBAR);
-		}
-		
-	}
+//	@Override
+//	public Panel getSidebar() {
+//		if(this.selectedCourse == null) {
+//			return new EmptyPanel("rhs_sidebar");
+//		}
+//		else {
+//			Mentor mentor = selectedCourse.getMentor();
+//			return new CourseDetailsPanel(mentor, WicketIdConstants.RHS_SIDEBAR);
+//		}
+//		
+//	}
 }

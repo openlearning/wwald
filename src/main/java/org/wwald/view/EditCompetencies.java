@@ -61,11 +61,6 @@ public class EditCompetencies extends AccessControlledPage {
 	}
 
 	@Override
-	public Panel getSidebar() {
-		return new EmptyPanel("rhs_sidebar");
-	}
-
-	@Override
 	protected Permission getRequiredPermission() {
 		return Permission.EDIT_COURSE;
 	}
