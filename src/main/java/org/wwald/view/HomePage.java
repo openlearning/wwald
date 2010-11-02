@@ -75,10 +75,5 @@ public class HomePage extends BasePage implements Serializable {
     private Panel getStatusUpdatesPanel() {
     	return new StatusUpdatesPanel(WicketIdConstants.STATUS_UPDATES_PANEL);
     }
-
-	@Override
-	public Panel getSidebar() {
-		return new EmptyPanel(WicketIdConstants.RHS_SIDEBAR);
-	}
 	
 }

@@ -55,9 +55,4 @@ public class LoginPage extends BasePage {
 		return loginForm;
 	}
 	
-	@Override
-	public Panel getSidebar() {
-		return new EmptyPanel("rhs_sidebar");
-	}
-
 }

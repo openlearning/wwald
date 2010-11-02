@@ -15,7 +15,7 @@ public class ConnectionPool {
 			InputStream propStream = 
 				ConnectionPool.class.
 					getClassLoader().
-						getResourceAsStream("org/wwald/db.properties");
+						getResourceAsStream("db.properties");
 			Properties dbProps = new Properties();
 			dbProps.load(propStream);
 			

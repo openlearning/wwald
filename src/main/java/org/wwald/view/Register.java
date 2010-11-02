@@ -38,8 +38,4 @@ public class Register extends BasePage {
 		return registerForm;
 	}
 
-	@Override
-	public Panel getSidebar() {
-		return new EmptyPanel("rhs_sidebar");
-	}
 }

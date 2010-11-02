@@ -28,7 +28,9 @@ public abstract class BasePage extends WebPage {
 		this.sidebar = sidebar;
 	}
 	
-	public abstract Panel getSidebar();
+	public Panel getSidebar() {
+		return new Sidebar(WicketIdConstants.RHS_SIDEBAR);
+	}
 	
 	private Serializable getMessages(PageParameters parameters) {
 		String messages = parameters.getString(WicketIdConstants.MESSAGES);

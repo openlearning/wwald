@@ -83,7 +83,7 @@ public class CoursePage extends BasePage {
 		}
 		else {
 			Mentor mentor = selectedCourse.getMentor();
-			return new CourseDetailsPanel(mentor, "rhs_sidebar");
+			return new CourseDetailsPanel(mentor, WicketIdConstants.RHS_SIDEBAR);
 		}
 		
 	}
