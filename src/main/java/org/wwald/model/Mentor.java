@@ -65,6 +65,6 @@ public class Mentor implements Serializable {
 	@Override
 	public String toString() {
 		//StringBuffer buff = new StringBuffer();
-		return this.firstName;
+		return this.firstName + " " + this.middleInitial + " " + this.lastName;
 	}
 }
