@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -368,8 +370,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		try {
 			List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses(conn);
 			List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
+//			DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 			for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
-				statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getUsername() + " " + courseEnrollmentStatus.getUserCourseStatus() + " course " + courseEnrollmentStatus.getCourseId() + " at " + courseEnrollmentStatus.getTimestamp()));
+				statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getTimestamp() + 
+												   " - " +
+												   courseEnrollmentStatus.getUsername() + " " + 
+												   getEnrollmentStatusWithSurroundingText(courseEnrollmentStatus.getUserCourseStatus()) + 
+												   " course " + 
+												   courseEnrollmentStatus.getCourseId()));
 			}    	
 	    	return statusUpdates;
 		} catch(SQLException sqle) {
@@ -378,7 +386,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new DataException(msg, sqle);
 		}
 	}
-	
+
 	public User retreiveUser(Connection conn, String username, String password) throws DataException {
 		User user = null;
 		try {
@@ -598,6 +606,25 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		String escapedStr = s.replaceAll("'", "''");
 		return "'" + escapedStr + "'";
+	}
+	
+	private String getEnrollmentStatusWithSurroundingText(
+			UserCourseStatus userCourseStatus) {
+		String retVal = "";
+		switch(userCourseStatus) {
+			case COMPLETED:
+				retVal = UserCourseStatus.COMPLETED.toString();
+				break;
+			case DROPPED:
+				retVal = UserCourseStatus.DROPPED.toString();
+				break;
+			case ENROLLED:
+				retVal = UserCourseStatus.ENROLLED.toString() + " in ";
+				break;
+			default:
+				retVal = userCourseStatus.toString();
+		}
+		return retVal;
 	}
 
 }
