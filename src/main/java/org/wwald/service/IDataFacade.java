@@ -7,6 +7,7 @@ import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
 import org.wwald.model.Mentor;
+import org.wwald.model.StaticPage;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
 
@@ -48,5 +49,9 @@ public interface IDataFacade {
 	
 	//User
 	public User retreiveUser(Connection c, String userName, String password) throws DataException ;
+	
+	//Static Pages
+	public StaticPage retreiveStaticPage(Connection c, String id) throws DataException;
+	public void upsertStaticPage(Connection c, StaticPage page) throws DataException;
 	
 }

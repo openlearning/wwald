@@ -22,6 +22,7 @@ import org.wwald.model.CourseEnrollmentStatus;
 import org.wwald.model.Mentor;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
+import org.wwald.model.StaticPage;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
@@ -408,7 +409,63 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		return user; 
 	}
+	
+	public StaticPage retreiveStaticPage(Connection c, String id) throws DataException {
+		StaticPage page = null;
+		String sql = String.format(Sql.RETREIVE_STATIC_PAGE, wrapForSQL(id));
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				String pageContents = rs.getString("contents");
+				page = new StaticPage(id, pageContents);
+			}
+			return page;
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive static page " + id;
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	public void upsertStaticPage(Connection conn, StaticPage page) throws DataException {
+		StaticPage preexistingPage = retreiveStaticPage(conn, page.getId());
+		if(preexistingPage == null) {
+			insertStaticPage(conn, page);
+		}
+		else {
+			updateStaticPage(conn, page);
+		}
+	}
 
+	private void insertStaticPage(Connection conn, StaticPage page) throws DataException {
+		String sql = String.format(Sql.INSERT_STATIC_PAGE, 
+								   wrapForSQL(page.getId()), 
+								   wrapForSQL(page.getContents()));
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql); 
+		} catch(SQLException sqle) {
+			String msg = "Could not insert page " + page;
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	private void updateStaticPage(Connection conn, StaticPage page) throws DataException {
+		String sql = String.format(Sql.UPDATE_STATIC_PAGE, 
+								   wrapForSQL(page.getContents()), 
+								   wrapForSQL(page.getId()));
+		
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not update page " + page;
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
 	/**
 	 * This method parses the courses wiki contents and returns a List of Course objects. 
 	 * Every course which exists in the database is returned as a {@link Course} object in  

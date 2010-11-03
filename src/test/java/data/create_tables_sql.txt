@@ -55,4 +55,8 @@ CREATE TABLE COURSE_MENTORS (
 	PRIMARY KEY(course_id, mentor_id),
 		CONSTRAINT course_mentors_col1_fk FOREIGN KEY (course_id) REFERENCES COURSE(id),
 		CONSTRAINT course_mentors_col2_fk FOREIGN KEY (mentor_id) REFERENCES MENTOR(id));
+
+CREATE TABLE STATIC_PAGES (
+	id VARCHAR(32) NOT NULL PRIMARY KEY,	
+	contents LONGVARCHAR);
 	

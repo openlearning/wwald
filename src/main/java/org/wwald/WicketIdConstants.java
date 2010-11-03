@@ -53,4 +53,8 @@ public class WicketIdConstants {
 	public static final String COURSE_STATUS_ACTIONS = "course_status_actions";
 	public static final String COURSE_STATUS_ACTION_LINK = "course_status_action_link";
 	public static final String COURSE_STATUS_ACTION_LABEL = "course_status_action_label";
+	
+	public static final String EDIT_ABOUT_FORM = "about_edit_form";
+	public static final String EDIT_ABOUT_FORM_TEXTAREA = "about_edit_form_textarea";
+	public static final String ABOUT_CONTENTS = "about_contents";
 }
