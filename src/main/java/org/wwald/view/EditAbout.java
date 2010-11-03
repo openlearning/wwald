@@ -47,7 +47,7 @@ public class EditAbout extends AccessControlledPage {
 					}
 				}
 				//TODO: When we make this generic we must change the page we redirect to based on which page was serviced
-				setResponsePage(AboutPage.class);
+				setResponsePage(StaticPage.class);
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();

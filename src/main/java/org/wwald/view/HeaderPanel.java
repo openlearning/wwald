@@ -18,7 +18,7 @@ public class HeaderPanel extends Panel {
 		homeLink.add(homeLabel);
 		add(homeLink);
 		
-		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, AboutPage.class);
+		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, StaticPage.class);
 		Label aboutLabel = new Label(WicketIdConstants.ABOUT_LABEL, "About .");
 		aboutLink.add(aboutLabel);
 		add(aboutLink);
