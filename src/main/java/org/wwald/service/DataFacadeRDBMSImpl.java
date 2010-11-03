@@ -22,7 +22,7 @@ import org.wwald.model.CourseEnrollmentStatus;
 import org.wwald.model.Mentor;
 import org.wwald.model.NonExistentCourse;
 import org.wwald.model.Role;
-import org.wwald.model.StaticPage;
+import org.wwald.model.StaticPagePOJO;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
@@ -410,15 +410,15 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return user; 
 	}
 	
-	public StaticPage retreiveStaticPage(Connection c, String id) throws DataException {
-		StaticPage page = null;
+	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException {
+		StaticPagePOJO page = null;
 		String sql = String.format(Sql.RETREIVE_STATIC_PAGE, wrapForSQL(id));
 		try {
 			Statement stmt = c.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {
 				String pageContents = rs.getString("contents");
-				page = new StaticPage(id, pageContents);
+				page = new StaticPagePOJO(id, pageContents);
 			}
 			return page;
 		} catch(SQLException sqle) {
@@ -428,8 +428,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void upsertStaticPage(Connection conn, StaticPage page) throws DataException {
-		StaticPage preexistingPage = retreiveStaticPage(conn, page.getId());
+	public void upsertStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
+		StaticPagePOJO preexistingPage = retreiveStaticPage(conn, page.getId());
 		if(preexistingPage == null) {
 			insertStaticPage(conn, page);
 		}
@@ -438,7 +438,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	private void insertStaticPage(Connection conn, StaticPage page) throws DataException {
+	private void insertStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
 		String sql = String.format(Sql.INSERT_STATIC_PAGE, 
 								   wrapForSQL(page.getId()), 
 								   wrapForSQL(page.getContents()));
@@ -452,7 +452,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	private void updateStaticPage(Connection conn, StaticPage page) throws DataException {
+	private void updateStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
 		String sql = String.format(Sql.UPDATE_STATIC_PAGE, 
 								   wrapForSQL(page.getContents()), 
 								   wrapForSQL(page.getId()));

@@ -8,7 +8,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
-import org.wwald.model.StaticPage;
+import org.wwald.model.StaticPagePOJO;
 import org.wwald.service.DataException;
 
 public class EditAbout extends AccessControlledPage {
@@ -35,7 +35,7 @@ public class EditAbout extends AccessControlledPage {
 					//TODO: Get by name and not index
 					TextArea textArea = (TextArea)get(0);
 					WWALDApplication app = (WWALDApplication)getApplication();
-					StaticPage page = new StaticPage("about", (String)textArea.getModelObject());
+					StaticPagePOJO page = new StaticPagePOJO("about", (String)textArea.getModelObject());
 					app.getDataFacade().upsertStaticPage(ConnectionPool.getConnection(), page);
 					
 				} catch(DataException de) {
@@ -51,7 +51,7 @@ public class EditAbout extends AccessControlledPage {
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();
-		StaticPage page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
+		StaticPagePOJO page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
 		TextArea editCoursesFormTextArea = new TextArea(WicketIdConstants.EDIT_ABOUT_FORM_TEXTAREA, new Model(page.getContents()));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;

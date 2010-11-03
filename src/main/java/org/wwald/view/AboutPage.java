@@ -8,7 +8,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
-import org.wwald.model.StaticPage;
+import org.wwald.model.StaticPagePOJO;
 import org.wwald.service.DataException;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
@@ -21,7 +21,7 @@ public class AboutPage extends BasePage {
 															 EditAbout.class, 
 															 new Role[]{Role.ADMIN});
 			
-			StaticPage page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
+			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
 			
 			add(new Label(WicketIdConstants.ABOUT_CONTENTS, page.getContents()));
 			add(editLink);
