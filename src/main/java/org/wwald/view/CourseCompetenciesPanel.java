@@ -44,7 +44,7 @@ public class CourseCompetenciesPanel extends Panel {
 			}
 		};
 		add(editLecture);
-		
+		add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getTranformedDescription()).setEscapeModelStrings(false));
 		add(getCompetenciesListView(course, competency));
 		add(new Label(WicketIdConstants.SELECTED_COURSE, course.getTitle())); 
 			

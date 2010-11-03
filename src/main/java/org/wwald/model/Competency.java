@@ -61,7 +61,15 @@ public class Competency implements Serializable {
 	
 	public String getTransformedResources() {
 		WWALDApplication app = (WWALDApplication)Application.get();
-		return app.getMarkDown().transform(this.resource);
+		String transormedResource = app.getMarkDown().transform(this.resource);
+		
+		System.out.println("Original Resource");
+		System.out.println(this.resource);
+		
+		System.out.println("Transformed Resource");
+		System.out.println(transormedResource);
+		
+		return transormedResource;
 	}
 
 	public void setResource(String resource) {

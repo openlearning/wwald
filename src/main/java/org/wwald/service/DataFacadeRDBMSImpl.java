@@ -329,8 +329,19 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	public void updateCourse(Connection conn, Course course) throws DataException {
-		throw new RuntimeException("method not implemented");
-		
+		String sql = String.format(Sql.UPDATE_COURSE, 
+								   wrapForSQL(course.getTitle()), 
+								   wrapForSQL(course.getDescription()), 
+								   wrapForSQL(course.getId()));
+		try {
+			cLogger.info("Executing SQL '''" + sql + "'''");
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not update course " + course.getId();
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
 	}
 
 	public void updateMentor(Connection conn, Mentor mentor) throws DataException {
@@ -582,7 +593,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 	
 	public static String wrapForSQL(String s) {
-		return "'" + s + "'";
+		if(s == null) {
+			s = "";
+		}
+		String escapedStr = s.replaceAll("'", "''");
+		return "'" + escapedStr + "'";
 	}
 
 }

@@ -92,7 +92,7 @@ public class CoursesPanel extends Panel {
 					};
 					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
 					item.add(courseLink);
-					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));
+					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getTranformedDescription()).setEscapeModelStrings(false));
 				}
 				else {
 					BookmarkablePageLink courseLink = new BookmarkablePageLink(WicketIdConstants.GOTO_COURSE, CoursePage.class);

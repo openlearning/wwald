@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Application;
+import org.wwald.WWALDApplication;
 
 
 
@@ -52,6 +54,11 @@ public class Course implements Serializable {
 	
 	public String getDescription() {
 		return description;
+	}
+	
+	public String getTranformedDescription() {
+		WWALDApplication app = (WWALDApplication)Application.get();
+		return app.getMarkDown().transform(this.description);
 	}
 	
 	public void setDescription(String description) {

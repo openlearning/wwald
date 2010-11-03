@@ -134,11 +134,11 @@ public class CourseFileParser {
 		private class InitState implements State {
 
 			public void processText(String text) throws DataFileSyntaxException {
-				if(text == null) {
+				if(text == null || text.equals("")) {
 					return;
 				}
 				if(!text.trim().equals("[title]")) {
-					throw new DataFileSyntaxException("Was expecting [title]");
+					throw new DataFileSyntaxException("Was expecting [title] in file '" + filePath + "'");
 				}
 				else {
 					ReadingCompetenciesState.this.currentState = 

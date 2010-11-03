@@ -1,28 +1,32 @@
 package org.wwald.view;
 
 import java.io.Serializable;
+import java.sql.Connection;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
+import org.wwald.model.Course;
 import org.wwald.model.Permission;
 import org.wwald.service.DataException;
 
 public class EditCompetencies extends AccessControlledPage {
+	
 	public EditCompetencies(PageParameters parameters) {
-		super(parameters);
+		super(parameters); 
 		try {
+			Connection conn = ConnectionPool.getConnection();
 			String courseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
+			Course course = ((WWALDApplication)getApplication()).getDataFacade().retreiveCourse(conn, courseId);
+			
 			add(new Label("course.name", courseId));
-			add(getCoursesEditForm(courseId, parameters));
+			add(getCompetenciesAndCourseDescriptionEditForm(course, parameters));
 		} catch(DataException de) {
 			String msg = "Sorry we could not perform the requested action, due to an internal error. We will look into this issue as soon as we can";
 			parameters.add(WicketIdConstants.MESSAGES, msg);
@@ -31,14 +35,20 @@ public class EditCompetencies extends AccessControlledPage {
 		}
 	}
 
-	private Form getCoursesEditForm(final String courseId, final PageParameters pageParams) throws DataException {
+	private Form getCompetenciesAndCourseDescriptionEditForm(final Course course, final PageParameters pageParams) throws DataException {
 		Form editCompetenciesForm = new Form("competencies.edit.form") {
 			@Override
 			public void onSubmit() {
 				try {
-					TextArea textArea = (TextArea)get(0);
-					WWALDApplication app = (WWALDApplication)getApplication();
-					app.getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), courseId, (String)textArea.getModelObject());
+					Connection conn = ConnectionPool.getConnection();
+					
+					TextArea courseDescriptionTextArea = (TextArea)get(0);
+					course.setDescription((String)courseDescriptionTextArea.getModelObject());
+					((WWALDApplication)getApplication()).getDataFacade().updateCourse(conn, course);
+															
+					TextArea competenciesListTextArea = (TextArea)get(1);					
+					((WWALDApplication)getApplication()).getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), course.getId(), (String)competenciesListTextArea.getModelObject());
+					
 					setResponsePage(CoursePage.class, pageParams);
 				} catch(DataException de) {
 					String msg = "Sorry we could not perform the action you requested " +
@@ -49,8 +59,12 @@ public class EditCompetencies extends AccessControlledPage {
 				}
 			}
 		};
+		
+		TextArea editCourseDescriptionTextArea = new TextArea("course.description.edit.form.textarea", new Model(course.getDescription()));
 		TextArea editCompetenciesFormTextArea = new TextArea("competencies.edit.form.textarea", 
-															 new Model(getCompetenciesWikiContents(courseId)));
+															 new Model(getCompetenciesWikiContents(course.getId())));
+		
+		editCompetenciesForm.add(editCourseDescriptionTextArea);
 		editCompetenciesForm.add(editCompetenciesFormTextArea);
 		return editCompetenciesForm;
 	}

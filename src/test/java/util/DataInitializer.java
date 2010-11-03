@@ -94,36 +94,49 @@ public class DataInitializer {
 	}
 
 	private void populateCompetency(List<Course> coursesList, Connection conn) throws SQLException {
+		System.out.println("----- populating course competencies -----");
 		for(Course course : coursesList) {
-			
+			System.out.println("----- populating competencies for course " + course.getId() + " -----");
 			List<Competency> competencies = course.getCompetencies();
-			for(Competency competency : competencies) {
-				if(competency != null) {
-					String sql = String.format(Sql.INSERT_COMPETENCY, 
-							   				   String.valueOf(competency.getId()), 
-							   				   wrapForSQL(course.getId()),
-							   				   wrapForSQL(competency.getTitle()),
-							   				   wrapForSQL(competency.getDescription()),
-							   				   wrapForSQL(competency.getResource()));
-					Statement stmt = conn.createStatement();
-					System.out.println(sql);
-					stmt.executeUpdate(sql);
+			if(competencies != null) {
+				for(Competency competency : competencies) {
+					if(competency != null) {
+						System.out.println("----- populating competency " + competency.getTitle() + " -----");
+						String sql = String.format(Sql.INSERT_COMPETENCY, 
+								   				   String.valueOf(competency.getId()), 
+								   				   wrapForSQL(course.getId()),
+								   				   wrapForSQL(competency.getTitle()),
+								   				   wrapForSQL(competency.getDescription()),
+								   				   wrapForSQL(competency.getResource()));
+						Statement stmt = conn.createStatement();
+						System.out.println(sql);
+						stmt.executeUpdate(sql);
+					}
 				}
+			}
+			else {
+				System.out.println("WARNING: competencies were null");
 			}
 		}
 
 	}
 
 	private void populateCourseCompetenciesWiki(List<Course> coursesList, Connection conn) throws SQLException {
+		System.out.println("----- populating course competency wiki -----");
 		for(Course course : coursesList) {
-			
+			System.out.println("----- populating competency for course " + course.getId() + " -----");
 			StringBuffer buff = new StringBuffer("");
 			List<Competency> competencies = course.getCompetencies();
-			for(Competency competency : course.getCompetencies()) {
-				if(competency != null) {
-					buff.append(competency.getTitle());
-					buff.append(LINE_SEPERATOR);
+			if(competencies != null) {
+				for(Competency competency : competencies) {
+					if(competency != null) {					
+						buff.append(competency.getTitle());
+						buff.append(LINE_SEPERATOR);
+					}
 				}
+			}
+			else {
+				System.out.println("WARNING: Competencies are null for course " + course.getId());
 			}
 			String sql = String.format(Sql.INSERT_COURSE_COMPETENCIES_WIKI, wrapForSQL(course.getId()), wrapForSQL(buff.toString()));
 			Statement stmt = conn.createStatement();
@@ -133,11 +146,12 @@ public class DataInitializer {
 	}
 
 	private void populateCourse(List<Course> coursesList, Connection conn) throws SQLException {
-		
+		System.out.println("----- populating courses -----");
 		//SqlUtil.printTableContents("MENTOR", conn);
 		
 		for(Course course : coursesList) {
 			if(course != null) {
+				System.out.println("----- populating course " + course.getId() + " -----");
 				String sql = String.format(Sql.INSERT_COURSE,
 										   wrapForSQL(course.getId()),
 										   wrapForSQL(course.getTitle()),
@@ -191,6 +205,7 @@ public class DataInitializer {
 	}
 
 	private void populateCoursesWiki(List<Course> coursesList, Connection conn) throws SQLException {
+		System.out.println("----- populating courses wiki -----");
 		StringBuffer buff = new StringBuffer();
 		String sep = " | ";
 		for(Course course : coursesList) {
@@ -209,6 +224,7 @@ public class DataInitializer {
 	}
 
 	private void populateMentors(Connection conn) {
+		System.out.println("----- populating mentors -----");
 		URL url = appClassLoader.getResource(BASE_PATH + MENTORS_DATA_FILE);
 		MentorsFileParser parser = new MentorsFileParser(url);
 		try {
@@ -335,7 +351,11 @@ public class DataInitializer {
 	}
 	
 	public static String wrapForSQL(String s) {
-		return "'" + s + "'";
+		if(s == null) {
+			s = "";
+		}
+		String escapedStr = s.replaceAll("'", "''");
+		return "'" + escapedStr + "'";
 	}
 	
 	public static void main(String args[]) throws Exception {
