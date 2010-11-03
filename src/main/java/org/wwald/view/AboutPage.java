@@ -13,15 +13,20 @@ import org.wwald.service.DataException;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
 public class AboutPage extends BasePage {
-
+	private final String STATIC_PREFIX = "static/" + WicketIdConstants.PAGE + "/";
+	
 	public AboutPage(PageParameters parameters) {		
 		super(parameters);
+
+		String requestedStaticPage = getRequestedStaticPage(getRequest().getPath());
+		parameters.add(WicketIdConstants.PAGE, requestedStaticPage);
 		try {
-			Link editLink = new AccessControlledViewPageLink("about_edit", 
-															 EditAbout.class, 
+			Link editLink = new AccessControlledViewPageLink(WicketIdConstants.EDIT_ABOUT, 
+															 EditAbout.class,
+															 parameters,
 															 new Role[]{Role.ADMIN});
 			
-			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
+			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), requestedStaticPage);
 			
 			add(new Label(WicketIdConstants.ABOUT_CONTENTS, page.getContents()));
 			add(editLink);
@@ -30,6 +35,13 @@ public class AboutPage extends BasePage {
 			parameters.add(WicketIdConstants.MESSAGES, msg);
 			setResponsePage(GenericErrorPage.class, parameters);
 		}
+	}
+
+	private String getRequestedStaticPage(String path) {
+		if(!path.startsWith(STATIC_PREFIX) || path.length() <= STATIC_PREFIX.length()) {
+			return null;
+		}
+		return path.substring(STATIC_PREFIX.length(), path.length());
 	}
 
 }

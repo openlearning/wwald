@@ -2,7 +2,6 @@ package org.wwald.view.components;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.link.Link;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.Role;
@@ -16,8 +15,17 @@ public class AccessControlledViewPageLink extends SimpleViewPageLink {
 		this(id, null, roles);
 	}
 	
-	public AccessControlledViewPageLink(String id, Class<? extends Page> responseView, Role roles[]) {
-		super(id, responseView);
+	public AccessControlledViewPageLink(String id, 
+										Class<? extends Page> responseView, 
+										Role roles[]) {
+		this(id, responseView, null, roles);		
+	}
+	
+	public AccessControlledViewPageLink(String id, 
+										Class<? extends Page> responseView, 
+										PageParameters parameters, 
+										Role roles[]) {
+		super(id, responseView, parameters);
 		this.roles = roles;
 		if(!hasPermission()) {
 			this.setVisible(false);

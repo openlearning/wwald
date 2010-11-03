@@ -16,8 +16,8 @@ public class EditAbout extends AccessControlledPage {
 	public EditAbout(PageParameters parameters) {
 		super(parameters);
 		try {
-			String path = getRequest().getPath();
-			add(getEditAboutForm(path));
+			String pageBeingEdited = parameters.getString(WicketIdConstants.PAGE);
+			add(getEditAboutForm(pageBeingEdited));
 		} catch(DataException de) {
 			String msg = "We cannot display this page because an " +
 						 "internal error has occured. We will look " +
@@ -35,7 +35,7 @@ public class EditAbout extends AccessControlledPage {
 					//TODO: Get by name and not index
 					TextArea textArea = (TextArea)get(0);
 					WWALDApplication app = (WWALDApplication)getApplication();
-					StaticPagePOJO page = new StaticPagePOJO("about", (String)textArea.getModelObject());
+					StaticPagePOJO page = new StaticPagePOJO(path, (String)textArea.getModelObject());
 					app.getDataFacade().upsertStaticPage(ConnectionPool.getConnection(), page);
 					
 				} catch(DataException de) {
@@ -51,7 +51,7 @@ public class EditAbout extends AccessControlledPage {
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();
-		StaticPagePOJO page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
+		StaticPagePOJO page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), path);
 		TextArea editCoursesFormTextArea = new TextArea(WicketIdConstants.EDIT_ABOUT_FORM_TEXTAREA, new Model(page.getContents()));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;

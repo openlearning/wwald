@@ -1,17 +1,19 @@
 package util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.wwald.model.Competency;
@@ -29,6 +31,7 @@ public class DataInitializer {
 	
 	private static final String BASE_PATH = "data/";
 	private static final String COURSES_BASE_PATH = BASE_PATH + "course/";
+	private static final String PAGES_BASE_PATH = BASE_PATH + "pages/";
 	private static final String TABLES_DATA_FILE = "create_tables_sql.txt";
 	private static final String MENTORS_DATA_FILE = "mentors.txt";
 	
@@ -45,6 +48,7 @@ public class DataInitializer {
 		populateMentors(conn);
 		populateCourses(conn);
 		populateUsers(conn);
+		populatePages(conn);
 	}
 
 	private void populateUsers(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
@@ -70,7 +74,28 @@ public class DataInitializer {
 			System.out.println("coulnd not insert users in the database because users[] is null");
 		}
 	}
-
+	
+	private void populatePages(Connection conn) {
+		File[] files = getFilesInDirectory(PAGES_BASE_PATH);		
+		for(File file : files) {
+			String fileName = file.getName();
+			InputStream is = appClassLoader.getResourceAsStream(PAGES_BASE_PATH + fileName);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			StringBuffer buff = new StringBuffer();
+			String line = null;
+			try {
+				while((line = reader.readLine()) != null) {
+					buff.append(line + "\n");
+				}
+				String sql = String.format(Sql.INSERT_STATIC_PAGE, wrapForSQL(fileName), wrapForSQL(buff.toString()));
+				Statement stmt = conn.createStatement();
+				stmt.executeUpdate(sql);
+			} catch(Exception ioe) {
+				System.out.println("Could not populate data for static page in file " + file + " " + ioe);
+			} 
+		}
+	}	
+	
 	private void populateCourses(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
 		URL coursesDirUrl = appClassLoader.getResource(COURSES_BASE_PATH);
 		File coursesDataDir = new File(coursesDirUrl.getPath());
@@ -109,7 +134,6 @@ public class DataInitializer {
 								   				   wrapForSQL(competency.getDescription()),
 								   				   wrapForSQL(competency.getResource()));
 						Statement stmt = conn.createStatement();
-						System.out.println(sql);
 						stmt.executeUpdate(sql);
 					}
 				}
@@ -337,11 +361,14 @@ public class DataInitializer {
 							  throws IOException {
 		URL url = appClassLoader.getResource(BASE_PATH + TABLES_DATA_FILE);		
 		String sqls[] = (new CreateTablesFileParser(url)).parse();
+		System.out.println("----- creating tables -----");
 		for(String sql : sqls) {
 			if(sql != null && !sql.trim().equals("")) {
 				try {
 					Statement stmt = conn.createStatement();
 					stmt.executeUpdate(sql);
+					System.out.println("created table");
+					System.out.println(sql);
 				} catch(SQLException sqle) {
 					System.out.println("Could not execute statement to create table " + sql);
 					System.out.println("Exception: " + sqle);
@@ -356,6 +383,13 @@ public class DataInitializer {
 		}
 		String escapedStr = s.replaceAll("'", "''");
 		return "'" + escapedStr + "'";
+	}
+	
+	private File[] getFilesInDirectory(String path) {
+		URL dirUrl = appClassLoader.getResource(path);
+		File dataDir = new File(dirUrl.getPath());
+		File dataFiles[] = dataDir.listFiles();
+		return dataFiles;
 	}
 	
 	public static void main(String args[]) throws Exception {

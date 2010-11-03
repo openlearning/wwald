@@ -1,41 +1,303 @@
-INTROCS | Introduction to computer science
+INTROCS | Introduction To Computer Science
 
 
 
-David J. Malan
+Mentor Goes Here
 
 
 
-Introduction to Computer Science I is a first course in computer science at Harvard College for concentrators and non-concentrators alike.
+Introduction to Computer Science I is a first course in computer science at Harvard College for concentrators and non-concentrators alike. More than just teach you how to program, this course teaches you how to think more methodically and how to solve problems more effectively. As such, its lessons are applicable well beyond the boundaries of computer science itself. That the course does teach you how to program, though, is perhaps its most empowering return. With this skill comes the ability to solve real-world problems in ways and at speeds beyond the abilities of most humans.
+<p>Original Source: <a href="http://www.cs50.tv/">Harvard</a></p>
+<p>License: <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0</a></p>
 
 
 
-[title] 
-Lecture 1
+[title]
+Lecture 1 - How Computers Work, Binary
 [desc]
-Description of lecture 1
+description for lecture
 [resources]
-<p><embed src="http://blip.tv/play/gtQk6o5MkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed><p style="font-size:11px;font-family:tahoma,arial">Watch it on <a style="text-decoration:underline" href="http://academicearth.org/lectures/malan-hardware/">Academic Earth</a></p>
+<p>
+<embed src="http://blip.tv/play/gtQk5pIbkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
 
-[title] 
-Lecture 2
+[title]
+Lecture 2 - Introduction to Programming and Scratch
 [desc]
-Description of lecture 2
+description for lecture
 [resources]
-<object width="480" height="385"><param name="movie" value="http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
+<p>
+<embed src="http://blip.tv/play/gtQk5pQfkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
 
-[title] 
-Lecture 3
+[title]
+Lecture 3 - Threads and Programs with Multiple Scripts
 [desc]
-Description of lecture 3
+description for lecture
 [resources]
-<object width="480" height="385"><param name="movie" value="http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
+<p>
+<embed src="http://blip.tv/play/gtQk5pU6kPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
 
-[title] 
-Lecture 4
+[title]
+Lecture 4 - Binary Numbers, Programming Languages, Working in Linux, and Programming in C
 [desc]
-Description of lecture 4
+description for lecture
 [resources]
-Resource for lecture 4
+<p>
+<embed src="http://blip.tv/play/gtQk5pZIkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 5 - Secure File Transfer, Variable Types, and Arithmetic Operators
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5pc8kPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 6 - Standard Input Functions, Boolean Expressions, and Loops
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5pgRkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 7 - Cryptography, Bugs, Integer Casting, and Functions
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5phmkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 8 - Local and Global Variables, the Stack, Return Values, and Arrays
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5plBkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 9 - Strings as Arrays, Command-Line Arguments, and more Cryptography
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5poOkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 10 - Run Times and Algorithms, Recursion
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5psWkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 11 - Sorting: Bubble Sort, Selection Sort, and Merge Sort
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5ptukPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 12 - Hardware, Processors, and Implications for Software
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5pxLkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 13 - Greedy Algorithms, Software Design and Debugging
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5p0ckPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 14 - Pointers
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5p1tkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 15 - Pointers and Arrays, Dynamic Memory Allocation
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5p5GkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 16 - Pointer Arithmetic, Structures, File I/O
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5p9HkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 17 - Linked Lists
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qBFkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 18 - Inserting and Deleting Elements in Linked Lists, Doubly-Linked Lists
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qFfkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 19 - Hash Tables, Dealing with Collisions
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qMFkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 20 - Pointers to Pointers, Binary Search Tree, Tries, Heaps
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qQskPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 21 - Heapsort, Jeopardy!
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qV8kPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 22 - Huffman Coding Theory
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qkkkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 23 - Bitwise Operators, Underneath the Hood - From Code to Executable File
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qkqkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 24 - Dangerous Functions, Secure Code
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qkxkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 25 - The Internet and Webpages - HTTP and XHTML
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qk8kPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 26 - Introduction to PHP
+[desc]
+description for lecture
+[resources]
+<p>
+
+<embed src="http://blip.tv/play/gtQk5qlKkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed></p>
+
+[title]
+Lecture 27 - User Input, Setting up a Login Page, SQL
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qlWkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 28 - Threats, Part 1
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qlckPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 29 - Threats, Part 2
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qlnkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 30 - Introduction to LISP
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qlzkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 31 - Brief Introduction to System Programming and Machine Organization
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qsGkPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
+
+[title]
+Lecture 32 - Conclusions
+[desc]
+description for lecture
+[resources]
+<p>
+<embed src="http://blip.tv/play/gtQk5qoikPxE" type="application/x-shockwave-flash" width="500" height="311" allowscriptaccess="always" allowfullscreen="true"></embed>
+</p>
 
 [end]
