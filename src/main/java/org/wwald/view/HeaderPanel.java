@@ -21,7 +21,7 @@ public class HeaderPanel extends Panel {
 		
 		PageParameters parameters = new PageParameters();
 		parameters.add(WicketIdConstants.PAGE, "about");
-		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, StaticPage.class, parameters);
+		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, StaticPagePojo.class, parameters);
 		Label aboutLabel = new Label(WicketIdConstants.ABOUT_LABEL, "About .");
 		aboutLink.add(aboutLabel);
 		add(aboutLink);

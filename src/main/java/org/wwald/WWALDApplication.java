@@ -9,7 +9,7 @@ import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
-import org.wwald.view.StaticPage;
+import org.wwald.view.StaticPagePojo;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
 import org.wwald.view.HomePage;
@@ -59,7 +59,7 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("courses", CoursePage.class);
 		mountBookmarkablePage("login", LoginPage.class);
 		mountBookmarkablePage("register", Register.class);
-		mountBookmarkablePage("static", StaticPage.class);
+		mountBookmarkablePage("static", StaticPagePojo.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 	}
 	
