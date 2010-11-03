@@ -121,7 +121,7 @@ public class MarkDown {
             char c = ESCAPE_CHARACTERS.charAt(i);
             String ch = Character.toString(c);
             String code = Integer.toString(ch.hashCode());
-            escape.put(ch, code);
+            escape.put(ch, "\0"+code+"\0");
             backslashEscape.put("\\" + ch, code);
         }
         ESCAPE_TABLE = Collections.unmodifiableMap(escape);
