@@ -57,4 +57,5 @@ public class WicketIdConstants {
 	public static final String EDIT_ABOUT_FORM = "about_edit_form";
 	public static final String EDIT_ABOUT_FORM_TEXTAREA = "about_edit_form_textarea";
 	public static final String ABOUT_CONTENTS = "about_contents";
+	public static final String PAGE = "page";
 }

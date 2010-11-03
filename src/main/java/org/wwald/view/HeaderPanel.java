@@ -1,5 +1,6 @@
 package org.wwald.view;
 
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -18,7 +19,9 @@ public class HeaderPanel extends Panel {
 		homeLink.add(homeLabel);
 		add(homeLink);
 		
-		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, StaticPage.class);
+		PageParameters parameters = new PageParameters();
+		parameters.add(WicketIdConstants.PAGE, "about");
+		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, StaticPage.class, parameters);
 		Label aboutLabel = new Label(WicketIdConstants.ABOUT_LABEL, "About .");
 		aboutLink.add(aboutLabel);
 		add(aboutLink);

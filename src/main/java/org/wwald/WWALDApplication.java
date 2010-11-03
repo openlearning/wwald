@@ -59,7 +59,7 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("courses", CoursePage.class);
 		mountBookmarkablePage("login", LoginPage.class);
 		mountBookmarkablePage("register", Register.class);
-		mountBookmarkablePage("about", StaticPage.class);
+		mountBookmarkablePage("static", StaticPage.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 	}
 	
