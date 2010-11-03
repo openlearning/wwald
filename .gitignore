@@ -1,3 +1,5 @@
 *.class
 *class
 *~
+src/test/java/data/*
+target/*
