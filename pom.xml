@@ -19,6 +19,21 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	
+	<repositories>	
+		<repository>
+         	<id>twitter4j.org</id>
+         	<name>twitter4j.org Repository</name>
+         	<url>http://twitter4j.org/maven2</url>
+         	<releases>
+            	<enabled>true</enabled>
+         	</releases>
+         	<snapshots>
+            	<enabled>true</enabled>
+         	</snapshots>
+      	</repository>
+      </repositories>
+	
 	<dependencies>
 		<!--  WICKET DEPENDENCIES -->
 		<dependency>
@@ -78,6 +93,14 @@
 			<version>${jetty.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- TWITTER DEPENDENCIES -->
+		<dependency>
+         <groupId>org.twitter4j</groupId>
+         <artifactId>twitter4j-core</artifactId>
+         <version>[2.1,)</version>
+      </dependency>
+
 	</dependencies>
 	<build>
 		<resources>
