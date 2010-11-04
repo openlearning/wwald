@@ -18,7 +18,7 @@ public class StaticPagePojo extends BasePage {
 		super(parameters);
 		try {
 			Link editLink = new AccessControlledViewPageLink("about_edit", 
-															 EditAbout.class, 
+															 EditStaticPage.class, 
 															 new Role[]{Role.ADMIN});
 			
 			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");

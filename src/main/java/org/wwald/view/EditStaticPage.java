@@ -11,19 +11,21 @@ import org.wwald.model.Permission;
 import org.wwald.model.StaticPagePOJO;
 import org.wwald.service.DataException;
 
-public class EditAbout extends AccessControlledPage {
+public class EditStaticPage extends AccessControlledPage {
 	
-	public EditAbout(PageParameters parameters) {
+	public EditStaticPage(PageParameters parameters) {
 		super(parameters);
 		try {
 			String pageBeingEdited = parameters.getString(WicketIdConstants.PAGE);
-			add(getEditAboutForm(pageBeingEdited));
+			
+			if(pageBeingEdited != null && !pageBeingEdited.equals("")) {
+				add(getEditAboutForm(pageBeingEdited));
+			} else {
+				gotoGenericErrorPage(parameters);
+			}
+			
 		} catch(DataException de) {
-			String msg = "We cannot display this page because an " +
-						 "internal error has occured. We will look " +
-						 "into this as soon as we can.";
-			parameters.add(WicketIdConstants.MESSAGES, msg);
-			setResponsePage(GenericErrorPage.class, parameters);
+			gotoGenericErrorPage(parameters);
 		}
 	}
 
@@ -31,6 +33,12 @@ public class EditAbout extends AccessControlledPage {
 		Form editCoursesForm = new Form(WicketIdConstants.EDIT_ABOUT_FORM) {
 			@Override
 			public void onSubmit() {
+				
+				PageParameters parameters = getPageParameters();
+				if(parameters == null) {
+					parameters = new PageParameters();
+				}
+				
 				try {
 					//TODO: Get by name and not index
 					TextArea textArea = (TextArea)get(0);
@@ -40,14 +48,12 @@ public class EditAbout extends AccessControlledPage {
 					
 				} catch(DataException de) {
 					String msg = "Sorry we could not perform the action you requested, " +
-								 "due to an internal error. We will look into this issue as soon as we can";
-					PageParameters pageParams = getPage().getPageParameters();
-					if(pageParams != null) {
-						pageParams.add(WicketIdConstants.MESSAGES, msg);
-					}
+								 "due to an internal error. We will look into this issue as soon as we can";					
+					parameters.add(WicketIdConstants.MESSAGES, msg);
 				}
-				//TODO: When we make this generic we must change the page we redirect to based on which page was serviced
-				setResponsePage(StaticPagePojo.class);
+				
+				parameters.add(WicketIdConstants.PAGE, path);
+				setResponsePage(StaticPage.class, parameters);
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();
@@ -55,6 +61,15 @@ public class EditAbout extends AccessControlledPage {
 		TextArea editCoursesFormTextArea = new TextArea(WicketIdConstants.EDIT_ABOUT_FORM_TEXTAREA, new Model(page.getContents()));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;
+	}
+	
+	//TODO: Move this to PageUtils so all web pages can access it
+	private void gotoGenericErrorPage(PageParameters parameters) {
+		String msg = "We cannot display this page because an " +
+					 "internal error has occured. We will look " +
+					 "into this as soon as we can.";
+		parameters.add(WicketIdConstants.MESSAGES, msg);
+		setResponsePage(GenericErrorPage.class, parameters);
 	}
 
 	@Override
