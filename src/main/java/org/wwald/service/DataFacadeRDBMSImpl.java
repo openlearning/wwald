@@ -26,6 +26,7 @@ import org.wwald.model.StaticPagePOJO;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
+import org.wwald.util.CompetencyUniqueIdGenerator;
 
 
 public class DataFacadeRDBMSImpl implements IDataFacade {
@@ -259,7 +260,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	public Competency insertCompetency(Connection conn, Course course, String competencyTitle) throws DataException {
-		Competency competency = new Competency(competencyTitle, "", "");
+		Competency competency = new Competency(CompetencyUniqueIdGenerator.getNextCompetencyId(conn), competencyTitle, "", "");
 		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');"; 
 		Statement stmt = null;
 		try {

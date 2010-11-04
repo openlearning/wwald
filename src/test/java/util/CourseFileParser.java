@@ -13,6 +13,7 @@ import java.util.Map;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.Mentor;
+import org.wwald.util.CompetencyUniqueIdGenerator;
 
 public class CourseFileParser {
 	
@@ -159,7 +160,7 @@ public class CourseFileParser {
 						ReadingCompetenciesState.this.competenciesStateMap.get(DESCRIPTION_STATE);
 				}
 				else {
-					ReadingCompetenciesState.this.currentCompetency = new Competency();
+					ReadingCompetenciesState.this.currentCompetency = new Competency(CompetencyUniqueIdGenerator.getNextCompetencyId(null));
 					ReadingCompetenciesState.this.currentCompetency.setTitle(text);
 				}
 			}

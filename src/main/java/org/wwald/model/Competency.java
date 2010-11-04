@@ -14,10 +14,8 @@ public class Competency implements Serializable {
 	private String description;
 	private String resource;
 	
-	public Competency() {}
-	
-	public Competency(String title, String description, String resource) {
-		this(0, title, description, resource);
+	public Competency(int id) {
+		this.id = id;
 	}
 	
 	public Competency(int id, String title, String description, String resource) {
@@ -37,9 +35,6 @@ public class Competency implements Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
-		if(this.id == 0) {
-			this.id = title.hashCode();
-		}
 	}
 
 	public String getDescription() {
@@ -62,13 +57,6 @@ public class Competency implements Serializable {
 	public String getTransformedResources() {
 		WWALDApplication app = (WWALDApplication)Application.get();
 		String transormedResource = app.getMarkDown().transform(this.resource);
-		
-		System.out.println("Original Resource");
-		System.out.println(this.resource);
-		
-		System.out.println("Transformed Resource");
-		System.out.println(transormedResource);
-		
 		return transormedResource;
 	}
 

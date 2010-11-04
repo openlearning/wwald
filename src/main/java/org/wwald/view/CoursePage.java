@@ -63,13 +63,16 @@ public class CoursePage extends BasePage {
 		String selectedCompetencyId = parameters.getString(WWALDConstants.SELECTED_COMPETENCY);
 		Competency competency = null; 
 		if(selectedCompetencyId == null) {
-			List<Competency> competencies = selectedCourse.getCompetencies();
-			if(competencies != null && competencies.size() > 0) {
-				competency = competencies.get(0);
-			}
+			competency = getFirstCompetency(selectedCourse);			
 		}
 		else {
 			competency = selectedCourse.getCompetency(selectedCompetencyId);
+			//The user may have deleted the selected competency from the course wiki
+			//In such a scenario the course object will not contain the competency
+			//we will default to the first competency
+			if(competency == null) {
+				competency = getFirstCompetency(selectedCourse);
+			}
 		}
 		
 		return competency;
@@ -81,5 +84,14 @@ public class CoursePage extends BasePage {
 			mentor = selectedCourse.getMentor();
 		}
 		return mentor;
+	}
+	
+	private Competency getFirstCompetency(Course course) {
+		Competency competency = null;
+		List<Competency> competencies = selectedCourse.getCompetencies();
+		if(competencies != null && competencies.size() > 0) {
+			competency = competencies.get(0);
+		}
+		return competency;
 	}
 }
