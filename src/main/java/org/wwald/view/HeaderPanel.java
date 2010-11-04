@@ -20,7 +20,7 @@ public class HeaderPanel extends Panel {
 		add(homeLink);
 		
 		PageParameters parameters = new PageParameters();
-		parameters.add(WicketIdConstants.PAGE, "about");
+		parameters.add(WicketIdConstants.PAGE, WicketIdConstants.ABOUT_PAGE_NAME);
 		Link aboutLink = new BookmarkablePageLink(WicketIdConstants.ABOUT_LINK, StaticPage.class, parameters);
 		Label aboutLabel = new Label(WicketIdConstants.ABOUT_LABEL, "About .");
 		aboutLink.add(aboutLabel);

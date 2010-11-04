@@ -29,7 +29,7 @@ public class StaticPage extends BasePage {
 		try {
 			if(requestedStaticPage != null && !requestedStaticPage.equals("")) {
 				Link editLink = new AccessControlledViewPageLink(
-						WicketIdConstants.EDIT_ABOUT, EditStaticPage.class,
+						WicketIdConstants.EDIT_STATIC_PAGE, EditStaticPage.class,
 						parameters, new Role[] { Role.ADMIN });
 
 				StaticPagePOJO page = ((WWALDApplication) Application.get())
@@ -37,7 +37,7 @@ public class StaticPage extends BasePage {
 								ConnectionPool.getConnection(),
 								requestedStaticPage);
 
-				add(new Label(WicketIdConstants.ABOUT_CONTENTS, page
+				add(new Label(WicketIdConstants.STATIC_PAGE_CONTENTS, page
 						.getContents()));
 				add(editLink);
 			}

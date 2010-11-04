@@ -23,7 +23,7 @@ public class StaticPagePojo extends BasePage {
 			
 			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
 			
-			add(new Label(WicketIdConstants.ABOUT_CONTENTS, page.getContents()));
+			add(new Label(WicketIdConstants.STATIC_PAGE_CONTENTS, page.getContents()));
 			add(editLink);
 		} catch(DataException de) {
 			String msg = "Sorry cannot display this page because an internal error has occured";

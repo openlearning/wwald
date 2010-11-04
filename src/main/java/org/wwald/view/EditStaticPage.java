@@ -30,7 +30,7 @@ public class EditStaticPage extends AccessControlledPage {
 	}
 
 	private Form getEditAboutForm(final String path) throws DataException {
-		Form editCoursesForm = new Form(WicketIdConstants.EDIT_ABOUT_FORM) {
+		Form editCoursesForm = new Form(WicketIdConstants.EDIT_STATIC_PAGE_FORM) {
 			@Override
 			public void onSubmit() {
 				
@@ -58,7 +58,7 @@ public class EditStaticPage extends AccessControlledPage {
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();
 		StaticPagePOJO page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), path);
-		TextArea editCoursesFormTextArea = new TextArea(WicketIdConstants.EDIT_ABOUT_FORM_TEXTAREA, new Model(page.getContents()));
+		TextArea editCoursesFormTextArea = new TextArea(WicketIdConstants.EDIT_STATIC_PAGE_FORM_TEXTAREA, new Model(page.getContents()));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;
 	}

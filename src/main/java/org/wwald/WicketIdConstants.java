@@ -3,9 +3,7 @@ package org.wwald;
 public class WicketIdConstants {
 	public static final String HEADER_PANEL = "header_panel";
 	public static final String HOMEPAGE_LINK  = "homepage_link";
-	public static final String HOMEPAGE_LABEL  = "homepage_label";
-	public static final String ABOUT_LINK  = "about_link";
-	public static final String ABOUT_LABEL  = "about_label";
+	public static final String HOMEPAGE_LABEL  = "homepage_label";	
 	public static final String LOGIN_LINK  = "login_link";
 	public static final String LOGIN_LABEL  = "login_label";
 	public static final String REGISTER_LINK  = "register_link";
@@ -15,13 +13,7 @@ public class WicketIdConstants {
 	
 	public static final String MESSAGES = "messages";
 	
-	public static final String FOOTER_PANEL = "footer_panel";
-	public static final String TOS_LINK = "tos_link";
-	public static final String TOS_LABEL = "tos_label";
-	public static final String PRIVACY_POLICY_LINK  = "privacy_policy_link";
-	public static final String PRIVACY_POLICY_LABEL  = "privacy_policy_label";
-	public static final String CONTACT_LINK  = "contact_link";
-	public static final String CONTACT_LABEL  = "contact_label";
+	public static final String FOOTER_PANEL = "footer_panel";	
 	
 	public static final String COURSES = "courses";
 	public static final String COURSES_EDIT = "courses.edit";
@@ -54,9 +46,23 @@ public class WicketIdConstants {
 	public static final String COURSE_STATUS_ACTION_LINK = "course_status_action_link";
 	public static final String COURSE_STATUS_ACTION_LABEL = "course_status_action_label";
 	
-	public static final String EDIT_ABOUT = "edit_about";
-	public static final String EDIT_ABOUT_FORM = "about_edit_form";
-	public static final String EDIT_ABOUT_FORM_TEXTAREA = "about_edit_form_textarea";
-	public static final String ABOUT_CONTENTS = "about_contents";
+	//static pages
+	public static final String EDIT_STATIC_PAGE = "edit_static_page";
+	public static final String EDIT_STATIC_PAGE_FORM = "static_page_edit_form";
+	public static final String EDIT_STATIC_PAGE_FORM_TEXTAREA = "static_page_edit_form_textarea";
+	public static final String STATIC_PAGE_CONTENTS = "static_page_contents";
 	public static final String PAGE = "page";
+	
+	public static final String ABOUT_PAGE_NAME = "about";
+	public static final String ABOUT_LINK  = "about_link";
+	public static final String ABOUT_LABEL  = "about_label";
+	public static final String TOS_PAGE_NAME = "tos";
+	public static final String TOS_LINK = "tos_link";
+	public static final String TOS_LABEL = "tos_label";
+	public static final String PRIVACY_POLICY_PAGE_NAME  = "privacy_policy";
+	public static final String PRIVACY_POLICY_LINK  = "privacy_policy_link";
+	public static final String PRIVACY_POLICY_LABEL  = "privacy_policy_label";
+	public static final String CONTACT_PAGE_NAME  = "contact";
+	public static final String CONTACT_LINK  = "contact_link";
+	public static final String CONTACT_LABEL  = "contact_label";
 }
