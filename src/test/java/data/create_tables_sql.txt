@@ -71,6 +71,5 @@ CREATE TABLE ANSWER (
 	id INTEGER,
 	contents LONGVARCHAR,
 	PRIMARY KEY(discussion_id, question_id, id),
-		CONSTRAINT answer_col1_fk FOREIGN KEY (discussion_id) REFERENCES DISCUSSION(id),
-		CONSTRAINT answer_col2_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
+		CONSTRAINT answer_fk FOREIGN KEY (discussion_id, question_id) REFERENCES QUESTION(discussion_id, id));
 
