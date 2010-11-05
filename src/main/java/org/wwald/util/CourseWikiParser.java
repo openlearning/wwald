@@ -29,6 +29,10 @@ public class CourseWikiParser {
 					//ignore empty lines
 					continue;
 				}
+				if(line.trim().startsWith("#")) {
+					//# denotes a comment
+					continue;
+				}
 				String lineTokens[] = line.split("\\|");
 				String courseId = lineTokens[0];
 				String courseTitle = lineTokens[1];
