@@ -1,8 +1,9 @@
 <wicket:panel>
 	<div id="lecture_list">
-		<p><span wicket:id="course.description">Course Description</span></p>
-		<h2 class="course_listing_heading">Lectures<a wicket:id="competencies.edit" href="#">[edit]</a></h2>		
-		<p wicket:id="competencies" class="competency"><a wicket:id="goto.competency" href="#"><span wicket:id="competency.title">Competency 1 Title</span></a></p>
+		<h2 class="course_listing_heading">Description<a wicket:id="competencies.edit" href="#">[edit]</a></h2>
+		<p><span class="course_description" wicket:id="course.description">Course Description</span></p>
+		<h2 class="course_listing_heading">Lectures</h2>		
+		<p wicket:id="competencies" class="competencies"><a wicket:id="goto.competency" href="#"><span wicket:id="competency.title">Competency 1 Title</span></a></p>
 		<wicket:remove>
 			<p class="competency"><a href="#"><span>Competency 2 Title</span></a></p>
 		</wicket:remove>
@@ -12,7 +13,7 @@
 		<h2 wicket:id="selected.course" class="course_listing_heading">Selected Course</h2>
 		<div wicket:id="course_status_panel">Course Status Panel</div>
 		<h2 wicket:id="selected.lecture" class="course_listing_heading">Selected Lecture</h2><a wicket:id="lecture.edit" href="#">[edit]</a>
-		<div id="competency_resources" wicket:id="competency.resources">Video</div>
 		<div id="competency_description" wicket:id="competency.description">Description</div>
+		<div id="competency_resources" wicket:id="competency.resources">Video</div>		
 	</div>
 </wicket:panel>

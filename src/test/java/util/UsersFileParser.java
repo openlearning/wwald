@@ -45,15 +45,21 @@ public class UsersFileParser {
 				}
 				else if(!line.trim().equals("")) {
 					String fullName[] = line.split(" ");
-					if(fullName.length != 3) {
-						String msg = "Expected full name in the following format 'FirstName M. LastName'" +
+					int length = fullName.length;
+					if(length < 1 || length > 3) {
+						String msg = "Expected full name in the following format 'FirstName [MI LastName]'" +
 									 "\n you provided " + line;
 						throw new DataFileSyntaxException(msg);
 					}
 					user = new User();
 					user.setFirstName(fullName[0]);
-					user.setMi(fullName[1]);
-					user.setLastName(fullName[2]);
+					if(length == 2) {
+						user.setLastName(fullName[1]);
+					}
+					else if(length == 3) {
+						user.setMi(fullName[1]);
+						user.setLastName(fullName[2]);
+					}
 					currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
 				}
 			}

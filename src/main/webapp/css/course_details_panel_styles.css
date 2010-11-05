@@ -3,10 +3,17 @@
 	padding-top: 4px;
 }
 
-.mentor_detail {
+.mentor_name {
 	padding-bottom: 4px;
 	padding-top: 4px;
 	font-weight: bold;	
+}
+
+.mentor_details {
+	padding-bottom: 4px;
+	padding-top: 4px;
+	font-weight: bold;
+	font-style: italic;	
 }
 
 #rhs_sidebar #course_summary_heading {
