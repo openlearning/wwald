@@ -19,6 +19,7 @@ import org.wwald.WWALDApplication;
  */
 public class Course implements Serializable {
 	
+	private static final String DESCRIPTION_SHORTENING_CODE = "-short-";
 	private String id;
 	private String title;
 	private String description;
@@ -58,7 +59,7 @@ public class Course implements Serializable {
 	
 	public String getFullDescription() {
 		if(this.description != null) {
-			return description.replaceAll("-short-", "       ");
+			return description.replaceAll(DESCRIPTION_SHORTENING_CODE, "       ");
 		}
 		else {
 			return this.description;
@@ -67,7 +68,7 @@ public class Course implements Serializable {
 	
 	public String getShortDescription() {
 		if(this.description != null) {
-			int index = this.description.indexOf("-short-");
+			int index = this.description.indexOf(DESCRIPTION_SHORTENING_CODE);
 			if(index != -1) {
 				return this.description.substring(0, index) + "...";
 			}
