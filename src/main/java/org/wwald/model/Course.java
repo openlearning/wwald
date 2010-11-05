@@ -53,12 +53,32 @@ public class Course implements Serializable {
 	}
 	
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 	
-	public String getTranformedDescription() {
-		WWALDApplication app = (WWALDApplication)Application.get();
-		return app.getMarkDown().transform(this.description);
+	public String getFullDescription() {
+		if(this.description != null) {
+			return description.replaceAll("-short-", "       ");
+		}
+		else {
+			return this.description;
+		}
+	}
+	
+	public String getShortDescription() {
+		if(this.description != null) {
+			int index = this.description.indexOf("-short-");
+			if(index != -1) {
+				return this.description.substring(0, index) + "...";
+			}
+			else {
+				return this.description;
+			}
+		}
+		else {
+			return this.description;
+		}
+		
 	}
 	
 	public void setDescription(String description) {

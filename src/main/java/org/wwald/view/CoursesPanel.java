@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Application;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -99,10 +100,24 @@ public class CoursesPanel extends Panel {
 					courseLink.setParameter(WWALDConstants.SELECTED_COURSE, course.getId());
 					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
 					item.add(courseLink);
-					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getTranformedDescription()).setEscapeModelStrings(false));
+					
+					WWALDApplication app = (WWALDApplication)Application.get();
+					String description = app.getMarkDown().transform(course.getShortDescription());
+					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, description).setEscapeModelStrings(false));
 				}
 			}
     	};
 	}
-
+	
+	private String shorten(String str) {
+		if(str == null) {
+			return str;
+		}
+		if(str.length() > 512) {
+			return str.substring(0, 512)+"...";
+		}
+		else {
+			return str;
+		}
+	}
 }

@@ -39,7 +39,7 @@ public class DataInitializer {
 	
 	public void initData(Connection conn) throws IOException, SQLException, DataFileSyntaxException {		
 		createTables(conn);
-//		populateTables(conn);
+		populateTables(conn);
 	}
 
 	private void populateTables(Connection conn) throws IOException, DataFileSyntaxException, SQLException {

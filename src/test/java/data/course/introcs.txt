@@ -2,7 +2,7 @@ INTROCS | Introduction To Computer Science
 
 
 
-Mentor Goes Here
+gs
 
 
 

@@ -1,5 +1,6 @@
 package org.wwald.view;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -10,6 +11,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
@@ -44,7 +46,11 @@ public class CourseCompetenciesPanel extends Panel {
 			}
 		};
 		add(editLecture);
-		add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getTranformedDescription()).setEscapeModelStrings(false));
+		
+		WWALDApplication app = (WWALDApplication)Application.get();
+		
+		String description = app.getMarkDown().transform(course.getFullDescription());
+		add(new Label(WicketIdConstants.COURSE_DESCRIPTION, description).setEscapeModelStrings(false));
 		add(getCompetenciesListView(course, competency));
 		add(new Label(WicketIdConstants.SELECTED_COURSE, course.getTitle())); 
 			
@@ -52,8 +58,10 @@ public class CourseCompetenciesPanel extends Panel {
 		
 		add(new Label(WicketIdConstants.SELECTED_LECTURE, competency.getTitle()));
 		//TODO: Can we use something other than labels out here
-		add(new Label(WicketIdConstants.COMPETENCY_RESOURCES, competency.getTransformedResources()).setEscapeModelStrings(false));
-		add(new Label(WicketIdConstants.COMPETENCY_DESCRIPTION, competency.getTranformedDescription()).setEscapeModelStrings(false));
+		String competencyResources = app.getMarkDown().transform(competency.getResource());
+		add(new Label(WicketIdConstants.COMPETENCY_RESOURCES, competencyResources).setEscapeModelStrings(false));
+		String competencyDescription = app.getMarkDown().transform(competency.getDescription());
+		add(new Label(WicketIdConstants.COMPETENCY_DESCRIPTION, competencyDescription).setEscapeModelStrings(false));
 	}
 	
 	private Component getCourseStatusPanel(Course course) {

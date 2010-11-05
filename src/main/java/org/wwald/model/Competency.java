@@ -41,11 +41,6 @@ public class Competency implements Serializable {
 		return description;
 	}
 	
-	public String getTranformedDescription() {
-		WWALDApplication app = (WWALDApplication)Application.get();
-		return app.getMarkDown().transform(this.description);
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -54,12 +49,6 @@ public class Competency implements Serializable {
 		return resource;
 	}
 	
-	public String getTransformedResources() {
-		WWALDApplication app = (WWALDApplication)Application.get();
-		String transormedResource = app.getMarkDown().transform(this.resource);
-		return transormedResource;
-	}
-
 	public void setResource(String resource) {
 		this.resource = resource;
 	}

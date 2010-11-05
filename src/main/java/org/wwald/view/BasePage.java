@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WWALDPropertiesEnum;
 import org.wwald.WicketIdConstants;
@@ -22,7 +23,7 @@ public abstract class BasePage extends WebPage {
 	
 	Panel sidebar;
 	
-	public BasePage(PageParameters parameters) {
+	public BasePage(PageParameters parameters) {		
 		//we add an empty side bar which will be replaced by inheriting pages
 		this.sidebar = new EmptyPanel(WicketIdConstants.RHS_SIDEBAR); 
 		add(this.sidebar);
