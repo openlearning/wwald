@@ -312,10 +312,28 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	public List<Mentor> retreiveAllMentors(Connection conn) throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
+		List<Mentor> mentors = new ArrayList<Mentor>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_ALL_MENTORS);
+			while(rs.next()) {
+				Mentor mentor = new Mentor();
+				mentor.setUsername(rs.getString("username"));
+				mentor.setFirstName(rs.getString("first_name"));
+				mentor.setMi(rs.getString("mi"));
+				mentor.setLastName(rs.getString("last_name"));
+				mentor.setJoinDate(rs.getDate("join_date"));
+				String role = rs.getString("role");
+				mentor.setRole(Role.valueOf(role));
+				mentors.add(mentor);
+			}			
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive mentors";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
-		return null;
+		
+		return mentors;
 	}
 
 	public List<Competency> retreiveCompetenciesForCourse(Connection conn, Course course) throws DataException {
@@ -340,6 +358,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		try {
 			cLogger.info("Executing SQL '''" + sql + "'''");
 			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+			
+			//TODO: Good Samaritan is the default mentor for every course... if the mentor was removed then add this one
+			sql = String.format(Sql.UPDATE_COURSE_MENTORS, wrapForSQL(course.getMentor().getUsername()), wrapForSQL(course.getId()));
+			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
 			String msg = "Could not update course " + course.getId();
@@ -532,7 +555,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	private void buildMentorsForCourses(Connection conn, List<Course> courses) throws SQLException {
-		String sqlToGetMentorIdsForCourse = "SELECT (mentor_id) FROM COURSE_MENTORS WHERE course_id=%s";
+		String sqlToGetMentorIdsForCourse = "SELECT (mentor_username) FROM COURSE_MENTORS WHERE course_id=%s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, wrapForSQL(course.getId())));
@@ -623,17 +646,26 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	private List<Mentor> buildMentorObjectsFromResultSet(Connection conn, ResultSet rs) throws SQLException {
 		List<Mentor> mentors = new ArrayList<Mentor>();
 		while(rs.next()) {
-			int mentorId = rs.getInt(1);
-			String sqlToGetMentor = "SELECT * FROM MENTOR WHERE id=%s";
+			String mentorUsername = rs.getString("mentor_username");
 			Statement stmt = conn.createStatement();
-			ResultSet mentorsResultSet = stmt.executeQuery(String.format(sqlToGetMentor, String.valueOf(mentorId)));
+			ResultSet mentorsResultSet = stmt.executeQuery(String.format(Sql.RETREIVE_USER_WITH_USERNAME, wrapForSQL(mentorUsername)));
 			while(mentorsResultSet.next()) {
-				String firstName = mentorsResultSet.getString(2);
-				String middleInitial = mentorsResultSet.getString(3);
-				String lastName = mentorsResultSet.getString(4);
-				String shortBio = mentorsResultSet.getString(5);
-				Mentor mentor = new Mentor(mentorId, firstName, middleInitial, lastName, shortBio);
-				mentors.add(mentor);
+				String firstName = mentorsResultSet.getString("first_name");
+				String mi = mentorsResultSet.getString("mi");
+				String lastName = mentorsResultSet.getString("last_name");
+				String role = mentorsResultSet.getString("role");
+				Mentor mentor = new Mentor();
+				mentor.setUsername(mentorUsername);
+				mentor.setFirstName(firstName);
+				mentor.setMi(mi);
+				mentor.setLastName(lastName);
+				mentor.setRole(Role.valueOf(role));
+				if(mentor.getRole().equals(Role.MENTOR)) {
+					mentors.add(mentor);
+				}
+				else {
+					cLogger.warn("Found a user in COURSE_MENTOR table who is not a mentor " + mentorUsername);
+				}
 			}
 		}
 		return mentors;

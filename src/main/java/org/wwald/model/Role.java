@@ -5,7 +5,10 @@ public enum Role {
 	UNAUTHENTICATED_USER,
 	STUDENT, 
 	MENTOR(Permission.EDIT_COURSE), 
-	ADMIN(Permission.EDIT_COURSE, Permission.EDIT_COURSES);
+	ADMIN(Permission.EDIT_COURSE, 
+		  Permission.EDIT_COURSES, 
+		  Permission.ADD_MENTOR, 
+		  Permission.ADD_USER);
 	
 	private Permission permissions[];
 	

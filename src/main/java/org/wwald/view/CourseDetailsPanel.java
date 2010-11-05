@@ -12,7 +12,7 @@ public class CourseDetailsPanel extends Panel {
 			CoursePage coursePage = (CoursePage)viewPage;
 			Mentor mentor = coursePage.getMentor();
 			if(mentor != null) {
-				add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMiddleInitial() + " " + mentor.getLastName()));
+				add(new Label("mentor.name", mentor.getFirstName() + " " + mentor.getMi() + " " + mentor.getLastName()));
 				add(new Label("mentor.qanswered", ""));
 				add(new Label("mentor.lastlogin", ""));
 			}

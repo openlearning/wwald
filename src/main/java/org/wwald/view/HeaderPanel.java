@@ -8,7 +8,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.view.components.AccessControlledViewPageLink;
 
 public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
@@ -56,6 +58,10 @@ public class HeaderPanel extends Panel {
 		else {
 			logoutLink.setVisible(false);
 		}
+		
+		Link adminLink = new AccessControlledViewPageLink("admin_page", AdminPage.class, new Role[]{Role.ADMIN});
+		
+		add(adminLink);
 	}
 
 	private boolean userLoggedIn() {

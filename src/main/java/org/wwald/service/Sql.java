@@ -6,9 +6,12 @@ public class Sql {
 	
 	public static String RETREIVE_USER =
 		"SELECT * FROM USER WHERE username=%s AND password=%s;";
+	public static String RETREIVE_USER_WITH_USERNAME = "SELECT * FROM USER WHERE username=%s;";
 	
 	public static String INSERT_MENTOR = 
-		"INSERT INTO MENTOR (first_name, middle_initial, last_name, short_bio) VALUES (%s, %s, %s, %s);";
+		"INSERT INTO MENTOR (first_name, middle_initial, last_name, short_bio) VALUES (%s, %s, %s, %s);"; 
+	
+	public static String RETREIVE_ALL_MENTORS = "SELECT * FROM USER WHERE ROLE='MENTOR';";
 	
 	public static String RETREIVE_MENTOR_BY_NAME = "SELECT * FROM MENTOR WHERE first_name=%s AND middle_initial=%s AND last_name=%s";
 	
@@ -17,7 +20,8 @@ public class Sql {
 	public static String INSERT_COURSE = "INSERT INTO COURSE (id, title, description) VALUES (%s, %s, %s);";
 	public static String UPDATE_COURSE = "UPDATE COURSE SET title=%s, description=%s WHERE id=%s;";
 	
-	public static String INSERT_COURSE_MENTOR = "INSERT INTO COURSE_MENTORS (course_id, mentor_id) VALUES (%s, %s);";
+	public static String INSERT_COURSE_MENTOR = "INSERT INTO COURSE_MENTORS (course_id, mentor_username) VALUES (%s, %s);";
+	public static String UPDATE_COURSE_MENTORS = "UPDATE COURSE_MENTORS SET mentor_username=%s WHERE course_id=%s;";
 	
 	public static String INSERT_COURSE_COMPETENCIES_WIKI = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s, %s);";
 	public static String RETREIVE_COMPETENCIES = "SELECT * FROM COMPETENCY;";

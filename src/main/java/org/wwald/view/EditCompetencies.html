@@ -3,6 +3,14 @@
 		Use the wiki form below to enter details for the course : <span wicket:id="course.name">Course Name</span>
 	</p>
 	<form wicket:id="competencies.edit.form">
+		  
+		<p>
+			<select wicket:id="select_mentor">
+				<option> mentor 1 </option>
+				<option> mentor 2 </option>
+			</select>
+		</p>
+		
 		<p><i>Please enter the course description below (you can use the <a href="http://daringfireball.net/projects/markdown/syntax">markdown syntax</a> in this field)</i></p>
 		<p>
 			<textarea wicket:id="course.description.edit.form.textarea" rows="20" cols="120"></textarea>

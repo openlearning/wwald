@@ -2,29 +2,35 @@ package org.wwald.view;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.List;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
+import org.wwald.model.Mentor;
 import org.wwald.model.Permission;
 import org.wwald.service.DataException;
 
 public class EditCompetencies extends AccessControlledPage {
-	
+		
 	public EditCompetencies(PageParameters parameters) {
 		super(parameters); 
+		
 		try {
 			Connection conn = ConnectionPool.getConnection();
 			String courseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
 			Course course = ((WWALDApplication)getApplication()).getDataFacade().retreiveCourse(conn, courseId);
-			
+			System.out.println("Course Mentor Before" + course.getMentor());
 			add(new Label("course.name", courseId));
 			add(getCompetenciesAndCourseDescriptionEditForm(course, parameters));
 		} catch(DataException de) {
@@ -40,13 +46,13 @@ public class EditCompetencies extends AccessControlledPage {
 			@Override
 			public void onSubmit() {
 				try {
-					Connection conn = ConnectionPool.getConnection();
-					
-					TextArea courseDescriptionTextArea = (TextArea)get(0);
+					Connection conn = ConnectionPool.getConnection();					
+
+					TextArea courseDescriptionTextArea = (TextArea)get(1);
 					course.setDescription((String)courseDescriptionTextArea.getModelObject());
 					((WWALDApplication)getApplication()).getDataFacade().updateCourse(conn, course);
 															
-					TextArea competenciesListTextArea = (TextArea)get(1);					
+					TextArea competenciesListTextArea = (TextArea)get(2);					
 					((WWALDApplication)getApplication()).getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), course.getId(), (String)competenciesListTextArea.getModelObject());
 					
 					setResponsePage(CoursePage.class, pageParams);
@@ -59,14 +65,21 @@ public class EditCompetencies extends AccessControlledPage {
 				}
 			}
 		};
-		
+						
+		DropDownChoice selectMentors = new DropDownChoice("select_mentor", new PropertyModel(course, "mentor"), getMentors());		
 		TextArea editCourseDescriptionTextArea = new TextArea("course.description.edit.form.textarea", new Model(course.getDescription()));
 		TextArea editCompetenciesFormTextArea = new TextArea("competencies.edit.form.textarea", 
 															 new Model(getCompetenciesWikiContents(course.getId())));
 		
+		editCompetenciesForm.add(selectMentors);
 		editCompetenciesForm.add(editCourseDescriptionTextArea);
 		editCompetenciesForm.add(editCompetenciesFormTextArea);
 		return editCompetenciesForm;
+	}
+
+	private List getMentors() throws DataException {
+		WWALDApplication app = (WWALDApplication)getApplication();
+		return app.getDataFacade().retreiveAllMentors(ConnectionPool.getConnection());
 	}
 
 	private Serializable getCompetenciesWikiContents(String courseId) throws DataException {

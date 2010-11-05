@@ -40,7 +40,7 @@ public abstract class BasePage extends WebPage {
 	@Override
 	public void onBeforeRender() {
 		super.onBeforeRender();
-		//we will not replace the default sidebar with the
+		//we will now replace the default sidebar with the
 		//page specific sidebar
 		replaceSidebar(getSidebar(this));
 	}

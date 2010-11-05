@@ -84,8 +84,7 @@ public class CourseFileParser {
 					}
 				}
 				else {
-					Mentor mentor = new Mentor();
-					MentorsFileParser.mentorNamePopulator(mentor, text);
+					Mentor mentor = new Mentor(text);
 					CourseFileParser.this.course.setMentor(mentor);
 				}
 			}
