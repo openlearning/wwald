@@ -36,9 +36,12 @@ public class StaticPage extends BasePage {
 						.getDataFacade().retreiveStaticPage(
 								ConnectionPool.getConnection(),
 								requestedStaticPage);
-
-				add(new Label(WicketIdConstants.STATIC_PAGE_CONTENTS, page
-						.getContents()));
+				
+				String pageContents = page.getContents();
+				String markdownTranformedContents = 
+					((WWALDApplication)WWALDApplication.
+							get()).getMarkDown().transform(pageContents);
+				add(new Label(WicketIdConstants.STATIC_PAGE_CONTENTS, markdownTranformedContents).setEscapeModelStrings(false));
 				add(editLink);
 			}
 			else {
