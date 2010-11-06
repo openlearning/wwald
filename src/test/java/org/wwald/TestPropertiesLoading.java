@@ -1,6 +1,5 @@
 package org.wwald;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -16,7 +15,7 @@ public class TestPropertiesLoading {
 		InputStream propStream = 
 			ConnectionPool.class.
 				getClassLoader().
-					getResourceAsStream("org/wwald/db.properties");
+					getResourceAsStream("db.properties");
 		Properties dbProps = new Properties();
 		dbProps.load(propStream);
 		Assert.assertNotNull(dbProps.getProperty("db.url"));
