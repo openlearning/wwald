@@ -5,13 +5,16 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.resource.ContextRelativeResource;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -94,6 +97,7 @@ public class CoursesPanel extends Panel {
 					courseLink.add(new Label(WicketIdConstants.COURSE_TITLE, course.getTitle()));
 					item.add(courseLink);
 					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, course.getDescription()));
+					item.add(getCourseImage(course.getId()));
 				}
 				else {
 					BookmarkablePageLink courseLink = new BookmarkablePageLink(WicketIdConstants.GOTO_COURSE, CoursePage.class);
@@ -103,10 +107,17 @@ public class CoursesPanel extends Panel {
 					
 					WWALDApplication app = (WWALDApplication)Application.get();
 					String description = app.getMarkDown().transform(course.getShortDescription());
+					item.add(getCourseImage(course.getId()));
 					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, description).setEscapeModelStrings(false));
 				}
-			}
+			}			
     	};
+	}
+	
+	private Component getCourseImage(String id) {
+		String relImagePath = "images/" + id + ".png";
+		ContextRelativeResource resource = new ContextRelativeResource(relImagePath); 
+		return new Image("course_image", resource);
 	}
 	
 	private String shorten(String str) {
