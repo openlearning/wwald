@@ -7,6 +7,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
@@ -27,7 +28,10 @@ public class StatusUpdatesPanel extends Panel {
 	}
 	
 	private ListView getStatusUpdateListView() throws DataException {
-		List<StatusUpdate> statusUpdates = ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection());
+		ServletWebRequest request = (ServletWebRequest)getRequest();
+		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+		List<StatusUpdate> statusUpdates = ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection(databaseId));
     	return
     	new ListView(WicketIdConstants.STATUS_UPDATES, statusUpdates) {
 

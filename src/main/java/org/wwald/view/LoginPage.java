@@ -30,7 +30,7 @@ public class LoginPage extends BasePage {
 					String password = (String)((TextField)get("password")).getModelObject();
 					User user = 
 						((WWALDApplication)getApplication()).
-							getApplicationFacade().login(username, password);
+							getApplicationFacade().login(username, password, getDatabaseId());
 					WWALDSession.get().setUser(user);
 					if(user != null) {
 						setResponsePage(HomePage.class);

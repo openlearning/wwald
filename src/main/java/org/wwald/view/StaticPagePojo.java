@@ -21,7 +21,7 @@ public class StaticPagePojo extends BasePage {
 															 EditStaticPage.class, 
 															 new Role[]{Role.ADMIN});
 			
-			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), "about");
+			StaticPagePOJO page = ((WWALDApplication)Application.get()).getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(getDatabaseId()), "about");
 			
 			add(new Label(WicketIdConstants.STATIC_PAGE_CONTENTS, page.getContents()));
 			add(editLink);

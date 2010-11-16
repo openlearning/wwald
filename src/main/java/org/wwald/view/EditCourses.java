@@ -35,7 +35,7 @@ public class EditCourses extends AccessControlledPage {
 					//TODO: Get by name and not index
 					TextArea textArea = (TextArea)get(0);
 					WWALDApplication app = (WWALDApplication)getApplication();
-					app.getDataFacade().updateCourseWiki(ConnectionPool.getConnection(), (String)textArea.getModelObject());
+					app.getDataFacade().updateCourseWiki(ConnectionPool.getConnection(getDatabaseId()), (String)textArea.getModelObject());
 					
 				} catch(DataException de) {
 					String msg = "Sorry we could not perform the action you requested, " +
@@ -49,7 +49,7 @@ public class EditCourses extends AccessControlledPage {
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();
-		String wikiContents = app.getDataFacade().retreiveCourseWiki(ConnectionPool.getConnection());
+		String wikiContents = app.getDataFacade().retreiveCourseWiki(ConnectionPool.getConnection(getDatabaseId()));
 		TextArea editCoursesFormTextArea = new TextArea("courses.edit.form.textarea", new Model(wikiContents));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;

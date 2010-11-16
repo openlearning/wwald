@@ -339,69 +339,14 @@ public class DataInitializer {
 	
 	public static void main(String args[]) throws Exception {
 		System.out.println("starting data initializer");
-		DataInitializer dataInitializer = new DataInitializer();
-		dataInitializer.initData(ConnectionPool.getConnection());
-	}
-	
-//	private static String video1 = "<embed src=\"http://blip.tv/play/gtQk6o5MkPxE\" type=\"application/x-shockwave-flash\" width=\"500\" height=\"311\" allowscriptaccess=\"always\" allowfullscreen=\"true\"></embed><p style=\"font-size:11px;font-family:tahoma,arial\">Watch it on <a style=\"text-decoration:underline\" href=\"http://academicearth.org/lectures/malan-hardware/\">Academic Earth</a></p>";
-//	private static String video2 = "<object width=\"480\" height=\"385\"><param name=\"movie\" value=\"http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US\"></param><param name=\"allowFullScreen\" value=\"true\"></param><param name=\"allowscriptaccess\" value=\"always\"></param><embed src=\"http://www.youtube.com/v/zWg7U0OEAoE?fs=1&amp;hl=en_US\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"480\" height=\"385\"></embed></object>";
-//	
-//	public static String courseWiki = "INTROCS | Introduction To Computer Science\n" +
-//									  "INTROCSPROG | Introduction to Computer Science and Programming (using Python)\n" +									  
-//									  "PROGPAR | Programming Paradigms\n" +
-//									  "UCATI | Understanding Computers And The Internet\n";
-//	
-//	public static String courses[][] = {
-//			{"INTROCS", "Introduction To Computer Science", "Introduction to Computer Science I is a first course in computer science at Harvard College for concentrators and non-concentrators alike."},
-//			{"INTROCSPROG", "Introduction to Computer Science and Programming (using Python)", "This subject is aimed at students with little or no programming experience."},
-//			{"PROGPAR", "Programming Paradigms", "Lecture by Professor Jerry Cain for Programming Paradigms (CS107) in the Stanford University Computer Science department. Professor Cain provides an overview of the course."},
-//			{"UCATI", "Understanding Computers And The Internet", "This course is all about understanding: understanding what is going on inside your computer when you flip on the switch"},
-//		};
-//
-//	public static String competencies[][] = {
-//			{"1","UCATI","Lecture 1","Description of lecture 1",video1},
-//			{"2","UCATI","Lecture 2","Description of lecture 2",video2},
-//			{"3","UCATI","Lecture 3","Description of lecture 3",video1},
-//			{"1","INTROCS","Lecture 1","Description of lecture 1",video1},
-//			{"2","INTROCS","Lecture 2","Description of lecture 2",video2},
-//			{"3","INTROCS","Lecture 3","Description of lecture 3",video1},
-//			{"1","INTROCSPROG","Lecture 1","Description of lecture 1",video1},
-//			{"2","INTROCSPROG","Lecture 2","Description of lecture 2",video2},
-//			{"3","INTROCSPROG","Lecture 3","Description of lecture 3",video1},
-//			{"1","PROGPAR","Lecture 1","Description of lecture 1",video1},
-//			{"2","PROGPAR","Lecture 2","Description of lecture 2",video2},
-//			{"3","PROGPAR","Lecture 3","Description of lecture 3",video1},
-//		  };
-//
-//	public static String mentors[][] = {
-//			{"1", "David", "J", "Malan", "Professor at Harvard"}
-//		 };
-//	
-//	public static String courseCompetenciesWiki[][] = {
-//		{"UCATI","Lecture 1\nLecture 2\nLecture 3"},
-//		{"INTROCS","Lecture 1\nLecture 2\nLecture 3"},
-//		{"INTROCSPROG","Lecture 1\nLecture 2\nLecture 3"},
-//		{"PROGPAR","Lecture 1\nLecture 2\nLecture 3"},
-//	};
-//
-//	public static String courseMentors[][] = {
-//					{"UCATI","1"},
-//					{"INTROCS","1"},
-//					{"INTROCSPROG","1"},
-//					{"PROGPAR","1"},
-//			   };
-//	
-//	public static String users[][] = {
-//		{"John", "M", "Woods", "jwoods", "jwoods", "2010-10-01", "STUDENT"},
-//		{"Bill", "", "Forrest", "bforrest", "bforrest", "2010-10-01", "MENTOR"},
-//		{"Steve", "", "Meadows", "smeadows", "smeadows", "2010-10-01", "ADMIN"},
-//	};
-//	
-//	public static String courseEnrollmentStatus[][] = {
-//		{"1", "UNENROLLED"},
-//		{"2", "ENROLLED"},
-//		{"3", "COMPLETED"},
-//		{"4", "DROPPED"},
-//	};
-
+		String databaseId = System.getProperty("databaseId");
+		if(databaseId != null) {
+			System.out.println("Initializing database " + databaseId);
+			DataInitializer dataInitializer = new DataInitializer();
+			dataInitializer.initData(ConnectionPool.getConnection(databaseId));
+		}
+		else {
+			System.out.println("Cannot initialize the database because databaseId has not been specified as a VM property");
+		}
+	}	
 }

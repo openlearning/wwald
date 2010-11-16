@@ -10,9 +10,11 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.Role;
 import org.wwald.model.User;
@@ -55,7 +57,10 @@ public class CourseStatusPanel extends Panel implements Serializable {
 						public void onClick() {
 							if(hasPermission()) {
 								try {
-									appFacade.enrollInCourse(user, course);
+									ServletWebRequest request = (ServletWebRequest)getRequest();
+									String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+									String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+									appFacade.enrollInCourse(user, course, databaseId);
 								} catch(ApplicationException ae) {
 									String msg = "Sorry we could not enroll you in the course due to an internal error. " +
 												 "We will look into this problem as soon as we can.";
@@ -93,7 +98,10 @@ public class CourseStatusPanel extends Panel implements Serializable {
 						public void onClick() {
 							if(hasPermission()) {
 								try {
-								appFacade.dropCourse(user, course);
+									ServletWebRequest request = (ServletWebRequest)getRequest();
+									String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+									String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+									appFacade.dropCourse(user, course, databaseId);
 								} catch(ApplicationException ae) {
 									String msg = "Sorry we could not drop you from the course due to an internal error. " +
 									 			 "We will look into this problem as soon as we can.";
@@ -150,7 +158,10 @@ public class CourseStatusPanel extends Panel implements Serializable {
 		ICourseStatusForUser retVal = null;
 		WWALDApplication app = (WWALDApplication)getApplication();
 		ApplicationFacade appFacade = app.getApplicationFacade();
-		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(user, course);
+		ServletWebRequest request = (ServletWebRequest)getRequest();
+		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(user, course, databaseId);
 		//TODO: Can we use a map here instead of multiple if...else???
 		if(UserCourseStatus.UNENROLLED.equals(userCourseStatus) || 
 		   UserCourseStatus.DROPPED.equals(userCourseStatus)) {

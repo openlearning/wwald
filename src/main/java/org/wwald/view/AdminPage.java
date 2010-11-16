@@ -41,7 +41,7 @@ public class AdminPage extends AccessControlledPage {
 	
 	private ListView getMentorList() throws DataException {
 		IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
-		Connection conn = ConnectionPool.getConnection();
+		Connection conn = ConnectionPool.getConnection(getDatabaseId());
 		List<Mentor> mentors = dataFacade.retreiveAllMentors(conn);
 		
 		return new ListView("mentors", mentors) {

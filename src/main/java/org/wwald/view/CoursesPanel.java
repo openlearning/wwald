@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
@@ -37,10 +38,12 @@ public class CoursesPanel extends Panel {
 	}
 	
 	private ListView getCoursesListView() throws DataException, ParseException {
-		
+		ServletWebRequest request = (ServletWebRequest)getRequest();
+		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
 		String wikiContent = ((WWALDApplication)getApplication()).
 									getDataFacade().
-										retreiveCourseWiki(ConnectionPool.getConnection());
+										retreiveCourseWiki(ConnectionPool.getConnection(databaseId));
 		CourseWikiParser parser = new CourseWikiParser();
 		
 		List<CourseTitlePair> tokens = parser.parse(wikiContent);
@@ -50,7 +53,7 @@ public class CoursesPanel extends Panel {
 		for(CourseTitlePair ctp : tokens) {
 			Course course = ((WWALDApplication)getApplication()).
 								getDataFacade().
-									retreiveCourse(ConnectionPool.getConnection(),ctp.courseId);
+									retreiveCourse(ConnectionPool.getConnection(databaseId),ctp.courseId);
 			if(course != null) {
 				allCoursesToDisplay.add(course);
 			}
@@ -76,6 +79,9 @@ public class CoursesPanel extends Panel {
 															 new Role[]{Role.ADMIN}) {
 						@Override
 						public void onClick() {
+							ServletWebRequest request = (ServletWebRequest)getRequest();
+							String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+							String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
 							//TODO: Why can't we access dataFacade from HomePage?
 							PageParameters pageParameters = getPage().getPageParameters();
 							//TODO: Why would this ever be null?
@@ -84,7 +90,7 @@ public class CoursesPanel extends Panel {
 							}
 							try {
 								WWALDApplication app = (WWALDApplication)(getApplication());
-								app.getDataFacade().insertCourse(ConnectionPool.getConnection(), course);								
+								app.getDataFacade().insertCourse(ConnectionPool.getConnection(databaseId), course);								
 								pageParameters.add(WWALDConstants.SELECTED_COURSE, course.getId());
 								setResponsePage(EditCompetencies.class, pageParameters);
 							} catch(DataException de) {

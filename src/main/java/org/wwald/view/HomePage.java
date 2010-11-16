@@ -47,8 +47,6 @@ public class HomePage extends BasePage implements Serializable {
 	private Component getCoursesPanel(PageParameters parameters) {
 		ServletWebRequest request = (ServletWebRequest)getRequest();
 		
-		System.out.println("Request Domain Name '" + request.getHttpServletRequest().getLocalName() + "'");
-		System.out.println("Request relative URL '" + request.getURL() + "'");
 		//TODO: Should we throw the DataException out of here and let the caller handle it?
 		Panel coursesPanel = null;
 		try {

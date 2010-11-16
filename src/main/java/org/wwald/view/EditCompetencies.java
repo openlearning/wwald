@@ -27,7 +27,7 @@ public class EditCompetencies extends AccessControlledPage {
 		super(parameters); 
 		
 		try {
-			Connection conn = ConnectionPool.getConnection();
+			Connection conn = ConnectionPool.getConnection(getDatabaseId());
 			String courseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
 			Course course = ((WWALDApplication)getApplication()).getDataFacade().retreiveCourse(conn, courseId);
 			System.out.println("Course Mentor Before" + course.getMentor());
@@ -46,14 +46,14 @@ public class EditCompetencies extends AccessControlledPage {
 			@Override
 			public void onSubmit() {
 				try {
-					Connection conn = ConnectionPool.getConnection();					
+					Connection conn = ConnectionPool.getConnection(getDatabaseId());					
 
 					TextArea courseDescriptionTextArea = (TextArea)get(1);
 					course.setDescription((String)courseDescriptionTextArea.getModelObject());
 					((WWALDApplication)getApplication()).getDataFacade().updateCourse(conn, course);
 															
 					TextArea competenciesListTextArea = (TextArea)get(2);					
-					((WWALDApplication)getApplication()).getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(), course.getId(), (String)competenciesListTextArea.getModelObject());
+					((WWALDApplication)getApplication()).getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(getDatabaseId()), course.getId(), (String)competenciesListTextArea.getModelObject());
 					
 					setResponsePage(CoursePage.class, pageParams);
 				} catch(DataException de) {
@@ -79,12 +79,13 @@ public class EditCompetencies extends AccessControlledPage {
 
 	private List getMentors() throws DataException {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().retreiveAllMentors(ConnectionPool.getConnection());
+		return app.getDataFacade().retreiveAllMentors(ConnectionPool.getConnection(getDatabaseId()));
 	}
 
 	private Serializable getCompetenciesWikiContents(String courseId) throws DataException {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().retreiveCompetenciesWiki(ConnectionPool.getConnection(), courseId);
+		return app.getDataFacade().retreiveCompetenciesWiki(ConnectionPool.getConnection(getDatabaseId()), 
+															courseId);
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class CoursePage extends BasePage {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		IDataFacade dataStore = app.getDataFacade();
 		String selectedCourseId = parameters.getString(WWALDConstants.SELECTED_COURSE);
-		Course course = dataStore.retreiveCourse(ConnectionPool.getConnection(),selectedCourseId); 
+		Course course = dataStore.retreiveCourse(ConnectionPool.getConnection(getDatabaseId()),selectedCourseId); 
 		return course;
 	}
 

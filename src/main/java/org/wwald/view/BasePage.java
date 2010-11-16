@@ -11,10 +11,12 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WWALDPropertiesEnum;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 
 
@@ -71,6 +73,16 @@ public abstract class BasePage extends WebPage {
 		}
 		
 		return sidebar; 
+	}
+	
+	protected final String getRequestUrl() {
+		ServletWebRequest request = (ServletWebRequest)getRequest();
+		return request.getHttpServletRequest().getRequestURL().toString();
+	}
+	
+	protected final String getDatabaseId() {
+		String requestUrl = getRequestUrl();
+		return ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
 	}
 
 	private String getSidebarFqcn(Class<?> pageClass) {

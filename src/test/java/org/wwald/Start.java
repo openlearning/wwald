@@ -56,7 +56,16 @@ public class Start {
 	}
 
 	private static void initData() throws Exception {
-		DataInitializer initializer = new DataInitializer();
-		initializer.initData(ConnectionPool.getConnection());
+		
+		String databaseId = System.getProperty("databaseId");
+		if(databaseId != null) {
+			System.out.println("Initializing database " + databaseId);
+			DataInitializer initializer = new DataInitializer();
+			initializer.initData(ConnectionPool.getConnection(databaseId));
+		}
+		else {
+			System.out.println("Not initializing database because no databaseId has been specified");
+		}
+		
 	}
 }

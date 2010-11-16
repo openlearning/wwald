@@ -45,7 +45,7 @@ public class EditLecture extends AccessControlledPage {
 					
 					competency.setDescription((String)editCompetencyDescriptionTextArea.getModelObject());
 					competency.setResource((String)editCompetencyResourcesTextArea.getModelObject());
-					app.getDataFacade().updateCompetency(ConnectionPool.getConnection(), courseId, competency);
+					app.getDataFacade().updateCompetency(ConnectionPool.getConnection(getDatabaseId()), courseId, competency);
 					
 					setResponsePage(CoursePage.class, pageParams);
 				} catch(DataException de) {
@@ -67,7 +67,7 @@ public class EditLecture extends AccessControlledPage {
 
 	private Competency getCompetency(String courseId, String sCompetencyId) throws DataException {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		Competency competency = app.getDataFacade().retreiveCompetency(ConnectionPool.getConnection(), courseId, sCompetencyId);
+		Competency competency = app.getDataFacade().retreiveCompetency(ConnectionPool.getConnection(getDatabaseId()), courseId, sCompetencyId);
 		return competency;
 	}
 

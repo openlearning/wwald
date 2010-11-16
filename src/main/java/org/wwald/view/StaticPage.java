@@ -34,7 +34,7 @@ public class StaticPage extends BasePage {
 
 				StaticPagePOJO page = ((WWALDApplication) Application.get())
 						.getDataFacade().retreiveStaticPage(
-								ConnectionPool.getConnection(),
+								ConnectionPool.getConnection(getDatabaseId()),
 								requestedStaticPage);
 				
 				String pageContents = page.getContents();

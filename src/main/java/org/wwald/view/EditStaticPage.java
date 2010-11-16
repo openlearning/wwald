@@ -44,7 +44,7 @@ public class EditStaticPage extends AccessControlledPage {
 					TextArea textArea = (TextArea)get(0);
 					WWALDApplication app = (WWALDApplication)getApplication();
 					StaticPagePOJO page = new StaticPagePOJO(path, (String)textArea.getModelObject());
-					app.getDataFacade().upsertStaticPage(ConnectionPool.getConnection(), page);
+					app.getDataFacade().upsertStaticPage(ConnectionPool.getConnection(getDatabaseId()), page);
 					
 				} catch(DataException de) {
 					String msg = "Sorry we could not perform the action you requested, " +
@@ -57,7 +57,7 @@ public class EditStaticPage extends AccessControlledPage {
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();
-		StaticPagePOJO page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(), path);
+		StaticPagePOJO page = app.getDataFacade().retreiveStaticPage(ConnectionPool.getConnection(getDatabaseId()), path);
 		TextArea editCoursesFormTextArea = new TextArea(WicketIdConstants.EDIT_STATIC_PAGE_FORM_TEXTAREA, new Model(page.getContents()));
 		editCoursesForm.add(editCoursesFormTextArea);
 		return editCoursesForm;
