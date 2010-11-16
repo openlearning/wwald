@@ -1,13 +1,22 @@
 package org.wwald.view;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.resource.ContextRelativeResource;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
 import org.wwald.view.components.AccessControlledViewPageLink;
@@ -15,6 +24,8 @@ import org.wwald.view.components.AccessControlledViewPageLink;
 public class HeaderPanel extends Panel {
 	public HeaderPanel(String id) {
 		super(id);
+				
+		add(getHeaderImage());
 		
 		Link homeLink = new BookmarkablePageLink(WicketIdConstants.HOMEPAGE_LINK, HomePage.class);
 		Label homeLabel = new Label(WicketIdConstants.HOMEPAGE_LABEL, "Home .");
@@ -62,6 +73,29 @@ public class HeaderPanel extends Panel {
 		Link adminLink = new AccessControlledViewPageLink("admin_page", AdminPage.class, new Role[]{Role.ADMIN});
 		
 		add(adminLink);
+	}
+
+	private Component getHeaderImage() {
+		String imagePath = "";
+		ServletWebRequest request = (ServletWebRequest)getRequest();
+		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+		try {
+			InputStream propStream = 
+				ConnectionPool.class.
+					getClassLoader().
+						getResourceAsStream("ui_config.properties");
+			Properties dbProps = new Properties();
+			dbProps.load(propStream);
+			imagePath = dbProps.getProperty(databaseId + ".headerimage");
+		} catch(IOException ioe) {
+			
+		}
+		if(imagePath == null || imagePath.equals("")) {
+			imagePath = "images/default_header.jpg";
+		}
+		Image headerImage = new Image("header_image", new ContextRelativeResource(imagePath));
+		return headerImage;
 	}
 
 	private boolean userLoggedIn() {
