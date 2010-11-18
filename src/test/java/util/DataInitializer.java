@@ -37,7 +37,10 @@ public class DataInitializer {
 		this.appClassLoader = DataInitializer.class.getClassLoader();
 	}
 	
-	public void initData(Connection conn) throws IOException, SQLException, DataFileSyntaxException {		
+	public void initData(Connection conn) throws IOException, SQLException, DataFileSyntaxException {
+		if(conn == null) {
+			throw new IllegalArgumentException("conn cannot be null");
+		}
 		createTables(conn);
 		populateTables(conn);
 	}
