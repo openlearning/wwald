@@ -1,5 +1,8 @@
 package org.wwald;
 
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.Model;
+
 public class WicketIdConstants {
 	public static final String HEADER_PANEL = "header_panel";
 	public static final String HOMEPAGE_LINK  = "homepage_link";
@@ -45,6 +48,26 @@ public class WicketIdConstants {
 	public static final String COURSE_STATUS_ACTIONS = "course_status_actions";
 	public static final String COURSE_STATUS_ACTION_LINK = "course_status_action_link";
 	public static final String COURSE_STATUS_ACTION_LABEL = "course_status_action_label";
+	
+	//admin pages
+	public static final String MANAGE_USERS_PAGE = "manage_users_page";
+	public static final String USER_DETAILS_PAGE = "user_details_page";
+	public static final String USER_DETAILS_FORM = "user_details_form";
+	public static final String USER_DETAILS_FORM_FIRST_NAME_LABEL = "first_name_label";
+	public static final String USER_DETAILS_FORM_FIRST_NAME_FIELD = "first_name_field";
+	public static final String USER_DETAILS_FORM_MI_LABEL = "mi_label";
+	public static final String USER_DETAILS_FORM_MI_FIELD = "mi_field";
+	public static final String USER_DETAILS_FORM_LAST_NAME_LABEL = "last_name_label";
+	public static final String USER_DETAILS_FORM_LAST_NAME_FIELD = "last_name_field";
+	public static final String USER_DETAILS_FORM_USERNAME_LABEL = "username_label";
+	public static final String USER_DETAILS_FORM_USERNAME_FIELD = "username_field";
+	public static final String USER_DETAILS_FORM_PASSWORD_LABEL = "password_label";
+	public static final String USER_DETAILS_FORM_PASSWORD_FIELD = "password_field";
+	public static final String USER_DETAILS_FORM_REPEAT_PASSWORD_LABEL = "repeat_password_label";
+	public static final String USER_DETAILS_FORM_REPEAT_PASSWORD_FIELD = "repeat_password_field";
+	public static final String USER_DETAILS_FORM_ROLE_LABEL = "role_field_label";
+	public static final String USER_DETAILS_FORM_ROLE_FIELD = "role_field";
+	public static final String USER_DETAILS_FORM_JOINDATE_FIELD = "join_date_field";
 	
 	//static pages
 	public static final String EDIT_STATIC_PAGE = "edit_static_page";

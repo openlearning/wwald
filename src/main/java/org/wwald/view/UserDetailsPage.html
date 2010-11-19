@@ -1,0 +1,45 @@
+<wicket:extend>
+	<b>User Details</b>
+	
+	<form wicket:id="user_details_form">
+		<p class="form-line">		
+			<span class="form-label" wicket:id="first_name_label">First Name Label</span>
+			<input wicket:id="first_name_field" type="text" />
+		</p>
+		<p class="form-line">
+			<span class="form-label" wicket:id="mi_label">Middle Initial Label</span>
+			<input wicket:id="mi_field" type="text" />
+		</p>
+		<p class="form-line">
+			<span class="form-label" wicket:id="last_name_label">Last Name Label</span>
+			<input wicket:id="last_name_field" type="text" />
+		</p>
+		<p class="form-line">
+			<span class="form-label" wicket:id="username_label">Username Label</span>
+			<input wicket:id="username_field" type="text" />
+		</p>
+		<p class="form-line">
+			<span class="form-label" wicket:id="password_label">Password Label</span>
+			<input wicket:id="password_field" type="text" />
+		</p>
+		<p class="form-line">
+			<span class="form-label" wicket:id="repeat_password_label">Retype Password Label</span>
+			<input wicket:id="repeat_password_field" type="text" />
+		</p>
+		<p class="form-line">
+			<span class="form-label" wicket:id="role_field_label">Role Label</span>
+			<select wicket:id="role_field">
+				<option> Role 1 </option>
+				<option> Role 2 </option>
+			</select>
+		</p>
+		<p class="form-line">
+			<input type="submit" name="SubmitButton" value="Updtate User"/>
+		</p>
+	</form>
+	
+	<p>
+	<a wicket:id="manage_users_page" href="#">Manage Users</a>
+	</p>
+	
+</wicket:extend>

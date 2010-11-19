@@ -241,15 +241,15 @@ a {
 	font-size: 12px;
 }
 
-.login-label {
-	width: 4em;
+.form-label {
+	width: 110px;
 	float: left;
-	text-align: right;
+	text-align: left;
 	margin-right: 1.0em;
 	display: block
 }
 
-.login-form-line {
+.form-line {
 	padding-bottom: 10px;
 	margin-left: 10px;
 }

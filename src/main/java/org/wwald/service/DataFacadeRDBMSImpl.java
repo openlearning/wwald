@@ -412,11 +412,77 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
+	public void updateUser(Connection conn, User user) {
+		try {
+			Statement stmt = conn.createStatement();
+			String sql = String.format(Sql.UPDATE_USER, 
+									   wrapForSQL(user.getFirstName()), 
+									   wrapForSQL(user.getMi()), 
+									   wrapForSQL(user.getLastName()),
+									   wrapForSQL(user.getRole().toString()),
+									   wrapForSQL(user.getUsername()));
+			int rowsUpdated = stmt.executeUpdate(sql);
+			if(rowsUpdated == 0) {
+				cLogger.warn("Tried updating user but 0 rows were affected '" + user + "'");
+			}
+			else {
+				cLogger.info("User updated new values '" + user + "'");
+			}
+			
+		} catch(SQLException sqle) {
+			
+		}
+	}
+	
+	public List<User> retreiveAllUsers(Connection conn) throws DataException {
+		List<User> users = new ArrayList<User>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_ALL_USERS);
+			while(rs.next()) {
+				String firstName = rs.getString("first_name");
+				String mi = rs.getString("mi");
+				String lastName = rs.getString("last_name");
+				String userName = rs.getString("username");
+				Date dateJoined = rs.getDate("join_date");
+				String role = rs.getString("role");
+				users.add(new User(firstName,mi,lastName,userName,dateJoined,Role.valueOf(role)));
+			}
+			return users;
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive Users from the database";
+			throw new DataException(msg, sqle);
+		}
+		
+	}
+	
 	public User retreiveUser(Connection conn, String username, String password) throws DataException {
 		User user = null;
 		try {
 			Statement stmt = conn.createStatement();
 			String query = String.format(Sql.RETREIVE_USER, wrapForSQL(username), wrapForSQL(password));
+			ResultSet rs  = stmt.executeQuery(query);
+			if(rs.next()) {
+				String firstName = rs.getString("first_name");
+				String mi = rs.getString("mi");
+				String lastName = rs.getString("last_name");
+				String userName = rs.getString("username");
+				Date dateJoined = rs.getDate("join_date");
+				String role = rs.getString("role");
+				user = new User(firstName,mi,lastName,userName,dateJoined,Role.valueOf(role));
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive User from database";
+			throw new DataException(msg, sqle);
+		}
+		return user; 
+	}
+	
+	public User retreiveUserByUsername(Connection conn, String username) throws DataException {
+		User user = null;
+		try {
+			Statement stmt = conn.createStatement();
+			String query = String.format(Sql.RETREIVE_USER_BY_USERNAME, wrapForSQL(username));
 			ResultSet rs  = stmt.executeQuery(query);
 			if(rs.next()) {
 				String firstName = rs.getString("first_name");
@@ -648,7 +714,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		while(rs.next()) {
 			String mentorUsername = rs.getString("mentor_username");
 			Statement stmt = conn.createStatement();
-			ResultSet mentorsResultSet = stmt.executeQuery(String.format(Sql.RETREIVE_USER_WITH_USERNAME, wrapForSQL(mentorUsername)));
+			ResultSet mentorsResultSet = stmt.executeQuery(String.format(Sql.RETREIVE_USER_BY_USERNAME, wrapForSQL(mentorUsername)));
 			while(mentorsResultSet.next()) {
 				String firstName = mentorsResultSet.getString("first_name");
 				String mi = mentorsResultSet.getString("mi");
