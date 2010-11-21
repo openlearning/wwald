@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
@@ -176,16 +177,18 @@ public class UserForm extends Form {
 		
 		add(new Label(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_LABEL, "Password *"));
 		this.passwordField = 
-			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_FIELD, 
+			new PasswordTextField(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_FIELD, 
 						  new PropertyModel(this.user, "password"));
+		this.passwordField.setRequired(true);
 		this.passwordField.setLabel(new Model("Password"));
 		this.passwordField.add(StringValidator.lengthBetween(6, 16));
 		add(this.passwordField);
 		
 		add(new Label(WicketIdConstants.USER_DETAILS_FORM_REPEAT_PASSWORD_LABEL, "Retype Password *"));
 		this.repeatPasswordField = 
-			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_REPEAT_PASSWORD_FIELD, 
+			new PasswordTextField(WicketIdConstants.USER_DETAILS_FORM_REPEAT_PASSWORD_FIELD, 
 						  new PropertyModel(this, "repeatPassword"));
+		this.repeatPasswordField.setRequired(true);
 		this.repeatPasswordField.add(StringValidator.lengthBetween(6, 16));
 		this.repeatPasswordField.setLabel(new Model("Retype Password"));
 		add(this.repeatPasswordField);
