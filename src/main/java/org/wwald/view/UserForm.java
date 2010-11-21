@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
@@ -28,6 +29,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
 public class UserForm extends Form {
@@ -45,6 +47,9 @@ public class UserForm extends Form {
 	private DropDownChoice roleField;
 	
 	private Class<? extends Page> responsePage;
+	
+	//TODO: What is the implication of making this field transient?
+	private transient Logger cLogger = Logger.getLogger(UserForm.class);
 	
 	public enum Field {
 		FIRST_NAME,
@@ -172,6 +177,7 @@ public class UserForm extends Form {
 			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_USERNAME_FIELD, 
 						  new PropertyModel(this.user, "username"));
 		this.usernameField.add(StringValidator.lengthBetween(6, 16));
+		this.usernameField.add(new DuplicateUsernameValidator(getDatabaseId(), getDataFacade()));
 		this.usernameField.setLabel(new Model("Username"));
 		add(this.usernameField);
 		
@@ -200,6 +206,10 @@ public class UserForm extends Form {
 		add(this.roleField);
 	
 		add(new EqualPasswordInputValidator(this.passwordField, this.repeatPasswordField));
+	}
+
+	private IDataFacade getDataFacade() {
+		return ((WWALDApplication)getApplication()).getDataFacade();
 	}
 
 	private List getRoles() {
