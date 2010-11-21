@@ -47,8 +47,6 @@ public class HeaderPanel extends Panel {
 		Link registerLink = new BookmarkablePageLink(WicketIdConstants.REGISTER_LINK, Register.class);
 		Label registerLabel = new Label(WicketIdConstants.REGISTER_LABEL, "Register .");
 		registerLink.add(registerLabel);
-		//TODO: Change once we allow registrations
-		registerLink.setVisible(false);
 		add(registerLink);
 		
 		Link logoutLink = new Link(WicketIdConstants.LOGOUT_LINK) {

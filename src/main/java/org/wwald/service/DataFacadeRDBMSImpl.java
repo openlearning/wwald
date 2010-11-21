@@ -412,7 +412,28 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public void updateUser(Connection conn, User user) {
+	public void insertUser(Connection conn, User user) throws DataException {
+		try {
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			Statement stmt = conn.createStatement();
+			String sql = String.format(Sql.INSERT_USER, 
+									   wrapForSQL(user.getFirstName()), 
+									   wrapForSQL(user.getMi()), 
+									   wrapForSQL(user.getLastName()),
+									   wrapForSQL(user.getUsername()),
+									   wrapForSQL(user.getPassword()),
+									   wrapForSQL(df.format(user.getJoinDate())),
+									   wrapForSQL(user.getRole().toString()));
+			cLogger.info("Executing SQL '" + sql + "'");
+			int rowsUpdated = stmt.executeUpdate(sql);			
+		} catch(SQLException sqle) {
+			String msg = "Could not insert User due to an exception";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	public void updateUser(Connection conn, User user) throws DataException {
 		try {
 			Statement stmt = conn.createStatement();
 			String sql = String.format(Sql.UPDATE_USER, 
@@ -430,7 +451,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			}
 			
 		} catch(SQLException sqle) {
-			
+			String msg = "Could not update user due to an exception";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 	}
 	

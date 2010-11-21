@@ -31,7 +31,7 @@ public abstract class BasePage extends WebPage {
 		add(this.sidebar);
 		add(new HeaderPanel(WicketIdConstants.HEADER_PANEL));
 		add(new FooterPanel(WicketIdConstants.FOOTER_PANEL));
-		add(new Label(WicketIdConstants.MESSAGES, new Model(getMessages(parameters))));
+		add(new Label(WicketIdConstants.BASE_PAGE_MESSAGES, new Model(getMessages(parameters))));
 	}
 
 	public void replaceSidebar(Panel sidebar) {

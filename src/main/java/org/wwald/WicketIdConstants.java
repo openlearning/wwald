@@ -15,6 +15,7 @@ public class WicketIdConstants {
 	public static final String LOGOUT_LABEL  = "logout_label";
 	
 	public static final String MESSAGES = "messages";
+	public static final String BASE_PAGE_MESSAGES = "base_page_messages";
 	
 	public static final String FOOTER_PANEL = "footer_panel";	
 	
@@ -52,7 +53,7 @@ public class WicketIdConstants {
 	//admin pages
 	public static final String MANAGE_USERS_PAGE = "manage_users_page";
 	public static final String USER_DETAILS_PAGE = "user_details_page";
-	public static final String USER_DETAILS_FORM = "user_details_form";
+	public static final String USER_DETAILS_FORM = "user_details_panel";
 	public static final String USER_DETAILS_FORM_FIRST_NAME_LABEL = "first_name_label";
 	public static final String USER_DETAILS_FORM_FIRST_NAME_FIELD = "first_name_field";
 	public static final String USER_DETAILS_FORM_MI_LABEL = "mi_label";

@@ -48,6 +48,7 @@ public interface IDataFacade {
 	public List<StatusUpdate> getStatusUpdates(Connection c) throws DataException;
 	
 	//User
+	public void insertUser(Connection conn, User user) throws DataException;
 	public void updateUser(Connection conn, User user) throws DataException;
 	public List<User> retreiveAllUsers(Connection c) throws DataException ;
 	public User retreiveUserByUsername(Connection conn, String username) throws DataException;
