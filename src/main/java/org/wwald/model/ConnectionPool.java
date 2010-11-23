@@ -1,5 +1,7 @@
 package org.wwald.model;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,13 +9,16 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.wwald.WWALDApplication;
 
 
 public class ConnectionPool {
 	
 	private static Map<String, Connection> connections;
+	private static Map<String, String> dirmappings;
 	private static String username;
 	private static String password;
 	private static String preurl;
@@ -24,16 +29,18 @@ public class ConnectionPool {
 		try {
 			connections = new HashMap<String, Connection>();
 			
-			InputStream propStream = 
-				ConnectionPool.class.
-					getClassLoader().
-						getResourceAsStream("db.properties");
-			dbProps = new Properties();
-			dbProps.load(propStream);
-			
-			preurl = dbProps.getProperty("db.url");
-			username = dbProps.getProperty("db.user");
-			password = dbProps.getProperty("db.password");
+			dirmappings = new HashMap<String, String>();
+			InputStream dirmapIs = new FileInputStream(WWALDApplication.WWALDDIR + "dirmap.properties");
+			Properties dirmapProps = new Properties();
+			dirmapProps.load(dirmapIs);
+			Set dirmapKeys = dirmapProps.keySet();
+			cLogger.info("Building directory mappings");
+			for(Object dirmapKey : dirmapKeys) {
+				String val = dirmapProps.getProperty((String)dirmapKey);
+				dirmappings.put((String)dirmapKey, val);
+				cLogger.info((String)dirmapKey + "," + val);
+			}
+			cLogger.info("Completed building directory mappings");
 			
 			Class.forName("org.hsqldb.jdbcDriver").newInstance();
 		} catch(Exception e) {
@@ -44,26 +51,38 @@ public class ConnectionPool {
 	public static synchronized Connection getConnection(String id) {
 		Connection conn = connections.get(id);
 		if(conn == null) {
-			String dbId = dbProps.getProperty(id);
-			if(dbId != null && !dbId.equals("")) {
-				String couldNotObtainConnMsg = "Could not get connection to database mapped to '" + id + "'"; 
-				String url = preurl + dbId;
-				try {
-					conn = DriverManager.getConnection(url, username, password);
-				} catch(SQLException sqle) {
-					cLogger.error(couldNotObtainConnMsg, sqle);
-				}
+			try {
+				Properties dbProps = getDbPropertyFileById(id);
+				String url = dbProps.getProperty("db.url");
+				String username = dbProps.getProperty("db.user");
+				String password = dbProps.getProperty("db.password");
+				cLogger.info("Creating connection '" + url + "', '" + username + "', " + password + "'");
+				conn = DriverManager.getConnection(url, username, password);
 				if(conn != null) {
 					connections.put(id, conn);
 				}
 				else {
+					String couldNotObtainConnMsg = "Could not obtain database connection for id '" + id + "'";
 					cLogger.error(couldNotObtainConnMsg);
 				}
+			} catch(IOException ioe) {
+				String msg = "Could not load property file for id '" + id + "'";
+				cLogger.error(msg, ioe);
+			} catch(SQLException sqle) {
+				String msg = "Could not create connection for id '" + id + "'";
+				cLogger.error(msg, sqle);
 			}
-			
 		}
 		
 		return conn;
+	}
+
+	private static Properties getDbPropertyFileById(String id) throws IOException {
+		String filePath = WWALDApplication.WWALDDIR + dirmappings.get(id) + "/db.properties";
+		InputStream is = new FileInputStream(filePath);
+		Properties props = new Properties();
+		props.load(is);
+		return props;
 	}
 
 	public static String getDatabaseIdFromRequestUrl(String requestUrl) {

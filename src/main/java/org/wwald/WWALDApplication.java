@@ -27,11 +27,23 @@ import com.cforcoding.jmd.MarkDown;
  */
 public class WWALDApplication extends WebApplication
 {
+	public static final String HOMEDIR; 
+	public static final String WWALDDIR;
+	
 	private static Logger cLogger = Logger.getLogger(WWALDApplication.class);
 	
 	private IDataFacade dataStore;
 	private ApplicationFacade applicationFacade;
 	private MarkDown markDownLib;
+	
+	static {
+		HOMEDIR = System.getProperty("user.home");
+		WWALDDIR = HOMEDIR + "/.wwald/";
+		if(HOMEDIR == null || HOMEDIR.equals("")) {
+			throw new RuntimeException("CANNOT START APPLICATION BECAUSE THE user.home SYSTEM PROPERTY DOES NOT EXIST !!!");
+		}
+	}
+	
     /**
      * Constructor
      */
