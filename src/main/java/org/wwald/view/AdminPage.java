@@ -15,9 +15,14 @@ public class AdminPage extends AccessControlledPage {
 	
 	public AdminPage(PageParameters parameters) {
 		super(parameters);
-		Link manageUsersLink = new AccessControlledViewPageLink(WicketIdConstants.MANAGE_USERS_PAGE, ManageUsersPage.class, new Role[]{Role.ADMIN});
-		add(manageUsersLink);			
 		
+		Link manageUsersLink = new AccessControlledViewPageLink(WicketIdConstants.MANAGE_USERS_PAGE, ManageUsersPage.class, new Role[]{Role.ADMIN});
+		add(manageUsersLink);
+		
+		PageParameters pageParams = new PageParameters();
+		pageParams.add(WicketIdConstants.KVTableKey, WicketIdConstants.KVTableKey_GOOGLE_ANALYTICS);
+		Link googleAnalyticsLink = new AccessControlledViewPageLink(WicketIdConstants.SITE_ANALYTICS_LINK, KVTablePage.class, pageParams, new Role[]{Role.ADMIN});
+		add(googleAnalyticsLink);
 	}
 
 	@Override

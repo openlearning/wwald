@@ -1,6 +1,7 @@
 package org.wwald;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Application;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
 import org.apache.wicket.Session;
@@ -74,6 +75,10 @@ public class WWALDApplication extends WebApplication
 	
 	public synchronized MarkDown getMarkDown() {
 		return this.markDownLib;
+	}
+	
+	public static WWALDApplication get() {
+		return (WWALDApplication)Application.get();
 	}
 
 }

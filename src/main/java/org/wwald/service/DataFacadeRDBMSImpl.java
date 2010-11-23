@@ -550,6 +550,53 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			updateStaticPage(conn, page);
 		}
 	}
+	
+	public String retreiveFromKvTable(Connection c, String k) throws DataException {
+		return null;
+	}
+	
+	public void upsertKvTable(Connection c, String k, String v) throws DataException {
+		
+	}
+	
+	public String retreiveFromKvTableClob(Connection c, String k) throws DataException {
+		String retVal = null;
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(String.format(Sql.RETREIVE_KVTABLE_CLOB,wrapForSQL(k)));
+			if(rs.next()) {
+				retVal = rs.getString("v");
+			}
+			return retVal;
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive value from KVTABLE_CLOB";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	public void upsertKvTableClob(Connection c, String k, String v) throws DataException {
+		try {
+			String existingVal = retreiveFromKvTableClob(c, k);
+			Statement stmt = c.createStatement();
+			String sql = null;
+			if(existingVal == null) {
+				sql = String.format(Sql.INSERT_KVTABLE_CLOB, wrapForSQL(k), wrapForSQL(v));
+			}
+			else {
+				sql = String.format(Sql.UPDATE_KVTABLE_CLOB, wrapForSQL(v), wrapForSQL(k));
+			}
+			stmt.executeUpdate(sql);
+		} catch(DataException de) {
+			String msg = "Could not check if the key already exists before upserting the value in KVTABLE_CLOB ('" + k + "','" + v + "')";
+			cLogger.error(msg, de);
+			throw new DataException(msg, de);
+		} catch(SQLException sqle) {
+			String msg = "Could not upsert into KVTABLE_CLOB ('" + k + "','" + v + "')";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
 
 	private void insertStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
 		String sql = String.format(Sql.INSERT_STATIC_PAGE, 

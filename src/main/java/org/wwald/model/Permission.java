@@ -5,5 +5,6 @@ public enum Permission {
 	EDIT_COURSE,
 	MANAGE_USERS,
 	ADD_USER,
-	ADD_MENTOR;
+	ADD_MENTOR,
+	SITE_ANALYTICS;
 }

@@ -3,9 +3,13 @@ package org.wwald.view;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.Session;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -17,7 +21,7 @@ import org.wwald.WWALDConstants;
 import org.wwald.WWALDPropertiesEnum;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
-import org.wwald.model.Role;
+import org.wwald.service.DataException;
 
 
 public abstract class BasePage extends WebPage {
@@ -32,6 +36,22 @@ public abstract class BasePage extends WebPage {
 		add(new HeaderPanel(WicketIdConstants.HEADER_PANEL));
 		add(new FooterPanel(WicketIdConstants.FOOTER_PANEL));
 		add(new Label(WicketIdConstants.BASE_PAGE_MESSAGES, new Model(getMessages(parameters))));
+		add(new Label(WicketIdConstants.SITE_ANALYTICS_CODE, getSiteAnalyticsCode()).setEscapeModelStrings(false));
+	}
+
+	private String getSiteAnalyticsCode() {
+		Connection conn = ConnectionPool.getConnection(getDatabaseId());
+		String siteAnalCode = "";
+		try {
+			siteAnalCode = WWALDApplication.get().
+								getDataFacade().
+									retreiveFromKvTableClob(conn, 
+															WicketIdConstants.KVTableKey_GOOGLE_ANALYTICS);
+		} catch(DataException de) {
+			String msg = "Could not retreive site analytics code";
+			cLogger.error(msg, de);
+		}
+		return siteAnalCode;
 	}
 
 	public void replaceSidebar(Panel sidebar) {
@@ -73,6 +93,39 @@ public abstract class BasePage extends WebPage {
 		}
 		
 		return sidebar; 
+	}
+	
+	public void setWWALDFeedbackMessage(String msg) {
+		FeedbackMessage message = new FeedbackMessage(this, msg, 1);
+		Session.get().getFeedbackMessages().add(message);
+	}
+	
+	public String getWWALDFeedbackMessageAsString() {
+		String retVal = "";
+		FeedbackMessage feedbackMessage = getWWALDFeedbackMessage();
+		if(feedbackMessage != null) {
+			Serializable message = feedbackMessage.getMessage();
+			if(message != null) {
+				retVal = message.toString();
+			}
+		}
+		return retVal;
+	}
+	
+	public FeedbackMessage getWWALDFeedbackMessage() {
+		FeedbackMessage feedbackMessage = super.getFeedbackMessage();
+		Session.get().getFeedbackMessages().clear(new IFeedbackMessageFilter() {
+			
+			public boolean accept(FeedbackMessage message) {
+				if(message.getReporter() == BasePage.this) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		});
+		return feedbackMessage;
 	}
 	
 	protected final String getRequestUrl() {

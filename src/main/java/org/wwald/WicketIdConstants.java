@@ -52,6 +52,7 @@ public class WicketIdConstants {
 	
 	//admin pages
 	public static final String MANAGE_USERS_PAGE = "manage_users_page";
+	public static final String SITE_ANALYTICS_LINK = "site_analytics";
 	public static final String USER_DETAILS_PAGE = "user_details_page";
 	public static final String USER_DETAILS_FORM = "user_details_panel";
 	public static final String USER_DETAILS_FORM_FIRST_NAME_LABEL = "first_name_label";
@@ -89,4 +90,15 @@ public class WicketIdConstants {
 	public static final String CONTACT_PAGE_NAME  = "contact";
 	public static final String CONTACT_LINK  = "contact_link";
 	public static final String CONTACT_LABEL  = "contact_label";
+	
+	//Key Value table
+	public static final String KVTableKey = "KVTableKey";
+	public static final String KVTableKey_GOOGLE_ANALYTICS = "GoogleAnalytics";
+	public static final String KVTablePage_LABEL = "KVTablePage_LABEL";
+	public static final String KVTablePage_FORM = "KVTablePage_FORM";
+	public static final String KVTablePage_FORM_TEXTAREA = "KVTablePage_FORM_TEXTAREA";
+	
+	//KVTable rows
+	public static final String SITE_ANALYTICS_CODE = "site_analytics_code";
+	
 }

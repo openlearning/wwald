@@ -58,4 +58,11 @@ public interface IDataFacade {
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException;
 	public void upsertStaticPage(Connection c, StaticPagePOJO page) throws DataException;
 	
+	//KVTable
+	public String retreiveFromKvTable(Connection c, String k) throws DataException;
+	public void upsertKvTable(Connection c, String k, String v) throws DataException;
+	public String retreiveFromKvTableClob(Connection c, String k) throws DataException;
+	public void upsertKvTableClob(Connection c, String k, String v) throws DataException;
+	
+	
 }

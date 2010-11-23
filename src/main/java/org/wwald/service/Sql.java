@@ -32,4 +32,12 @@ public class Sql {
 	public static String RETREIVE_STATIC_PAGE = "SELECT contents FROM STATIC_PAGES WHERE id=%s";
 	public static String INSERT_STATIC_PAGE = "INSERT INTO STATIC_PAGES VALUES (%s,%s);";
 	public static String UPDATE_STATIC_PAGE = "UPDATE STATIC_PAGES SET contents=%s WHERE id=%s;";
+	
+	public static String INSERT_KVTABLE = "INSERT INTO KVTABLE (k, v) VALUES (%s, %s);";
+	public static String UPDATE_KVTABLE = "UPDATE KVTABLE SET v=%s WHERE k=%s;";
+	public static String RETREIVE_KVTABLE = "SELECT v FROM KVTABLE WHERE k=%s;";
+	
+	public static String INSERT_KVTABLE_CLOB = "INSERT INTO KVTABLE_CLOB (k, v) VALUES (%s, %s);";
+	public static String UPDATE_KVTABLE_CLOB = "UPDATE KVTABLE_CLOB SET v=%s WHERE k=%s;";
+	public static String RETREIVE_KVTABLE_CLOB = "SELECT v FROM KVTABLE_CLOB WHERE k=%s;";
 }

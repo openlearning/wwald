@@ -9,7 +9,8 @@ public enum Role {
 		  Permission.EDIT_COURSES,
 		  Permission.ADD_MENTOR, 
 		  Permission.ADD_USER, 
-		  Permission.MANAGE_USERS);
+		  Permission.MANAGE_USERS,
+		  Permission.SITE_ANALYTICS);
 	
 	private Permission permissions[];
 	

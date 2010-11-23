@@ -241,6 +241,11 @@ a {
 	font-size: 12px;
 }
 
+.messages-ok {
+	color: GREEN;
+	font-size: 12px;
+}
+
 .form-label {
 	width: 110px;
 	float: left;
