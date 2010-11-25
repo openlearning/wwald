@@ -1,9 +1,9 @@
 package org.wwald;
 
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.Model;
 
 public class WicketIdConstants {
+	public static final String INTERNAL_ERROR_MESSAGE = "internal_error_message";
+	
 	public static final String HEADER_PANEL = "header_panel";
 	public static final String HOMEPAGE_LINK  = "homepage_link";
 	public static final String HOMEPAGE_LABEL  = "homepage_label";	

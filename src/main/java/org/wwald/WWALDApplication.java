@@ -7,9 +7,11 @@ import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
+import org.apache.wicket.settings.IExceptionSettings;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
+import org.wwald.view.ErrorPageInternal;
 import org.wwald.view.StaticPage;
 import org.wwald.view.StaticPagePojo;
 import org.wwald.view.CoursePage;
@@ -51,7 +53,7 @@ public class WWALDApplication extends WebApplication
 	{
 		this.dataStore = new DataFacadeRDBMSImpl();
 		this.applicationFacade = new ApplicationFacade(this.dataStore);
-		this.markDownLib = new MarkDown();
+		this.markDownLib = new MarkDown();		 
 	}
 	
 	/**
@@ -75,6 +77,8 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("register", Register.class);
 		mountBookmarkablePage("static", StaticPage.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
+		getApplicationSettings().setInternalErrorPage(ErrorPageInternal.class);
+		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE); 
 	}
 	
 	public IDataFacade getDataFacade() {
