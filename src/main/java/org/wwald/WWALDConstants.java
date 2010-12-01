@@ -7,4 +7,6 @@ public class WWALDConstants {
 	
 	public static String SIDEBAR_SUFFIX = "Sidebar";
 	
+	public static String DEFAULT_COURSE_IMAGE_PATH = "images/default_course_image.jpg";
+	
 }

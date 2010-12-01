@@ -16,6 +16,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.resource.ContextRelativeResource;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -122,7 +123,14 @@ public class CoursesPanel extends Panel {
 	
 	private Component getCourseImage(String id) {
 		String relImagePath = "images/" + id + ".png";
-		ContextRelativeResource resource = new ContextRelativeResource(relImagePath); 
+		ContextRelativeResource resource = null;
+		try {
+			resource = new ContextRelativeResource(relImagePath);
+			resource.getResourceStream().getInputStream();
+		} catch(ResourceStreamNotFoundException rsnfe) {
+			resource = 
+				new ContextRelativeResource(WWALDConstants.DEFAULT_COURSE_IMAGE_PATH);
+		}
 		return new Image("course_image", resource);
 	}
 	

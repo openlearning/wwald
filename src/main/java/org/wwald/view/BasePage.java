@@ -37,6 +37,7 @@ public abstract class BasePage extends WebPage {
 		add(new FooterPanel(WicketIdConstants.FOOTER_PANEL));
 		add(new Label(WicketIdConstants.BASE_PAGE_MESSAGES, new Model(getMessages(parameters))));
 		add(new Label(WicketIdConstants.SITE_ANALYTICS_CODE, getSiteAnalyticsCode()).setEscapeModelStrings(false));
+		add(new Label(WicketIdConstants.PAGE_TITLE, ""));
 	}
 
 	private String getSiteAnalyticsCode() {
