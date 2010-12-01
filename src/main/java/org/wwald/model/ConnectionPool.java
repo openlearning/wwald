@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.wwald.WWALDApplication;
 import org.wwald.util.PropertyDirMap;
+import org.wwald.util.WWALDProperties;
 
 
 public class ConnectionPool {
@@ -40,7 +41,7 @@ public class ConnectionPool {
 		Connection conn = connections.get(id);
 		if(conn == null) {
 			try {
-				Properties dbProps = getDbPropertyFileById(id);
+				Properties dbProps = new WWALDProperties(id, WWALDProperties.DATABASE_PROPERTIES);
 				String url = dbProps.getProperty("db.url");
 				String username = dbProps.getProperty("db.user");
 				String password = dbProps.getProperty("db.password");
@@ -63,14 +64,6 @@ public class ConnectionPool {
 		}
 		
 		return conn;
-	}
-
-	private static Properties getDbPropertyFileById(String id) throws IOException {
-		String filePath = WWALDApplication.WWALDDIR + dirmappings.get(id) + "/db.properties";
-		InputStream is = new FileInputStream(filePath);
-		Properties props = new Properties();
-		props.load(is);
-		return props;
 	}
 
 	public static String getDatabaseIdFromRequestUrl(String requestUrl) {
