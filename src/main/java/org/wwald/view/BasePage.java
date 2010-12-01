@@ -1,5 +1,6 @@
 package org.wwald.view;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,7 @@ import org.wwald.WWALDPropertiesEnum;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.service.DataException;
+import org.wwald.util.WWALDProperties;
 
 
 public abstract class BasePage extends WebPage {
@@ -37,7 +39,26 @@ public abstract class BasePage extends WebPage {
 		add(new FooterPanel(WicketIdConstants.FOOTER_PANEL));
 		add(new Label(WicketIdConstants.BASE_PAGE_MESSAGES, new Model(getMessages(parameters))));
 		add(new Label(WicketIdConstants.SITE_ANALYTICS_CODE, getSiteAnalyticsCode()).setEscapeModelStrings(false));
-		add(new Label(WicketIdConstants.PAGE_TITLE, ""));
+		add(new Label(WicketIdConstants.PAGE_TITLE, getPageTitle()));
+	}
+
+	private String getPageTitle() {
+		String pageTitle = null;
+		try {
+			ServletWebRequest request = (ServletWebRequest)getRequest();
+			String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+			String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+			
+			WWALDProperties uiConfigProperties = new WWALDProperties(databaseId, WWALDProperties.UI_PROPERTIES);
+			pageTitle = uiConfigProperties.getProperty("pageTitle");
+		} catch(IOException ioe) {
+			String msg = "Could not get page title";
+			cLogger.error(msg, ioe);
+		}
+		if(pageTitle == null) {
+			pageTitle = "";
+		}
+		return pageTitle;
 	}
 
 	private String getSiteAnalyticsCode() {
