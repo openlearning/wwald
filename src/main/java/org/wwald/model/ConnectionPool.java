@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.wwald.WWALDApplication;
+import org.wwald.util.PropertyDirMap;
 
 
 public class ConnectionPool {
@@ -27,21 +28,8 @@ public class ConnectionPool {
 	
 	static {
 		try {
-			connections = new HashMap<String, Connection>();
-			
-			dirmappings = new HashMap<String, String>();
-			InputStream dirmapIs = new FileInputStream(WWALDApplication.WWALDDIR + "dirmap.properties");
-			Properties dirmapProps = new Properties();
-			dirmapProps.load(dirmapIs);
-			Set dirmapKeys = dirmapProps.keySet();
-			cLogger.info("Building directory mappings");
-			for(Object dirmapKey : dirmapKeys) {
-				String val = dirmapProps.getProperty((String)dirmapKey);
-				dirmappings.put((String)dirmapKey, val);
-				cLogger.info((String)dirmapKey + "," + val);
-			}
-			cLogger.info("Completed building directory mappings");
-			
+			connections = new HashMap<String, Connection>();			
+			dirmappings = new PropertyDirMap();
 			Class.forName("org.hsqldb.jdbcDriver").newInstance();
 		} catch(Exception e) {
 			cLogger.error("Could not initialize database connection ", e);
