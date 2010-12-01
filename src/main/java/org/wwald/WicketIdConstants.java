@@ -1,6 +1,10 @@
 package org.wwald;
 
-
+/**
+ * This class contains constants which represent wicket-id attributes in the
+ * html files/
+ *
+ */
 public class WicketIdConstants {
 	public static final String INTERNAL_ERROR_MESSAGE = "internal_error_message";
 	
