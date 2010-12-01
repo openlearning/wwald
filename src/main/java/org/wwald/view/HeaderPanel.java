@@ -19,6 +19,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.util.WWALDProperties;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
 public class HeaderPanel extends Panel {
@@ -76,25 +77,25 @@ public class HeaderPanel extends Panel {
 	}
 
 	private Component getHeaderImage() {
+		Image headerImage = null;
 		String imagePath = "";
-		ServletWebRequest request = (ServletWebRequest)getRequest();
-		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
-		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
-		try {
-			InputStream propStream = 
-				ConnectionPool.class.
-					getClassLoader().
-						getResourceAsStream("ui_config.properties");
-			Properties dbProps = new Properties();
-			dbProps.load(propStream);
-			imagePath = dbProps.getProperty(databaseId + ".headerimage");
-		} catch(IOException ioe) {
+		
+		try {	
+			ServletWebRequest request = (ServletWebRequest)getRequest();
+			String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+			String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
 			
-		}
-		if(imagePath == null || imagePath.equals("")) {
+			WWALDProperties uiConfigProperties = new WWALDProperties(databaseId, WWALDProperties.UI_PROPERTIES);
+			imagePath = uiConfigProperties.getProperty("headerimage");
+			if(imagePath == null || imagePath.equals("")) {
+				imagePath = "images/default_header.jpg";
+			}
+			headerImage = new Image("header_image", new ContextRelativeResource(imagePath));
+		} catch(IOException ioe) {
 			imagePath = "images/default_header.jpg";
+			headerImage = new Image("header_image", new ContextRelativeResource(imagePath));
 		}
-		Image headerImage = new Image("header_image", new ContextRelativeResource(imagePath));
+		
 		return headerImage;
 	}
 

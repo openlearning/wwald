@@ -12,6 +12,7 @@ public class WWALDProperties extends Properties {
 	private PropertyDirMap dirmap;
 	
 	public static final String DATABASE_PROPERTIES = "db.properties";
+	public static final String UI_PROPERTIES = "ui_config.properties";
 	
 	public WWALDProperties(String dbId, String propFileName) throws IOException {
 		super();
