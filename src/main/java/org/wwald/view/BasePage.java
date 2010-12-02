@@ -13,10 +13,12 @@ import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.resource.ContextRelativeResource;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WWALDPropertiesEnum;
@@ -96,6 +98,8 @@ public abstract class BasePage extends WebPage {
 		Class<?> viewPageClazz = viewPage.getClass();
 		String sidebarFqcn = getSidebarFqcn(viewPageClazz);
 		
+		//If the sidebar for a specific page has not been specified,
+		//then we will use the sidebar fqcn for the base page
 		if(sidebarFqcn == null || sidebarFqcn.equals("")) {
 			sidebarFqcn = getSidebarFqcn(BasePage.class);
 		}
@@ -110,6 +114,7 @@ public abstract class BasePage extends WebPage {
 			} 
 		}
 		
+		//If we still do not have a sidebar, then we will use the default sidebar
 		if(sidebar == null) {
 			sidebar = new Sidebar(WicketIdConstants.RHS_SIDEBAR, viewPage);
 		}
@@ -161,10 +166,26 @@ public abstract class BasePage extends WebPage {
 	}
 
 	private String getSidebarFqcn(Class<?> pageClass) {
-		String clazzName = pageClass.getName();
-		String sidebarKey = clazzName + "." + WWALDConstants.SIDEBAR_SUFFIX;
-		String sidebarFqcn = WWALDPropertiesEnum.UI_CONFIG_PROERTIES.
-										getProperties().getProperty(sidebarKey);
+		String sidebarFqcn = null;
+		String sidebarKey = null;
+		
+		try {	
+			ServletWebRequest request = (ServletWebRequest)getRequest();
+			String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+			String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+			
+			WWALDProperties uiConfigProperties = new WWALDProperties(databaseId, WWALDProperties.UI_PROPERTIES);
+			sidebarKey = pageClass.getName() + "." + WWALDConstants.SIDEBAR_SUFFIX;
+			sidebarFqcn = uiConfigProperties.getProperty(sidebarKey);
+		} catch(IOException ioe) {
+			String msg = "Could not get sidebar fqcn for sidebar key '" + sidebarKey;
+			cLogger.error(msg);
+		}
+		
+//		String clazzName = pageClass.getName();
+//		String sidebarKey = clazzName + "." + WWALDConstants.SIDEBAR_SUFFIX;
+//		String sidebarFqcn = WWALDPropertiesEnum.UI_CONFIG_PROERTIES.
+//										getProperties().getProperty(sidebarKey);
 		return sidebarFqcn;
 	}
 	
