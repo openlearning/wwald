@@ -182,10 +182,6 @@ public abstract class BasePage extends WebPage {
 			cLogger.error(msg);
 		}
 		
-//		String clazzName = pageClass.getName();
-//		String sidebarKey = clazzName + "." + WWALDConstants.SIDEBAR_SUFFIX;
-//		String sidebarFqcn = WWALDPropertiesEnum.UI_CONFIG_PROERTIES.
-//										getProperties().getProperty(sidebarKey);
 		return sidebarFqcn;
 	}
 	
