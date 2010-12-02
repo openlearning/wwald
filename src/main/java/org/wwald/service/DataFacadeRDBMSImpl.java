@@ -27,6 +27,8 @@ import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.util.CompetencyUniqueIdGenerator;
+import org.wwald.view.UserForm;
+import org.wwald.view.UserForm.Field;
 
 
 public class DataFacadeRDBMSImpl implements IDataFacade {
@@ -433,15 +435,36 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void updateUser(Connection conn, User user) throws DataException {
+	public void updateUser(Connection conn, User user, UserForm.Field... userFields) throws DataException {
+		for(UserForm.Field field : userFields) {
+			if(field.equals(UserForm.Field.USERNAME)) {
+				throw new IllegalArgumentException("updateUser should never be given UserForm.Field.USERNAME");
+			}
+		}
 		try {
 			Statement stmt = conn.createStatement();
-			String sql = String.format(Sql.UPDATE_USER, 
-									   wrapForSQL(user.getFirstName()), 
-									   wrapForSQL(user.getMi()), 
-									   wrapForSQL(user.getLastName()),
-									   wrapForSQL(user.getRole().toString()),
-									   wrapForSQL(user.getUsername()));
+			String sql = null;
+			if(userFields == null || userFields.length == 0) {
+				sql = String.format(Sql.UPDATE_USER, 
+						   wrapForSQL(user.getFirstName()), 
+						   wrapForSQL(user.getMi()), 
+						   wrapForSQL(user.getLastName()),
+						   wrapForSQL(user.getRole().toString()),
+						   wrapForSQL(user.getPassword()),
+						   wrapForSQL(user.getUsername()));
+			}
+			else {
+				sql = "UPDATE USER SET ";
+				for(UserForm.Field field : userFields) {
+					sql += field.getDbColName() + "=%s, ";
+				}
+				//remove the comma
+				sql = sql.substring(0,sql.length()-2);
+				sql = sql + " ";
+				//get back to building the sql
+				sql += "WHERE username=%s;";
+				sql = String.format(sql, getUserFieldValues(userFields, user));
+			}
 			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated == 0) {
 				cLogger.warn("Tried updating user but 0 rows were affected '" + user + "'");
@@ -456,7 +479,35 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new DataException(msg, sqle);
 		}
 	}
-	
+		
+	private String[] getUserFieldValues(Field[] userFields, User user) {
+		String retVal[] = null;
+		List<String> userFieldValues = new ArrayList<String>();
+		for(Field userField : userFields) {
+			switch(userField) {
+				case FIRST_NAME:
+					userFieldValues.add(wrapForSQL(user.getFirstName()));
+					break;
+				case MIDDLE_INITIAL:
+					userFieldValues.add(wrapForSQL(user.getMi()));
+					break;
+				case LAST_NAME:
+					userFieldValues.add(wrapForSQL(user.getLastName()));
+					break;
+				case PASSWORD:
+					userFieldValues.add(wrapForSQL(user.getPassword()));
+					break;
+				case ROLE:
+					userFieldValues.add(wrapForSQL(user.getRole().toString()));
+					break;
+			}
+		}
+		userFieldValues.add(wrapForSQL(user.getUsername()));
+		retVal = new String[userFieldValues.size()];
+		retVal = userFieldValues.toArray(retVal);
+		return retVal;
+	}
+
 	public List<User> retreiveAllUsers(Connection conn) throws DataException {
 		List<User> users = new ArrayList<User>();
 		try {

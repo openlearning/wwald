@@ -17,6 +17,8 @@ public class WicketIdConstants {
 	public static final String LOGIN_LABEL  = "login_label";
 	public static final String REGISTER_LINK  = "register_link";
 	public static final String REGISTER_LABEL  = "register_label";
+	public static final String PROFILE_LINK  = "profile_link";
+	public static final String PROFILE_LABEL  = "profile_label";
 	public static final String LOGOUT_LINK  = "logout_link";
 	public static final String LOGOUT_LABEL  = "logout_label";
 	
@@ -76,6 +78,9 @@ public class WicketIdConstants {
 	public static final String USER_DETAILS_FORM_ROLE_LABEL = "role_field_label";
 	public static final String USER_DETAILS_FORM_ROLE_FIELD = "role_field";
 	public static final String USER_DETAILS_FORM_JOINDATE_FIELD = "join_date_field";
+	
+	//profile page
+	public static final String PROFILE_USER_DETAILS = "user_details_panel";
 	
 	//static pages
 	public static final String EDIT_STATIC_PAGE = "edit_static_page";

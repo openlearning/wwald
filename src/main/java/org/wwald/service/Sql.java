@@ -3,7 +3,8 @@ package org.wwald.service;
 public class Sql {
 	public static String INSERT_USER = "INSERT into USER (first_name, mi, last_name, username, password, join_date, role) " +
 									   "VALUES (%s, %s, %s, %s, %s, %s, %s);";
-	public static String UPDATE_USER = "UPDATE USER SET first_name=%s, mi=%s, last_name=%s, role=%s WHERE username=%s;";
+	public static String UPDATE_USER = "UPDATE USER SET first_name=%s, mi=%s, last_name=%s, role=%s, password=%s WHERE username=%s;";
+	public static String UPDATE_USER_INCLUDING_PASSWORD_EXCLUDING_ROLE = "UPDATE USER SET first_name=%s, mi=%s, last_name=%s, password=%s WHERE username=%s;";
 	public static String RETREIVE_ALL_USERS = "SELECT * from USER;";
 	public static String RETREIVE_USER =
 		"SELECT * FROM USER WHERE username=%s AND password=%s;";

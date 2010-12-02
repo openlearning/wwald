@@ -12,9 +12,9 @@ public class UserFormPanel extends Panel{
 		this(id, null);		
 	}
 	
-	public UserFormPanel(String id, User user) {
+	public UserFormPanel(String id, User user, UserForm.Field... userFields) {
 		super(id);
-		init(user);
+		init(user, userFields);
 	}
 
 	public void setRoleChoices(Role... roles) {
@@ -29,13 +29,14 @@ public class UserFormPanel extends Panel{
 		this.userForm.setFieldEditable(field, editable);
 	}
 	
-	private void init(User user) {
+	private void init(User user, UserForm.Field... userFields) {
 		if(user != null) {
-			this.userForm = new UserForm("user_form", user);
+			this.userForm = new UserForm("user_form", user, userFields);
 		}
 		else {
 			this.userForm = new UserForm("user_form");
 		}
+		
 		add(this.userForm);
 		add(new FeedbackPanel("messages"));
 	}

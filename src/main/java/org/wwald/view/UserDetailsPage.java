@@ -23,6 +23,7 @@ import org.wwald.model.Role;
 import org.wwald.model.User;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
+import org.wwald.view.UserForm.Field;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
 
@@ -49,7 +50,7 @@ public class UserDetailsPage extends AccessControlledPage {
 	}
 
 	private Component buildUserForm(User user) {
-		UserFormPanel userFormPanel = new UserFormPanel(WicketIdConstants.USER_DETAILS_FORM, user);
+		UserFormPanel userFormPanel = new UserFormPanel(WicketIdConstants.USER_DETAILS_FORM, user, getUserFieldsToUpdate());
 		userFormPanel.setFieldEditable(UserForm.Field.USERNAME, false);
 		userFormPanel.setFieldEditable(UserForm.Field.PASSWORD, false);
 		userFormPanel.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
@@ -61,6 +62,13 @@ public class UserDetailsPage extends AccessControlledPage {
 //		userForm.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
 //		userForm.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
 		return userFormPanel;
+	}
+
+	private Field[] getUserFieldsToUpdate() {
+		return new UserForm.Field[] {Field.FIRST_NAME, 
+									 Field.MIDDLE_INITIAL, 
+									 Field.LAST_NAME, 
+									 Field.ROLE};
 	}
 
 	@Override

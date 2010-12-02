@@ -1,8 +1,6 @@
 package org.wwald.view;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -49,6 +47,11 @@ public class HeaderPanel extends Panel {
 		Label registerLabel = new Label(WicketIdConstants.REGISTER_LABEL, "Register .");
 		registerLink.add(registerLabel);
 		add(registerLink);
+		
+		Link profileLink = new AccessControlledViewPageLink(WicketIdConstants.PROFILE_LINK, ProfilePage.class, new Role[]{Role.ADMIN, Role.STUDENT, Role.MENTOR});
+		Label profileLabel = new Label(WicketIdConstants.PROFILE_LABEL, "Profile .");
+		profileLink.add(profileLabel);
+		add(profileLink);
 		
 		Link logoutLink = new Link(WicketIdConstants.LOGOUT_LINK) {
 			@Override

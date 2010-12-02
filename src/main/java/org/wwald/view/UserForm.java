@@ -12,24 +12,19 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
-import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.validator.AbstractValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
-import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
 public class UserForm extends Form {
@@ -46,28 +41,41 @@ public class UserForm extends Form {
 	private TextField repeatPasswordField;
 	private DropDownChoice roleField;
 	
+	private Field userFieldsToUpdate[];
+	
 	private Class<? extends Page> responsePage;
 	
 	//TODO: What is the implication of making this field transient?
 	private transient Logger cLogger = Logger.getLogger(UserForm.class);
 	
 	public enum Field {
-		FIRST_NAME,
-		MIDDLE_INITIAL,
-		LAST_NAME,
-		USERNAME,
-		PASSWORD,
-		REPEAT_PASSWORD,
-		ROLE;
+		FIRST_NAME("first_name"),
+		MIDDLE_INITIAL("mi"),
+		LAST_NAME("last_name"),
+		USERNAME("username"),
+		PASSWORD("password"),
+		REPEAT_PASSWORD(""),
+		ROLE("role");
+		
+		private String dbColName;
+		
+		Field(String dbColName) {
+			this.dbColName = dbColName;
+		}
+		
+		public String getDbColName() {
+			return this.dbColName;
+		}
 	}
 	
 	public UserForm(String id) {
 		this(id, new User());
 	}
 	
-	public UserForm(String id, User user) {
+	public UserForm(String id, User user, Field... userFields) {
 		super(id);
 		this.origUser = user;
+		this.userFieldsToUpdate = userFields;
 		copyUser();
 		addTextFields();
 	}
@@ -94,28 +102,56 @@ public class UserForm extends Form {
 		this.responsePage = responsePage;
 	}
 	
+	public void setFieldVisible(Field field, boolean visible) {
+		switch(field) {
+			case FIRST_NAME:
+				this.firstNameField.setVisible(visible);
+				break;
+			case MIDDLE_INITIAL:
+				this.miField.setVisible(visible);
+				break;
+			case LAST_NAME:
+				this.lastNameField.setVisible(visible);
+				break;
+			case USERNAME:
+				this.usernameField.setVisible(visible);
+				break;
+			case PASSWORD:
+				this.passwordField.setVisible(visible);
+				break;				
+			case REPEAT_PASSWORD:
+				this.repeatPasswordField.setVisible(visible);
+				break;
+			case ROLE:
+				this.roleField.setVisible(visible);
+				break;
+			default:
+				throw new RuntimeException(field  + " not handled");
+		}
+	}
+	
 	public void setFieldEditable(Field field, boolean editable) {
 		switch(field) {
 			case FIRST_NAME:
-				this.firstNameField.setEnabled(false);
+				this.firstNameField.setEnabled(editable);
 				break;
 			case MIDDLE_INITIAL:
-				this.miField.setEnabled(false);
+				this.miField.setEnabled(editable);
 				break;
 			case LAST_NAME:
-				this.lastNameField.setEnabled(false);
+				this.lastNameField.setEnabled(editable);
 				break;
 			case USERNAME:
-				this.usernameField.setEnabled(false);
+				this.usernameField.setEnabled(editable);
 				break;
 			case PASSWORD:
-				this.passwordField.setEnabled(false);
+				this.passwordField.setEnabled(editable);
 				break;				
 			case REPEAT_PASSWORD:
-				this.repeatPasswordField.setEnabled(false);
+				this.repeatPasswordField.setEnabled(editable);
 				break;
 			case ROLE:
-				this.roleField.setEnabled(false);
+				this.roleField.setEnabled(editable);
 				break;
 			default:
 				throw new RuntimeException(field  + " not handled");
@@ -133,7 +169,7 @@ public class UserForm extends Form {
 				dataFacade.insertUser(conn, this.user);
 			}
 			else {
-				dataFacade.updateUser(conn, this.user);
+				dataFacade.updateUser(conn, this.user, userFieldsToUpdate);
 			}			
 			if(this.responsePage != null) {
 				setResponsePage(this.responsePage);

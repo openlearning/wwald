@@ -33,7 +33,7 @@ public abstract class BasePage extends WebPage {
 	
 	Panel sidebar;
 	
-	public BasePage(PageParameters parameters) {		
+	public BasePage(PageParameters parameters) {
 		//we add an empty side bar which will be replaced by inheriting pages
 		this.sidebar = new EmptyPanel(WicketIdConstants.RHS_SIDEBAR); 
 		add(this.sidebar);
