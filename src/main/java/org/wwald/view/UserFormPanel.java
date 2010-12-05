@@ -4,6 +4,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.view.UserForm.Field;
 
 public class UserFormPanel extends Panel{
 	private UserForm userForm;
@@ -23,6 +24,10 @@ public class UserFormPanel extends Panel{
 	
 	public void setSubmitResponsePage(Class<? extends BasePage> responsePage) {
 		this.userForm.setSubmitResponsePage(responsePage);
+	}
+	
+	public void setFieldVisible(Field field, boolean visible) {
+		this.userForm.setFieldVisible(field, visible);
 	}
 	
 	public void setFieldEditable(UserForm.Field field, boolean editable) {

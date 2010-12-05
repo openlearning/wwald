@@ -32,13 +32,20 @@ public class UserForm extends Form {
 	private User origUser;
 	private User user;
 	private String repeatPassword;
-	
+
+	private Label firstNameFieldLabel;
 	private TextField firstNameField;
+	private Label miFieldLabel;
 	private TextField miField;
+	private Label lastNameFieldLabel;
 	private TextField lastNameField;
+	private Label usernameFieldLabel;
 	private TextField usernameField;
+	private Label passwordFieldLabel;
 	private TextField passwordField;
+	private Label repeatPasswordFieldLabel;
 	private TextField repeatPasswordField;
+	private Label roleFieldLabel;
 	private DropDownChoice roleField;
 	
 	private Field userFieldsToUpdate[];
@@ -106,24 +113,31 @@ public class UserForm extends Form {
 		switch(field) {
 			case FIRST_NAME:
 				this.firstNameField.setVisible(visible);
+				this.firstNameFieldLabel.setVisible(visible);
 				break;
 			case MIDDLE_INITIAL:
 				this.miField.setVisible(visible);
+				this.miFieldLabel.setVisible(visible);
 				break;
 			case LAST_NAME:
 				this.lastNameField.setVisible(visible);
+				this.lastNameFieldLabel.setVisible(visible);
 				break;
 			case USERNAME:
 				this.usernameField.setVisible(visible);
+				this.usernameFieldLabel.setVisible(visible);
 				break;
 			case PASSWORD:
 				this.passwordField.setVisible(visible);
+				this.passwordFieldLabel.setVisible(visible);
 				break;				
 			case REPEAT_PASSWORD:
 				this.repeatPasswordField.setVisible(visible);
+				this.repeatPasswordFieldLabel.setVisible(visible);
 				break;
 			case ROLE:
 				this.roleField.setVisible(visible);
+				this.roleFieldLabel.setVisible(visible);
 				break;
 			default:
 				throw new RuntimeException(field  + " not handled");
@@ -185,7 +199,8 @@ public class UserForm extends Form {
 	}
 	
 	private void addTextFields() {
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_FIRST_NAME_LABEL, "First Name *"));
+		this.firstNameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_FIRST_NAME_LABEL, "First Name *"); 
+		add(this.firstNameFieldLabel);
 		this.firstNameField =
 			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_FIRST_NAME_FIELD, 
 						  new PropertyModel(this.user, "firstName"));
@@ -194,13 +209,15 @@ public class UserForm extends Form {
 		this.firstNameField.setLabel(new Model("First Name"));
 		add(this.firstNameField);
 		
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_MI_LABEL, "Middle Initial"));
+		this.miFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_MI_LABEL, "Middle Initial"); 
+		add(this.miFieldLabel);
 		this.miField = 
 			new TextField(WicketIdConstants.USER_DETAILS_FORM_MI_FIELD, 
 						  new PropertyModel(this.user, "mi"));
 		add(this.miField);
 		
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_LAST_NAME_LABEL, "Last Name *"));
+		this.lastNameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_LAST_NAME_LABEL, "Last Name *"); 
+		add(this.lastNameFieldLabel);
 		this.lastNameField = 
 			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_LAST_NAME_FIELD, 
 						  new PropertyModel(this.user, "lastName"));
@@ -208,7 +225,8 @@ public class UserForm extends Form {
 		this.lastNameField.setLabel(new Model("Last Name"));
 		add(this.lastNameField);
 	
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_USERNAME_LABEL, "Username *"));
+		this.usernameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_USERNAME_LABEL, "Username *"); 
+		add(this.usernameFieldLabel);
 		this.usernameField = 
 			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_USERNAME_FIELD, 
 						  new PropertyModel(this.user, "username"));
@@ -217,7 +235,8 @@ public class UserForm extends Form {
 		this.usernameField.setLabel(new Model("Username"));
 		add(this.usernameField);
 		
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_LABEL, "Password *"));
+		this.passwordFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_LABEL, "Password *"); 
+		add(this.passwordFieldLabel);
 		this.passwordField = 
 			new PasswordTextField(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_FIELD, 
 						  new PropertyModel(this.user, "password"));
@@ -226,7 +245,8 @@ public class UserForm extends Form {
 		this.passwordField.add(StringValidator.lengthBetween(6, 16));
 		add(this.passwordField);
 		
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_REPEAT_PASSWORD_LABEL, "Retype Password *"));
+		this.repeatPasswordFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_REPEAT_PASSWORD_LABEL, "Retype Password *"); 
+		add(this.repeatPasswordFieldLabel);
 		this.repeatPasswordField = 
 			new PasswordTextField(WicketIdConstants.USER_DETAILS_FORM_REPEAT_PASSWORD_FIELD, 
 						  new PropertyModel(this, "repeatPassword"));
@@ -235,7 +255,8 @@ public class UserForm extends Form {
 		this.repeatPasswordField.setLabel(new Model("Retype Password"));
 		add(this.repeatPasswordField);
 		
-		add(new Label(WicketIdConstants.USER_DETAILS_FORM_ROLE_LABEL, "Role *"));
+		this.roleFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_ROLE_LABEL, "Role *"); 
+		add(this.roleFieldLabel);
 		this.roleField = new DropDownChoice(WicketIdConstants.USER_DETAILS_FORM_ROLE_FIELD, new PropertyModel(this.user, "role"), getRoles());
 		this.roleField.setRequired(true);
 		this.roleField.setLabel(new Model("Role"));
