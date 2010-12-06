@@ -11,6 +11,7 @@ import org.apache.wicket.settings.IExceptionSettings;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
+import org.wwald.view.CallbackHandlerPage;
 import org.wwald.view.ErrorPageInternal;
 import org.wwald.view.StaticPage;
 import org.wwald.view.StaticPagePojo;
@@ -76,6 +77,7 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("login", LoginPage.class);
 		mountBookmarkablePage("register", Register.class);
 		mountBookmarkablePage("static", StaticPage.class);
+		mountBookmarkablePage("callback", CallbackHandlerPage.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 		getApplicationSettings().setInternalErrorPage(ErrorPageInternal.class);
 		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE); 

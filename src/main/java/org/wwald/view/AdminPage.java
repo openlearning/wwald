@@ -19,10 +19,33 @@ public class AdminPage extends AccessControlledPage {
 		Link manageUsersLink = new AccessControlledViewPageLink(WicketIdConstants.MANAGE_USERS_PAGE, ManageUsersPage.class, new Role[]{Role.ADMIN});
 		add(manageUsersLink);
 		
-		PageParameters pageParams = new PageParameters();
-		pageParams.add(WicketIdConstants.KVTableKey, WicketIdConstants.KVTableKey_GOOGLE_ANALYTICS);
-		Link googleAnalyticsLink = new AccessControlledViewPageLink(WicketIdConstants.SITE_ANALYTICS_LINK, KVTablePage.class, pageParams, new Role[]{Role.ADMIN});
+		PageParameters pageParamsForSiteAnalytics = new PageParameters();
+		pageParamsForSiteAnalytics.add(WicketIdConstants.KVTableKey, 
+					   WicketIdConstants.KVTableKey_GOOGLE_ANALYTICS);
+		Link googleAnalyticsLink = new AccessControlledViewPageLink(WicketIdConstants.SITE_ANALYTICS_LINK, 
+																	KVTablePage.class, 
+																	pageParamsForSiteAnalytics, 
+																	new Role[]{Role.ADMIN});
 		add(googleAnalyticsLink);
+		
+		
+		PageParameters pageParamsForTwitterConsumerKey = new PageParameters();
+		pageParamsForTwitterConsumerKey.add(WicketIdConstants.KVTableKey, 
+										    WicketIdConstants.KVTableKey_TWITTER_CONSUMER);
+		Link twitterConsumerLink = new AccessControlledViewPageLink(WicketIdConstants.TWITTER_CONSUMER_LINK, 
+																  KVTablePage.class, 
+																  pageParamsForTwitterConsumerKey, 
+																  new Role[]{Role.ADMIN});
+		add(twitterConsumerLink);
+		
+		PageParameters pageParamsForTwitterSecretKey = new PageParameters();
+		pageParamsForTwitterSecretKey.add(WicketIdConstants.KVTableKey, 
+										  WicketIdConstants.KVTableKey_TWITTER_SECRET);
+		Link twitterSecretLink = new AccessControlledViewPageLink(WicketIdConstants.TWITTER_SECRET_LINK, 
+																  KVTablePage.class, 
+																  pageParamsForTwitterSecretKey, 
+																  new Role[]{Role.ADMIN});
+		add(twitterSecretLink);
 	}
 
 	@Override

@@ -22,6 +22,10 @@ public class WicketIdConstants {
 	public static final String LOGOUT_LINK  = "logout_link";
 	public static final String LOGOUT_LABEL  = "logout_label";
 	
+	public static final String SOCIAL_LOGIN_PANEL = "social_login_panel";
+	public static final String LOGIN_WITH_TWITTER = "login_with_twitter";
+	public static final String LOGIN_WITH_TWITTER_LABEL = "login_with_twitter_label";
+	
 	public static final String MESSAGES = "messages";
 	public static final String BASE_PAGE_MESSAGES = "base_page_messages";
 	
@@ -61,6 +65,8 @@ public class WicketIdConstants {
 	//admin pages
 	public static final String MANAGE_USERS_PAGE = "manage_users_page";
 	public static final String SITE_ANALYTICS_LINK = "site_analytics";
+	public static final String TWITTER_SECRET_LINK = "twitter_secret_link";
+	public static final String TWITTER_CONSUMER_LINK = "twitter_consumer_link";
 	public static final String USER_DETAILS_PAGE = "user_details_page";
 	public static final String USER_DETAILS_FORM = "user_details_panel";
 	public static final String USER_DETAILS_FORM_FIRST_NAME_LABEL = "first_name_label";
@@ -103,11 +109,14 @@ public class WicketIdConstants {
 	public static final String CONTACT_LABEL  = "contact_label";
 	
 	//Key Value table
-	public static final String KVTableKey = "KVTableKey";
-	public static final String KVTableKey_GOOGLE_ANALYTICS = "GoogleAnalytics";
+	public static final String KVTableKey = "KVTableKey";	
 	public static final String KVTablePage_LABEL = "KVTablePage_LABEL";
 	public static final String KVTablePage_FORM = "KVTablePage_FORM";
 	public static final String KVTablePage_FORM_TEXTAREA = "KVTablePage_FORM_TEXTAREA";
+	
+	public static final String KVTableKey_GOOGLE_ANALYTICS = "GoogleAnalytics";
+	public static final String KVTableKey_TWITTER_SECRET = "TwitterSecret";
+	public static final String KVTableKey_TWITTER_CONSUMER = "TwitterConsumer";
 	
 	//KVTable rows
 	public static final String SITE_ANALYTICS_CODE = "site_analytics_code";

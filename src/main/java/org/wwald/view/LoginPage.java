@@ -1,5 +1,6 @@
 package org.wwald.view;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -18,9 +19,14 @@ public class LoginPage extends BasePage {
 
 	public LoginPage(PageParameters parameters) {
 		super(parameters);
+		add(getSocialLoginPanel());
 		add(getLoginForm(parameters));
 	}
 	
+	private Panel getSocialLoginPanel() {
+		return new SocialLoginPanel(WicketIdConstants.SOCIAL_LOGIN_PANEL);
+	}
+
 	public Form getLoginForm(final PageParameters parameters) {
 		Form loginForm = new Form("login") {
 			@Override
