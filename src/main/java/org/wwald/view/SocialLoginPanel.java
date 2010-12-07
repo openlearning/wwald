@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.resource.ContextRelativeResource;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WWALDSession;
@@ -27,7 +31,8 @@ public class SocialLoginPanel extends Panel {
 	private static final Logger cLogger = Logger.getLogger(SocialLoginPanel.class);
 	
 	public SocialLoginPanel(String id) {
-		super(id);		
+		super(id);
+		
 		Link loginWithTwitterLink =	new Link(WicketIdConstants.LOGIN_WITH_TWITTER) {
 			@Override
 			public void onClick() {				
@@ -93,8 +98,21 @@ public class SocialLoginPanel extends Panel {
 			}
 		};
 	
-		loginWithTwitterLink.add(new Label(WicketIdConstants.LOGIN_WITH_TWITTER_LABEL, "Login With Twitter"));
+		//loginWithTwitterLink.add(new Label(WicketIdConstants.LOGIN_WITH_TWITTER_LABEL, "Login With Twitter"));
+		loginWithTwitterLink.add(getTwitterImage());
 		add(loginWithTwitterLink);		
 	}
-
+	
+	private Image getTwitterImage() {
+		String relImagePath = "images/twitter.png";
+		ContextRelativeResource resource = null;
+		try {
+			resource = new ContextRelativeResource(relImagePath);
+			resource.getResourceStream().getInputStream();
+		} catch(ResourceStreamNotFoundException rsnfe) {
+			resource = 
+				new ContextRelativeResource(WWALDConstants.DEFAULT_COURSE_IMAGE_PATH);
+		}
+		return new Image(WicketIdConstants.LOGIN_WITH_TWITTER_IMG, resource);
+	}
 }

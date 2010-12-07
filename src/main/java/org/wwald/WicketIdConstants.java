@@ -25,6 +25,7 @@ public class WicketIdConstants {
 	public static final String SOCIAL_LOGIN_PANEL = "social_login_panel";
 	public static final String LOGIN_WITH_TWITTER = "login_with_twitter";
 	public static final String LOGIN_WITH_TWITTER_LABEL = "login_with_twitter_label";
+	public static final String LOGIN_WITH_TWITTER_IMG = "login_with_twitter_img";
 	
 	public static final String MESSAGES = "messages";
 	public static final String BASE_PAGE_MESSAGES = "base_page_messages";
