@@ -6,6 +6,7 @@ import org.apache.wicket.protocol.http.WebSession;
 import org.wwald.model.User;
 
 import twitter4j.Twitter;
+import twitter4j.http.AccessToken;
 import twitter4j.http.RequestToken;
 
 public class WWALDSession extends WebSession {
@@ -13,6 +14,7 @@ public class WWALDSession extends WebSession {
 	private User user;
 	private Twitter twitter;
 	private RequestToken requestToken;
+	private AccessToken accessToken;
 	
 	public WWALDSession(Request request) {
 		super(request);
@@ -44,5 +46,13 @@ public class WWALDSession extends WebSession {
 	
 	public void setRequestToken(RequestToken requestToken) {
 		this.requestToken = requestToken;
+	}
+	
+	public AccessToken getAccessToken() {
+		return this.accessToken;
+	}
+	
+	public void setAccessToken(AccessToken accessToken) {
+		this.accessToken = accessToken;
 	}
 }

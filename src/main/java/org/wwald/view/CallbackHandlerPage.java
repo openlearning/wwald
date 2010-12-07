@@ -8,6 +8,7 @@ import org.wwald.model.TwitterUser;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.http.AccessToken;
 import twitter4j.http.RequestToken;
 
 public class CallbackHandlerPage extends BasePage {
@@ -20,8 +21,9 @@ public class CallbackHandlerPage extends BasePage {
 		RequestToken requestToken =  WWALDSession.get().getRequestToken();
 		String verifier = getVerifier();
 		try {
-			twitter.getOAuthAccessToken(requestToken, verifier);
+			AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 			WWALDSession.get().setRequestToken(null);
+			cLogger.info("User logged in with Twitter '" + accessToken.getScreenName() + "', '" + accessToken.getUserId() + "'");
 			WWALDSession.get().setUser(new TwitterUser(twitter.getScreenName()));
 		} catch (TwitterException e) {
 			String msg = "Caught Exception while handling the callback from Twitter";
