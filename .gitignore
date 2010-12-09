@@ -1,5 +1,6 @@
 *.class
 *class
+*.log
 *~
 src/test/java/data/*
 target/*
