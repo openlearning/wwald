@@ -84,18 +84,8 @@ public class UserForm extends Form {
 		super(id);
 		this.origUser = user;
 		this.userFieldsToUpdate = userFields;
-		copyUser();
+		this.user = User.duplicate(this.origUser);
 		addTextFields();
-	}
-	
-	private void copyUser() {
-		this.user = new User(this.origUser.getFirstName(),
-							 this.origUser.getLastName(),
-							 this.origUser.getUsername(),
-							 this.origUser.getJoinDate(),
-							 this.origUser.getRole());
-		this.user.setEmail(this.origUser.getEmail());
-		
 	}
 
 	public void setRoleChoices(Role... roles) {
@@ -241,6 +231,8 @@ public class UserForm extends Form {
 			new PasswordTextField(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_FIELD, 
 						  new PropertyModel(this.user, "password"));
 		this.passwordField.setRequired(true);
+		//TODO: We are setting the label to provide a better error msg when the pwd and retype pwd fields do not have the same value
+		//Udeally this should be controlled through a message in a property file
 		this.passwordField.setLabel(new Model("Password"));
 		this.passwordField.add(StringValidator.lengthBetween(6, 16));
 		add(this.passwordField);
@@ -252,6 +244,8 @@ public class UserForm extends Form {
 						  new PropertyModel(this, "repeatPassword"));
 		this.repeatPasswordField.setRequired(true);
 		this.repeatPasswordField.add(StringValidator.lengthBetween(6, 16));
+		//TODO: We are setting the label to provide a better error msg when the pwd and retype pwd fields do not have the same value
+		//Udeally this should be controlled through a message in a property file
 		this.repeatPasswordField.setLabel(new Model("Retype Password"));
 		add(this.repeatPasswordField);
 		

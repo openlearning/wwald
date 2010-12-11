@@ -9,6 +9,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -38,7 +39,7 @@ public class UserDetailsPage extends AccessControlledPage {
 			Connection conn = ConnectionPool.getConnection(getDatabaseId());
 			User user = dataFacade.retreiveUserByUsername(conn, username);
 			
-			add(buildUserForm(user));
+			add(buildUserForm(user));			
 		} catch(DataException de) {
 			String msg = "Sorry but we could not process the request due to an error. We will look into this as soon as we can.";
 			cLogger.error(msg, de);
@@ -47,7 +48,7 @@ public class UserDetailsPage extends AccessControlledPage {
 		}
 		Link manageUsersLink = new AccessControlledViewPageLink(WicketIdConstants.MANAGE_USERS_PAGE, ManageUsersPage.class, new Role[]{Role.ADMIN});
 		add(manageUsersLink);			
-	}
+	}	
 
 	private Component buildUserForm(User user) {
 		UserFormPanel userFormPanel = new UserFormPanel(WicketIdConstants.USER_DETAILS_FORM, user, getUserFieldsToUpdate());

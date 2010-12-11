@@ -25,7 +25,7 @@ public class WWALDSession extends WebSession {
 	}
 	
 	public User getUser() {
-		return this.user;
+		return User.duplicate(this.user);
 	}
 	
 	public void setUser(User user) {
