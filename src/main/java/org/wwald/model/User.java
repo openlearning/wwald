@@ -5,23 +5,21 @@ import java.util.Date;
 
 public class User implements Serializable{	
 	private String firstName;
-	private String mi;
 	private String lastName;
 	private String username;
 	private String password;
+	private String email;
 	private Date joinDate;
 	private Role role;
 	
 	public User() {}
 	
-	public User(String firstName, 
-				String mi, 
+	public User(String firstName,  
 				String lastName,
 				String username,
 				Date joinDate,
 				Role role) {
 		this.firstName = firstName;
-		this.mi = mi;
 		this.lastName = lastName;
 		this.username = username;
 		this.joinDate = joinDate;
@@ -34,14 +32,6 @@ public class User implements Serializable{
 	
 	public String getFirstName() {
 		return firstName;
-	}
-
-	public void setMi(String mi) {
-		this.mi = mi;
-	}
-	
-	public String getMi() {
-		return mi;
 	}
 
 	public void setLastName(String lastName) {
@@ -68,6 +58,14 @@ public class User implements Serializable{
 		return this.password;
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String getEmail() {
+		return this.email;
+	}
+
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
@@ -88,10 +86,11 @@ public class User implements Serializable{
 	
 	@Override
 	public String toString() {
-		return this.firstName + " " + 
-			   this.mi + " " + 
+		return this.firstName + " " +  
 			   this.lastName + " " + 
-			   this.username + " " + 
+			   this.username + " " +
+			   this.username + " " +
+			   this.email + " " + 
 			   this.joinDate + " " + 
 			   this.role;
 	}

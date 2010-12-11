@@ -78,6 +78,8 @@ public class WicketIdConstants {
 	public static final String USER_DETAILS_FORM_LAST_NAME_FIELD = "last_name_field";
 	public static final String USER_DETAILS_FORM_USERNAME_LABEL = "username_label";
 	public static final String USER_DETAILS_FORM_USERNAME_FIELD = "username_field";
+	public static final String USER_DETAILS_FORM_EMAIL_FIELD_LABEL = "email_label";
+	public static final String USER_DETAILS_FORM_EMAIL_FIELD = "email_field";
 	public static final String USER_DETAILS_FORM_PASSWORD_LABEL = "password_label";
 	public static final String USER_DETAILS_FORM_PASSWORD_FIELD = "password_field";
 	public static final String USER_DETAILS_FORM_REPEAT_PASSWORD_LABEL = "repeat_password_label";

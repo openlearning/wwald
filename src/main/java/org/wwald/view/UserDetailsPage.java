@@ -52,6 +52,7 @@ public class UserDetailsPage extends AccessControlledPage {
 	private Component buildUserForm(User user) {
 		UserFormPanel userFormPanel = new UserFormPanel(WicketIdConstants.USER_DETAILS_FORM, user, getUserFieldsToUpdate());
 		userFormPanel.setFieldEditable(UserForm.Field.USERNAME, false);
+		userFormPanel.setFieldEditable(UserForm.Field.EMAIL, false);
 		userFormPanel.setFieldEditable(UserForm.Field.PASSWORD, false);
 		userFormPanel.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
 		userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
@@ -65,9 +66,8 @@ public class UserDetailsPage extends AccessControlledPage {
 	}
 
 	private Field[] getUserFieldsToUpdate() {
-		return new UserForm.Field[] {Field.FIRST_NAME, 
-									 Field.MIDDLE_INITIAL, 
-									 Field.LAST_NAME, 
+		return new UserForm.Field[] {Field.FIRST_NAME,  
+									 Field.LAST_NAME,
 									 Field.ROLE};
 	}
 

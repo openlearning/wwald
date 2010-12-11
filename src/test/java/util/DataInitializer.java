@@ -61,10 +61,10 @@ public class DataInitializer {
 			for(User user : users) {
 				String sql = String.format(Sql.INSERT_USER, 
 										   wrapForSQL(user.getFirstName()),
-										   wrapForSQL(user.getMi()),
 										   wrapForSQL(user.getLastName()),
 										   wrapForSQL(user.getUsername()),
 										   wrapForSQL(user.getPassword()),
+										   wrapForSQL(user.getEmail()),
 										   wrapForSQL(df.format(user.getJoinDate())),
 										   wrapForSQL(user.getRole().toString()));
 				Statement stmt = conn.createStatement();

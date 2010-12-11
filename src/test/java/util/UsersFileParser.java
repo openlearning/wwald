@@ -27,6 +27,7 @@ public class UsersFileParser {
 	private enum StateEnum {
 		ReadingFullNameState,
 		ReadingAuthDetailsState,
+		ReadingEmailState,
 		ReadingDateJoinedState,
 		ReadingRoleState,
 		EndState;
@@ -56,10 +57,6 @@ public class UsersFileParser {
 					if(length == 2) {
 						user.setLastName(fullName[1]);
 					}
-					else if(length == 3) {
-						user.setMi(fullName[1]);
-						user.setLastName(fullName[2]);
-					}
 					currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
 				}
 			}
@@ -79,11 +76,18 @@ public class UsersFileParser {
 					}
 					user.setUsername(authDetails[0]);
 					user.setPassword(authDetails[1]);
-					currentState = stateMap.get(StateEnum.ReadingDateJoinedState);
+					currentState = stateMap.get(StateEnum.ReadingEmailState);	
 				}
 			}	
 		}
 		
+	}
+	
+	private class ReadingEmailState implements State {
+		public void processLine(String line) throws DataFileSyntaxException {
+			user.setEmail(line);
+			currentState = stateMap.get(StateEnum.ReadingDateJoinedState);
+		}
 	}
 	
 	private class ReadingDateJoinedState implements State {
@@ -135,6 +139,7 @@ public class UsersFileParser {
 		this.stateMap = new HashMap<StateEnum, State>();
 		this.stateMap.put(StateEnum.ReadingFullNameState, new ReadingFullNameState());
 		this.stateMap.put(StateEnum.ReadingAuthDetailsState, new ReadingAuthDetailsState());
+		this.stateMap.put(StateEnum.ReadingEmailState, new ReadingEmailState());
 		this.stateMap.put(StateEnum.ReadingDateJoinedState, new ReadingDateJoinedState());
 		this.stateMap.put(StateEnum.ReadingRoleState, new ReadingRoleState());
 		this.stateMap.put(StateEnum.EndState, new EndState());

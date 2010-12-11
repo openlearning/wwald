@@ -1,12 +1,11 @@
 package org.wwald.view;
 
-import org.apache.wicket.Component;
+import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.wwald.WWALDApplication;
@@ -17,6 +16,8 @@ import org.wwald.service.ApplicationException;
 
 public class LoginPage extends BasePage {
 
+	private static final Logger cLogger = Logger.getLogger(LoginPage.class);
+	
 	public LoginPage(PageParameters parameters) {
 		super(parameters);
 		add(getSocialLoginPanel());
@@ -47,6 +48,7 @@ public class LoginPage extends BasePage {
 						setResponsePage(LoginPage.class, parameters);
 					}
 				} catch(ApplicationException ae) {
+					cLogger.error("Could not login user " + ae);
 					String msg = "Sorry we could not log you into the application due to an internal error. We will look into this problem as soon as we can";
 					parameters.add(WicketIdConstants.MESSAGES, msg);
 					setResponsePage(GenericErrorPage.class, parameters);

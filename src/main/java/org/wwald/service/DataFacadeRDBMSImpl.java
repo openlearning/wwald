@@ -322,7 +322,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				Mentor mentor = new Mentor();
 				mentor.setUsername(rs.getString("username"));
 				mentor.setFirstName(rs.getString("first_name"));
-				mentor.setMi(rs.getString("mi"));
 				mentor.setLastName(rs.getString("last_name"));
 				mentor.setJoinDate(rs.getDate("join_date"));
 				String role = rs.getString("role");
@@ -419,8 +418,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			Statement stmt = conn.createStatement();
 			String sql = String.format(Sql.INSERT_USER, 
-									   wrapForSQL(user.getFirstName()), 
-									   wrapForSQL(user.getMi()), 
+									   wrapForSQL(user.getFirstName()),  
 									   wrapForSQL(user.getLastName()),
 									   wrapForSQL(user.getUsername()),
 									   wrapForSQL(user.getPassword()),
@@ -446,8 +444,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String sql = null;
 			if(userFields == null || userFields.length == 0) {
 				sql = String.format(Sql.UPDATE_USER, 
-						   wrapForSQL(user.getFirstName()), 
-						   wrapForSQL(user.getMi()), 
+						   wrapForSQL(user.getFirstName()),  
 						   wrapForSQL(user.getLastName()),
 						   wrapForSQL(user.getRole().toString()),
 						   wrapForSQL(user.getPassword()),
@@ -488,14 +485,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				case FIRST_NAME:
 					userFieldValues.add(wrapForSQL(user.getFirstName()));
 					break;
-				case MIDDLE_INITIAL:
-					userFieldValues.add(wrapForSQL(user.getMi()));
-					break;
 				case LAST_NAME:
 					userFieldValues.add(wrapForSQL(user.getLastName()));
 					break;
 				case PASSWORD:
 					userFieldValues.add(wrapForSQL(user.getPassword()));
+					break;
+				case EMAIL:
+					userFieldValues.add(wrapForSQL(user.getEmail()));
 					break;
 				case ROLE:
 					userFieldValues.add(wrapForSQL(user.getRole().toString()));
@@ -515,12 +512,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_ALL_USERS);
 			while(rs.next()) {
 				String firstName = rs.getString("first_name");
-				String mi = rs.getString("mi");
 				String lastName = rs.getString("last_name");
 				String userName = rs.getString("username");
+				String email = rs.getString("email");
 				Date dateJoined = rs.getDate("join_date");
 				String role = rs.getString("role");
-				users.add(new User(firstName,mi,lastName,userName,dateJoined,Role.valueOf(role)));
+				User newUser = new User(firstName,lastName,userName,dateJoined,Role.valueOf(role));
+				newUser.setEmail(email);
+				users.add(newUser);
 			}
 			return users;
 		} catch(SQLException sqle) {
@@ -538,12 +537,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs  = stmt.executeQuery(query);
 			if(rs.next()) {
 				String firstName = rs.getString("first_name");
-				String mi = rs.getString("mi");
 				String lastName = rs.getString("last_name");
 				String userName = rs.getString("username");
+				String email = rs.getString("email");
 				Date dateJoined = rs.getDate("join_date");
-				String role = rs.getString("role");
-				user = new User(firstName,mi,lastName,userName,dateJoined,Role.valueOf(role));
+				String role = rs.getString("role"); 
+				user = new User(firstName,lastName,userName,dateJoined,Role.valueOf(role));
+				user.setEmail(email);
 			}
 		} catch(SQLException sqle) {
 			String msg = "Could not retreive User from database";
@@ -560,12 +560,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs  = stmt.executeQuery(query);
 			if(rs.next()) {
 				String firstName = rs.getString("first_name");
-				String mi = rs.getString("mi");
 				String lastName = rs.getString("last_name");
 				String userName = rs.getString("username");
+				String email = rs.getString("email");
 				Date dateJoined = rs.getDate("join_date");
 				String role = rs.getString("role");
-				user = new User(firstName,mi,lastName,userName,dateJoined,Role.valueOf(role));
+				user = new User(firstName,lastName,userName,dateJoined,Role.valueOf(role));
+				user.setEmail(email);
 			}
 		} catch(SQLException sqle) {
 			String msg = "Could not retreive User from database";
@@ -838,14 +839,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet mentorsResultSet = stmt.executeQuery(String.format(Sql.RETREIVE_USER_BY_USERNAME, wrapForSQL(mentorUsername)));
 			while(mentorsResultSet.next()) {
 				String firstName = mentorsResultSet.getString("first_name");
-				String mi = mentorsResultSet.getString("mi");
 				String lastName = mentorsResultSet.getString("last_name");
+				String email = mentorsResultSet.getString("email");
 				String role = mentorsResultSet.getString("role");
 				Mentor mentor = new Mentor();
 				mentor.setUsername(mentorUsername);
 				mentor.setFirstName(firstName);
-				mentor.setMi(mi);
 				mentor.setLastName(lastName);
+				mentor.setEmail(email);
 				mentor.setRole(Role.valueOf(role));
 				if(mentor.getRole().equals(Role.MENTOR)) {
 					mentors.add(mentor);

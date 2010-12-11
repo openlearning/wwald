@@ -46,9 +46,9 @@ public class ProfilePage extends BasePage {
 	}
 
 	private Field[] getUserFieldsToUpdate() {
-		return new UserForm.Field[] {Field.FIRST_NAME, 
-				 Field.MIDDLE_INITIAL, 
-				 Field.LAST_NAME};
+		return new UserForm.Field[] {Field.FIRST_NAME,  
+				 					 Field.LAST_NAME,
+				 					 Field.EMAIL};
 	}
 
 }

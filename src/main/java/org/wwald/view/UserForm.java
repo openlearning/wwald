@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.validation.validator.EmailAddressPatternValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
@@ -35,12 +36,12 @@ public class UserForm extends Form {
 
 	private Label firstNameFieldLabel;
 	private TextField firstNameField;
-	private Label miFieldLabel;
-	private TextField miField;
 	private Label lastNameFieldLabel;
 	private TextField lastNameField;
 	private Label usernameFieldLabel;
 	private TextField usernameField;
+	private Label emailFieldLabel;
+	private TextField emailField;
 	private Label passwordFieldLabel;
 	private TextField passwordField;
 	private Label repeatPasswordFieldLabel;
@@ -57,9 +58,9 @@ public class UserForm extends Form {
 	
 	public enum Field {
 		FIRST_NAME("first_name"),
-		MIDDLE_INITIAL("mi"),
 		LAST_NAME("last_name"),
 		USERNAME("username"),
+		EMAIL("email"),
 		PASSWORD("password"),
 		REPEAT_PASSWORD(""),
 		ROLE("role");
@@ -89,11 +90,11 @@ public class UserForm extends Form {
 	
 	private void copyUser() {
 		this.user = new User(this.origUser.getFirstName(),
-							 this.origUser.getMi(),
 							 this.origUser.getLastName(),
 							 this.origUser.getUsername(),
 							 this.origUser.getJoinDate(),
 							 this.origUser.getRole());
+		this.user.setEmail(this.origUser.getEmail());
 		
 	}
 
@@ -115,10 +116,6 @@ public class UserForm extends Form {
 				this.firstNameField.setVisible(visible);
 				this.firstNameFieldLabel.setVisible(visible);
 				break;
-			case MIDDLE_INITIAL:
-				this.miField.setVisible(visible);
-				this.miFieldLabel.setVisible(visible);
-				break;
 			case LAST_NAME:
 				this.lastNameField.setVisible(visible);
 				this.lastNameFieldLabel.setVisible(visible);
@@ -127,6 +124,9 @@ public class UserForm extends Form {
 				this.usernameField.setVisible(visible);
 				this.usernameFieldLabel.setVisible(visible);
 				break;
+			case EMAIL:
+				this.emailField.setVisible(visible);
+				this.emailFieldLabel.setVisible(visible);
 			case PASSWORD:
 				this.passwordField.setVisible(visible);
 				this.passwordFieldLabel.setVisible(visible);
@@ -149,15 +149,14 @@ public class UserForm extends Form {
 			case FIRST_NAME:
 				this.firstNameField.setEnabled(editable);
 				break;
-			case MIDDLE_INITIAL:
-				this.miField.setEnabled(editable);
-				break;
 			case LAST_NAME:
 				this.lastNameField.setEnabled(editable);
 				break;
 			case USERNAME:
 				this.usernameField.setEnabled(editable);
 				break;
+			case EMAIL:
+				this.emailField.setEnabled(editable);
 			case PASSWORD:
 				this.passwordField.setEnabled(editable);
 				break;				
@@ -209,13 +208,6 @@ public class UserForm extends Form {
 		this.firstNameField.setLabel(new Model("First Name"));
 		add(this.firstNameField);
 		
-		this.miFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_MI_LABEL, "Middle Initial"); 
-		add(this.miFieldLabel);
-		this.miField = 
-			new TextField(WicketIdConstants.USER_DETAILS_FORM_MI_FIELD, 
-						  new PropertyModel(this.user, "mi"));
-		add(this.miField);
-		
 		this.lastNameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_LAST_NAME_LABEL, "Last Name *"); 
 		add(this.lastNameFieldLabel);
 		this.lastNameField = 
@@ -234,6 +226,14 @@ public class UserForm extends Form {
 		this.usernameField.add(new DuplicateUsernameValidator(getDatabaseId(), getDataFacade()));
 		this.usernameField.setLabel(new Model("Username"));
 		add(this.usernameField);
+		
+		this.emailFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_EMAIL_FIELD_LABEL, "Email *");
+		add(this.emailFieldLabel);
+		this.emailField = new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_EMAIL_FIELD, 
+												new PropertyModel(this.user, "email"));
+		this.emailField.add(new EmailAddressPatternValidator());
+		this.emailField.setLabel(new Model("Email"));
+		add(this.emailField);
 		
 		this.passwordFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_PASSWORD_LABEL, "Password *"); 
 		add(this.passwordFieldLabel);
