@@ -63,11 +63,13 @@ public class DataInitializer {
 										   wrapForSQL(user.getFirstName()),
 										   wrapForSQL(user.getLastName()),
 										   wrapForSQL(user.getUsername()),
-										   wrapForSQL(user.getPassword()),
+										   wrapForSQL(user.getEncryptedPassword()),
 										   wrapForSQL(user.getEmail()),
 										   wrapForSQL(df.format(user.getJoinDate())),
 										   wrapForSQL(user.getRole().toString()));
 				Statement stmt = conn.createStatement();
+				System.out.println("Executing SQL to create user");
+				System.out.println(sql);
 				stmt.executeUpdate(sql);
 				System.out.println("Created user " + user);
 			}

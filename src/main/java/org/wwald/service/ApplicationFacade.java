@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.wwald.WWALDSession;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
@@ -25,10 +26,15 @@ public class ApplicationFacade {
 		User user = null;
 		try {
 			cLogger.info("Trying to login user '" + username + "'");
-			user = dataFacade.retreiveUser(ConnectionPool.getConnection(databaseId), username, password);
-			if(user != null) {
+			String passwordInDb = dataFacade.retreivePassword(ConnectionPool.getConnection(databaseId), username);
+			BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+			if(passwordInDb != null && passwordEncryptor.checkPassword(password, passwordInDb)) {
+				user = dataFacade.retreiveUserByUsername(ConnectionPool.getConnection(databaseId), username);
+				if(user == null) {
+					cLogger.error("THIS SHOULD NEVER HAPPEN. COULD GET PASSWORD BUT COULD NOT GET USER OBJECT");
+				}
 				cLogger.info("User " + username + " logged in succesully");
-			}
+			}						
 			else {
 				cLogger.info("User " + username + " NOT logged in");
 			}

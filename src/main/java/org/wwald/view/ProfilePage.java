@@ -13,6 +13,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
@@ -42,8 +43,10 @@ public class ProfilePage extends BasePage {
 			Connection conn = ConnectionPool.getConnection(databaseId);
 			IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
 			try {
-				User verifiedUser = dataFacade.retreiveUser(conn, this.user.getUsername(), validatable.getValue());
-				if(verifiedUser == null) {
+				String origPassword = validatable.getValue();
+				String passwordInDb = dataFacade.retreivePassword(conn, this.user.getUsername());
+				BasicPasswordEncryptor passwordEncrypter = new BasicPasswordEncryptor();				
+				if(!passwordEncrypter.checkPassword(origPassword, passwordInDb)) {
 					error(validatable);
 				}				
 			} catch(DataException de) {

@@ -3,6 +3,8 @@ package org.wwald.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.jasypt.util.password.BasicPasswordEncryptor;
+
 public class User implements Serializable{	
 	private String firstName;
 	private String lastName;
@@ -56,6 +58,11 @@ public class User implements Serializable{
 	
 	public String getPassword() {
 		return this.password;
+	}
+	
+	public String getEncryptedPassword() {
+		BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();		
+		return passwordEncryptor.encryptPassword(this.password);
 	}
 
 	public void setEmail(String email) {

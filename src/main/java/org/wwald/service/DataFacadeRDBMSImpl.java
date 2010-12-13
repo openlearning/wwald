@@ -184,10 +184,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 	
 	public void addCourseEnrollmentAction(Connection conn, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException {
-		String sqlTemplate = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
 		//TODO: Remove hardcoded date
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
-		String sql = String.format(sqlTemplate, 
+		String sql = String.format(Sql.INSERT_COURSE_ENROLLMENT_STATUS,
 								   wrapForSQL(courseEnrollmentStatus.getCourseId()),
 								   wrapForSQL(courseEnrollmentStatus.getUsername()),
 								   courseEnrollmentStatus.getUserCourseStatus().getId(),
@@ -421,7 +420,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 									   wrapForSQL(user.getFirstName()),  
 									   wrapForSQL(user.getLastName()),
 									   wrapForSQL(user.getUsername()),
-									   wrapForSQL(user.getPassword()),
+									   wrapForSQL(user.getEncryptedPassword()),
+									   wrapForSQL(user.getEmail()),
 									   wrapForSQL(df.format(user.getJoinDate())),
 									   wrapForSQL(user.getRole().toString()));
 			cLogger.info("Executing SQL '" + sql + "'");
@@ -447,7 +447,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 						   wrapForSQL(user.getFirstName()),  
 						   wrapForSQL(user.getLastName()),
 						   wrapForSQL(user.getRole().toString()),
-						   wrapForSQL(user.getPassword()),
+						   wrapForSQL(user.getEncryptedPassword()),
 						   wrapForSQL(user.getUsername()));
 			}
 			else {
@@ -489,7 +489,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 					userFieldValues.add(wrapForSQL(user.getLastName()));
 					break;
 				case PASSWORD:
-					userFieldValues.add(wrapForSQL(user.getPassword()));
+					userFieldValues.add(wrapForSQL(user.getEncryptedPassword()));
 					break;
 				case EMAIL:
 					userFieldValues.add(wrapForSQL(user.getEmail()));
@@ -529,27 +529,46 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 	}
 	
-	public User retreiveUser(Connection conn, String username, String password) throws DataException {
-		User user = null;
+//	public User retreiveUser(Connection conn, String username, String password) throws DataException {
+//		User user = null;
+//		try {
+//			Statement stmt = conn.createStatement();
+//			String query = String.format(Sql.RETREIVE_USER, wrapForSQL(username), wrapForSQL(password));
+//			ResultSet rs  = stmt.executeQuery(query);
+//			if(rs.next()) {
+//				String firstName = rs.getString("first_name");
+//				String lastName = rs.getString("last_name");
+//				String userName = rs.getString("username");
+//				String email = rs.getString("email");
+//				Date dateJoined = rs.getDate("join_date");
+//				String role = rs.getString("role"); 
+//				user = new User(firstName,lastName,userName,dateJoined,Role.valueOf(role));
+//				user.setEmail(email);
+//			}
+//		} catch(SQLException sqle) {
+//			String msg = "Could not retreive User from database";
+//			cLogger.error(msg, sqle);
+//			throw new DataException(msg, sqle);
+//		}
+//		return user; 
+//	}
+	
+	public String retreivePassword(Connection conn, String username) throws DataException {
+		String password = null;
+		String sqlTemplate = "SELECT password from USER where username=%s";
+		String sql = String.format(sqlTemplate, wrapForSQL(username));
 		try {
 			Statement stmt = conn.createStatement();
-			String query = String.format(Sql.RETREIVE_USER, wrapForSQL(username), wrapForSQL(password));
-			ResultSet rs  = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {
-				String firstName = rs.getString("first_name");
-				String lastName = rs.getString("last_name");
-				String userName = rs.getString("username");
-				String email = rs.getString("email");
-				Date dateJoined = rs.getDate("join_date");
-				String role = rs.getString("role"); 
-				user = new User(firstName,lastName,userName,dateJoined,Role.valueOf(role));
-				user.setEmail(email);
+				password = rs.getString("password");
 			}
 		} catch(SQLException sqle) {
-			String msg = "Could not retreive User from database";
+			String msg = "Could not retreive password for user '" + username + "'";
+			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
-		return user; 
+		return password;
 	}
 	
 	public User retreiveUserByUsername(Connection conn, String username) throws DataException {
@@ -561,7 +580,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			if(rs.next()) {
 				String firstName = rs.getString("first_name");
 				String lastName = rs.getString("last_name");
-				String userName = rs.getString("username");
+				String userName = rs.getString("username");				
 				String email = rs.getString("email");
 				Date dateJoined = rs.getDate("join_date");
 				String role = rs.getString("role");

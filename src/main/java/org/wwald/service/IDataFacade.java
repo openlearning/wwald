@@ -53,7 +53,7 @@ public interface IDataFacade {
 	public void updateUser(Connection conn, User user, UserForm.Field... userFields) throws DataException;
 	public List<User> retreiveAllUsers(Connection c) throws DataException ;
 	public User retreiveUserByUsername(Connection conn, String username) throws DataException;
-	public User retreiveUser(Connection c, String userName, String password) throws DataException;
+	public String retreivePassword(Connection conn, String username) throws DataException;
 	
 	//Static Pages
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException;

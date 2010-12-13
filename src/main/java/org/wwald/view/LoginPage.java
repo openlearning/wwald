@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
@@ -35,6 +36,7 @@ public class LoginPage extends BasePage {
 				try {
 					String username = (String)((TextField)get("username")).getModelObject();
 					String password = (String)((TextField)get("password")).getModelObject();
+					
 					User user = 
 						((WWALDApplication)getApplication()).
 							getApplicationFacade().login(username, password, getDatabaseId());

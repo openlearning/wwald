@@ -30,6 +30,8 @@ public class Sql {
 	public static String RETREIVE_COMPETENCIES_FOR_COURSE = "SELECT * FROM COMPETENCY WHERE course_id=%s;";
 	public static String INSERT_COMPETENCY = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s,%s,%s,%s,%s);";
 	
+	public static String INSERT_COURSE_ENROLLMENT_STATUS = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
+	
 	public static String RETREIVE_STATIC_PAGE = "SELECT contents FROM STATIC_PAGES WHERE id=%s";
 	public static String INSERT_STATIC_PAGE = "INSERT INTO STATIC_PAGES VALUES (%s,%s);";
 	public static String UPDATE_STATIC_PAGE = "UPDATE STATIC_PAGES SET contents=%s WHERE id=%s;";
