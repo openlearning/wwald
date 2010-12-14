@@ -25,7 +25,10 @@ public class WWALDSession extends WebSession {
 	}
 	
 	public User getUser() {
-		return User.duplicate(this.user);
+		if(this.user == null) {
+			return null;
+		}
+		return this.user.duplicate();
 	}
 	
 	public void setUser(User user) {

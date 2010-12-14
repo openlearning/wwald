@@ -60,9 +60,18 @@ public class ProfilePage extends BasePage {
 		super(parameters);
 		try {
 			User userInSession =  WWALDSession.get().getUser();
-			add(getUserFormPanel(userInSession));
-			add(new FeedbackPanel(WicketIdConstants.MESSAGES));
-			add(getChangePasswordForm(userInSession));
+			
+			Component userFormPanel = getUserFormPanel(userInSession);
+			Component changePasswordForm = getChangePasswordForm(userInSession);
+			
+			if(userInSession.getClass().equals(User.class)) {				
+				userFormPanel.setVisible(false);
+				changePasswordForm.setVisible(false);
+			}
+			
+			add(new FeedbackPanel(WicketIdConstants.MESSAGES));			 
+			add(userFormPanel);			
+			add(changePasswordForm);
 		} catch(DataException de) {
 			String msg = "Sorry but we could not process the request due to an error. We will look into this as soon as we can.";
 			parameters.add(WicketIdConstants.MESSAGES, msg);

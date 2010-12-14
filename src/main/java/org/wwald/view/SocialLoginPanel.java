@@ -17,6 +17,9 @@ import org.wwald.WWALDConstants;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
+import org.wwald.model.Role;
+import org.wwald.model.TwitterUser;
+import org.wwald.model.User;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
@@ -31,7 +34,14 @@ public class SocialLoginPanel extends Panel {
 	public SocialLoginPanel(String id) {
 		super(id);
 		
-		Link loginWithTwitterLink =	new Link(WicketIdConstants.LOGIN_WITH_TWITTER) {
+		//Link loginWithTwitterLink =	getLoginWithTwitterLink();
+		Link loginWithTwitterLink =	getTestLoginLink();
+		loginWithTwitterLink.add(getTwitterImage());
+		add(loginWithTwitterLink);		
+	}
+	
+	private Link getLoginWithTwitterLink() {
+		return new Link(WicketIdConstants.LOGIN_WITH_TWITTER) {
 			@Override
 			public void onClick() {				
 		        try {
@@ -95,10 +105,27 @@ public class SocialLoginPanel extends Panel {
 	            return callbackUrl;
 			}
 		};
+	}
 	
-		//loginWithTwitterLink.add(new Label(WicketIdConstants.LOGIN_WITH_TWITTER_LABEL, "Login With Twitter"));
-		loginWithTwitterLink.add(getTwitterImage());
-		add(loginWithTwitterLink);		
+	private Link getTestLoginLink() {
+		
+		return new Link(WicketIdConstants.LOGIN_WITH_TWITTER) {
+			@Override
+			public void onClick() {				
+		        try {
+		        	User testUser = new TwitterUser("testUser");
+		            WWALDSession.get().setUser(testUser);
+		            setResponsePage(HomePage.class);
+		        } catch (Exception e) {
+		        	String msg = "Could not redirect to Twitter for authentication";
+		        	cLogger.error(msg, e);
+		        	PageParameters parameters = new PageParameters();
+		        	parameters.add(WicketIdConstants.MESSAGES, msg);
+		            setResponsePage(GenericErrorPage.class);
+		        }
+			}
+
+		};
 	}
 	
 	private Image getTwitterImage() {

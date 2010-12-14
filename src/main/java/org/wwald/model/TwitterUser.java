@@ -7,4 +7,9 @@ public class TwitterUser extends User {
 		setRole(Role.STUDENT);
 		setUsername(screenName);
 	}
+	
+	@Override
+	public TwitterUser duplicate() {
+		return new TwitterUser(getUsername()); 
+	}
 }

@@ -102,22 +102,15 @@ public class User implements Serializable{
 			   this.role;
 	}
 	
-	public static User duplicate(User user) {
-		if(user == null) {
-			return null;
-		}
-		else {
-			User dupUser = new User();
-			dupUser.setUsername(user.getUsername());
-			dupUser.setEmail(user.getEmail());
-			dupUser.setFirstName(user.getEmail());
-			dupUser.setLastName(user.getLastName());
-			dupUser.setJoinDate(user.getJoinDate());
-			dupUser.setRole(user.getRole());
-			dupUser.setPassword(user.getPassword());
-			return dupUser;
-		}
-		
-	}
-	
+	public User duplicate() {
+		User dupUser = new User();
+		dupUser.setFirstName(this.getFirstName());
+		dupUser.setLastName(this.getLastName());
+		dupUser.setUsername(this.getUsername());
+		dupUser.setPassword(this.getPassword());
+		dupUser.setEmail(this.getEmail());
+		dupUser.setJoinDate(this.getJoinDate());
+		dupUser.setRole(this.getRole());
+		return dupUser;
+	}	
 }

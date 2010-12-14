@@ -84,7 +84,7 @@ public class UserForm extends Form {
 		super(id);
 		this.origUser = user;
 		this.userFieldsToUpdate = userFields;
-		this.user = User.duplicate(this.origUser);
+		this.user = this.origUser.duplicate();
 		addTextFields();
 	}
 
