@@ -34,10 +34,6 @@ public class UserForm extends Form {
 	private User user;
 	private String repeatPassword;
 
-	private Label firstNameFieldLabel;
-	private TextField firstNameField;
-	private Label lastNameFieldLabel;
-	private TextField lastNameField;
 	private Label usernameFieldLabel;
 	private TextField usernameField;
 	private Label emailFieldLabel;
@@ -57,8 +53,6 @@ public class UserForm extends Form {
 	private transient Logger cLogger = Logger.getLogger(UserForm.class);
 	
 	public enum Field {
-		FIRST_NAME("first_name"),
-		LAST_NAME("last_name"),
 		USERNAME("username"),
 		EMAIL("email"),
 		PASSWORD("password"),
@@ -102,14 +96,6 @@ public class UserForm extends Form {
 	
 	public void setFieldVisible(Field field, boolean visible) {
 		switch(field) {
-			case FIRST_NAME:
-				this.firstNameField.setVisible(visible);
-				this.firstNameFieldLabel.setVisible(visible);
-				break;
-			case LAST_NAME:
-				this.lastNameField.setVisible(visible);
-				this.lastNameFieldLabel.setVisible(visible);
-				break;
 			case USERNAME:
 				this.usernameField.setVisible(visible);
 				this.usernameFieldLabel.setVisible(visible);
@@ -136,12 +122,6 @@ public class UserForm extends Form {
 	
 	public void setFieldEditable(Field field, boolean editable) {
 		switch(field) {
-			case FIRST_NAME:
-				this.firstNameField.setEnabled(editable);
-				break;
-			case LAST_NAME:
-				this.lastNameField.setEnabled(editable);
-				break;
 			case USERNAME:
 				this.usernameField.setEnabled(editable);
 				break;
@@ -167,8 +147,6 @@ public class UserForm extends Form {
 			IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
 			Connection conn = ConnectionPool.getConnection(getDatabaseId());
 			if(this.origUser.getUsername() == null || this.origUser.getUsername().equals("")) {
-				//this is a new user
-				this.user.setJoinDate(new Date());
 				dataFacade.insertUser(conn, this.user);
 			}
 			else {
@@ -188,25 +166,6 @@ public class UserForm extends Form {
 	}
 	
 	private void addTextFields() {
-		this.firstNameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_FIRST_NAME_LABEL, "First Name *"); 
-		add(this.firstNameFieldLabel);
-		this.firstNameField =
-			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_FIRST_NAME_FIELD, 
-						  new PropertyModel(this.user, "firstName"));
-		this.firstNameField.add(StringValidator.lengthBetween(2, 32));
-		//TODO: Can we use a model that reads directly from a property file
-		this.firstNameField.setLabel(new Model("First Name"));
-		add(this.firstNameField);
-		
-		this.lastNameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_LAST_NAME_LABEL, "Last Name *"); 
-		add(this.lastNameFieldLabel);
-		this.lastNameField = 
-			new RequiredTextField(WicketIdConstants.USER_DETAILS_FORM_LAST_NAME_FIELD, 
-						  new PropertyModel(this.user, "lastName"));
-		this.lastNameField.add(StringValidator.lengthBetween(1, 32));
-		this.lastNameField.setLabel(new Model("Last Name"));
-		add(this.lastNameField);
-	
 		this.usernameFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_USERNAME_LABEL, "Username *"); 
 		add(this.usernameFieldLabel);
 		this.usernameField = 

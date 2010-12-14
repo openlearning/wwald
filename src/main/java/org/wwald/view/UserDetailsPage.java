@@ -58,18 +58,11 @@ public class UserDetailsPage extends AccessControlledPage {
 		userFormPanel.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
 		userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
 		
-//		UserForm userForm = new UserForm(WicketIdConstants.USER_DETAILS_FORM, user);
-//		userForm.setFieldEditable(UserForm.Field.USERNAME, false);
-//		userForm.setFieldEditable(UserForm.Field.PASSWORD, false);
-//		userForm.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
-//		userForm.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
 		return userFormPanel;
 	}
 
 	private Field[] getUserFieldsToUpdate() {
-		return new UserForm.Field[] {Field.FIRST_NAME,  
-									 Field.LAST_NAME,
-									 Field.ROLE};
+		return new UserForm.Field[] {Field.ROLE};
 	}
 
 	@Override

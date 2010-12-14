@@ -25,10 +25,8 @@ public class UsersFileParser {
 	private Map<StateEnum, State> stateMap;
 	
 	private enum StateEnum {
-		ReadingFullNameState,
 		ReadingAuthDetailsState,
 		ReadingEmailState,
-		ReadingDateJoinedState,
 		ReadingRoleState,
 		EndState;
 	}
@@ -37,46 +35,25 @@ public class UsersFileParser {
 		void processLine(String line) throws DataFileSyntaxException;
 	}
 	
-	private class ReadingFullNameState implements State {
-		
+	private class ReadingAuthDetailsState implements State {
+
 		public void processLine(String line) throws DataFileSyntaxException {
 			if(line != null) {
 				if(line.trim().equalsIgnoreCase("[end]")) {
 					currentState = stateMap.get(StateEnum.EndState);
 				}
-				else if(!line.trim().equals("")) {
-					String fullName[] = line.split(" ");
-					int length = fullName.length;
-					if(length < 1 || length > 3) {
-						String msg = "Expected full name in the following format 'FirstName [MI LastName]'" +
-									 "\n you provided " + line;
-						throw new DataFileSyntaxException(msg);
+				else {
+					if(!line.trim().equals("")) {
+						String authDetails[] = line.split("\\|");
+						if(authDetails.length != 2) {
+							String msg = "Expected auth details in the following format 'username|pwd'";
+							throw new DataFileSyntaxException(msg);
+						}
+						user = new User();
+						user.setUsername(authDetails[0]);
+						user.setPassword(authDetails[1]);
+						currentState = stateMap.get(StateEnum.ReadingEmailState);	
 					}
-					user = new User();
-					user.setFirstName(fullName[0]);
-					if(length == 2) {
-						user.setLastName(fullName[1]);
-					}
-					currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
-				}
-			}
-		}
-		
-	}
-	
-	private class ReadingAuthDetailsState implements State {
-
-		public void processLine(String line) throws DataFileSyntaxException {
-			if(line != null) {
-				if(!line.trim().equals("")) {
-					String authDetails[] = line.split("\\|");
-					if(authDetails.length != 2) {
-						String msg = "Expected auth details in the following format 'username|pwd'";
-						throw new DataFileSyntaxException(msg);
-					}
-					user.setUsername(authDetails[0]);
-					user.setPassword(authDetails[1]);
-					currentState = stateMap.get(StateEnum.ReadingEmailState);	
 				}
 			}	
 		}
@@ -86,25 +63,8 @@ public class UsersFileParser {
 	private class ReadingEmailState implements State {
 		public void processLine(String line) throws DataFileSyntaxException {
 			user.setEmail(line);
-			currentState = stateMap.get(StateEnum.ReadingDateJoinedState);
+			currentState = stateMap.get(StateEnum.ReadingRoleState);
 		}
-	}
-	
-	private class ReadingDateJoinedState implements State {
-
-		public void processLine(String line) throws DataFileSyntaxException {
-			DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
-			Date date = null;
-			try {
-				date = df.parse(line);
-				user.setJoinDate(date);
-				currentState = stateMap.get(StateEnum.ReadingRoleState);
-			} catch (ParseException e) {
-				String msg = "Expected format for date yyyy-mm-dd but was " + line;
-				throw new DataFileSyntaxException(msg ,e);
-			}
-		}
-		
 	}
 	
 	private class ReadingRoleState implements State {
@@ -116,7 +76,7 @@ public class UsersFileParser {
 					user.setRole(role);
 					users.add(user);
 					user = null;
-					currentState = stateMap.get(StateEnum.ReadingFullNameState);
+					currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
 				}
 				else {
 					throw new DataFileSyntaxException("could not find role for " + line);
@@ -137,13 +97,11 @@ public class UsersFileParser {
 		this.filePath = url.getPath();
 		this.users = new ArrayList<User>();
 		this.stateMap = new HashMap<StateEnum, State>();
-		this.stateMap.put(StateEnum.ReadingFullNameState, new ReadingFullNameState());
 		this.stateMap.put(StateEnum.ReadingAuthDetailsState, new ReadingAuthDetailsState());
 		this.stateMap.put(StateEnum.ReadingEmailState, new ReadingEmailState());
-		this.stateMap.put(StateEnum.ReadingDateJoinedState, new ReadingDateJoinedState());
 		this.stateMap.put(StateEnum.ReadingRoleState, new ReadingRoleState());
 		this.stateMap.put(StateEnum.EndState, new EndState());
-		this.currentState = stateMap.get(StateEnum.ReadingFullNameState);
+		this.currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
 	}
 	
 	public User[] parse() throws IOException, DataFileSyntaxException {

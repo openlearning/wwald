@@ -64,7 +64,7 @@ public class ProfilePage extends BasePage {
 			Component userFormPanel = getUserFormPanel(userInSession);
 			Component changePasswordForm = getChangePasswordForm(userInSession);
 			
-			if(userInSession.getClass().equals(User.class)) {				
+			if(!userInSession.getClass().equals(User.class)) {				
 				userFormPanel.setVisible(false);
 				changePasswordForm.setVisible(false);
 			}
@@ -142,9 +142,7 @@ public class ProfilePage extends BasePage {
 	}
 
 	private Field[] getUserFieldsToUpdate() {
-		return new UserForm.Field[] {Field.FIRST_NAME,  
-				 					 Field.LAST_NAME,
-				 					 Field.EMAIL};
+		return new UserForm.Field[] {Field.EMAIL};
 	}
 
 }
