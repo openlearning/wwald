@@ -34,8 +34,8 @@ public class SocialLoginPanel extends Panel {
 	public SocialLoginPanel(String id) {
 		super(id);
 		
-		//Link loginWithTwitterLink =	getLoginWithTwitterLink();
-		Link loginWithTwitterLink =	getTestLoginLink();
+		Link loginWithTwitterLink =	getLoginWithTwitterLink();
+		//Link loginWithTwitterLink =	getTestLoginLink();
 		loginWithTwitterLink.add(getTwitterImage());
 		add(loginWithTwitterLink);		
 	}
