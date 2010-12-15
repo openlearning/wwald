@@ -1,13 +1,18 @@
 package org.wwald.service;
 
 public class Sql {
-	public static String INSERT_USER = "INSERT into USER (username, password, email, role) VALUES (%s, %s, %s, %s);";
+	public static String INSERT_USER = "INSERT into USER (username, password, email, role) VALUES (%s, %s, %s, %s); " +
+									   "INSERT into USER_META (userid, identifier, login_via) VALUES (NULL, %s, %s);";
 	public static String UPDATE_USER = "UPDATE USER SET email=%s, role=%s, password=%s WHERE username=%s;";
 	public static String RETREIVE_ALL_USERS = "SELECT * from USER;";
 	public static String RETREIVE_USER =
 		"SELECT * FROM USER WHERE username=%s AND password=%s;";
 	public static String RETREIVE_USER_BY_USERNAME = "SELECT * FROM USER WHERE username=%s;";
 		
+	public static String RETREIVE_ALL_USER_META = "SELECT * from USER_META;";
+	public static String RETREIVE_USER_META = "SELECT * from USER_META where userid=%s;";
+	public static String RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA = "SELECT * from USER_META where identifier=%s AND login_via=%s;";
+	
 	public static String RETREIVE_ALL_MENTORS = "SELECT * FROM USER WHERE ROLE='MENTOR';";
 	
 	public static String INSERT_COURSES_WIKI = "INSERT INTO COURSES_WIKI (id, content) VALUES (%s,%s);";

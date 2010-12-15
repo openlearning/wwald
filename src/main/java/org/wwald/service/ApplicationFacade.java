@@ -11,6 +11,7 @@ import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
+import org.wwald.model.UserMeta;
 
 public class ApplicationFacade {
 	
@@ -22,8 +23,9 @@ public class ApplicationFacade {
 		this.dataFacade = dataFacade;
 	}
 	
-	public User login(String username, String password, String databaseId) throws ApplicationException{
+	public UserMeta login(String username, String password, String databaseId) throws ApplicationException{
 		User user = null;
+		UserMeta userMeta = null;
 		try {
 			cLogger.info("Trying to login user '" + username + "'");
 			String passwordInDb = dataFacade.retreivePassword(ConnectionPool.getConnection(databaseId), username);
@@ -34,7 +36,13 @@ public class ApplicationFacade {
 					cLogger.error("THIS SHOULD NEVER HAPPEN. COULD GET PASSWORD BUT COULD NOT GET USER OBJECT");
 				}
 				cLogger.info("User " + username + " logged in succesully");
-			}						
+				userMeta = 
+					dataFacade.
+						retreiveUserMetaByIdentifierLoginVia(ConnectionPool.getConnection(databaseId), 
+														 	 user.getUsername(), 
+														 	 UserMeta.LoginVia.INTERNAL);
+				userMeta.setRole(user.getRole());
+			}
 			else {
 				cLogger.info("User " + username + " NOT logged in");
 			}
@@ -43,14 +51,14 @@ public class ApplicationFacade {
 			cLogger.error(msg, de);
 			throw new ApplicationException(msg, de);
 		}
-		return user; 
+		return userMeta; 
 	}
 	
 	public void logout() {
-		User user = WWALDSession.get().getUser();
+		UserMeta userMeta = WWALDSession.get().getUserMeta();
 		String msg = "Logging out user ";
-		if(user != null) {
-			msg += user.getUsername();
+		if(userMeta != null) {
+			msg += userMeta.getIdentifier();
 		}
 		cLogger.info(msg);
 		WWALDSession.get().invalidateNow();

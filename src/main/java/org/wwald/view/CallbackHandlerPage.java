@@ -4,8 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.wwald.WWALDSession;
-import org.wwald.model.TwitterUser;
-import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -25,8 +24,9 @@ public class CallbackHandlerPage extends BasePage {
 			AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 			WWALDSession.get().setRequestToken(null);
 			cLogger.info("User logged in with Twitter '" + accessToken.getScreenName() + "', '" + accessToken.getUserId() + "'");
-			User user = new TwitterUser(twitter.getScreenName());
-			WWALDSession.get().setUser(user);
+			UserMeta userMeta = new UserMeta();
+			userMeta.setIdentifier(twitter.getScreenName());
+			WWALDSession.get().setUserMeta(userMeta);
 		} catch (TwitterException e) {
 			String msg = "Caught Exception while handling the callback from Twitter";
 			cLogger.error(msg, e);

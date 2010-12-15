@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
 import org.jasypt.util.password.BasicPasswordEncryptor;
@@ -20,6 +21,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 import org.wwald.view.UserForm.Field;
@@ -59,8 +61,9 @@ public class ProfilePage extends BasePage {
 	public ProfilePage(PageParameters parameters) {
 		super(parameters);
 		try {
-			User userInSession =  WWALDSession.get().getUser();
-			
+			UserMeta userMeta =  WWALDSession.get().getUserMeta();
+			//TODO: This should only be done for Internal users
+			User userInSession = getUser(userMeta);
 			Component userFormPanel = getUserFormPanel(userInSession);
 			Component changePasswordForm = getChangePasswordForm(userInSession);
 			
@@ -79,6 +82,12 @@ public class ProfilePage extends BasePage {
 		}
 	}
 	
+	private User getUser(UserMeta userMeta) throws DataException {
+		String databaseId = ConnectionPool.getDatabaseIdFromRequest((ServletWebRequest)getRequest());
+		Connection conn = ConnectionPool.getConnection(databaseId);
+		return WWALDApplication.get().getDataFacade().retreiveUserByUsername(conn, userMeta.getIdentifier());
+	}
+
 	private Component getChangePasswordForm(final User user) {
 		final IModel oldPwdModel = new Model();
 		final IModel newPwdModel = new Model();
@@ -122,7 +131,10 @@ public class ProfilePage extends BasePage {
 		return changePasswordForm;
 	}
 
-	private Component getUserFormPanel(User userInSession) throws DataException {				
+	private Component getUserFormPanel(User userInSession) throws DataException {
+		if(userInSession == null) {
+			throw new NullPointerException("userInSession is null");
+		}
 		Connection conn = ConnectionPool.getConnection(getDatabaseId());
 		User user = WWALDApplication.get().getDataFacade().retreiveUserByUsername(conn, userInSession.getUsername());
 		UserFormPanel userFormPanel = 

@@ -19,6 +19,7 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.Mentor;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.service.Sql;
 
 public class DataInitializer {
@@ -59,11 +60,16 @@ public class DataInitializer {
 		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 		if(users != null) {
 			for(User user : users) {
+				UserMeta userMeta = new UserMeta();
+				userMeta.setIdentifier(user.getUsername());
+				userMeta.setLoginVia(UserMeta.LoginVia.INTERNAL);
 				String sql = String.format(Sql.INSERT_USER, 
 										   wrapForSQL(user.getUsername()),
 										   wrapForSQL(user.getEncryptedPassword()),
 										   wrapForSQL(user.getEmail()),
-										   wrapForSQL(user.getRole().toString()));
+										   wrapForSQL(user.getRole().toString()),
+										   wrapForSQL(userMeta.getIdentifier()),
+										   wrapForSQL(userMeta.getLoginVia().toString()));
 				Statement stmt = conn.createStatement();
 				System.out.println("Executing SQL to create user");
 				System.out.println(sql);

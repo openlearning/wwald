@@ -17,6 +17,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.util.WWALDProperties;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
@@ -103,15 +104,15 @@ public class HeaderPanel extends Panel {
 	}
 
 	private boolean userLoggedIn() {
-		User user = WWALDSession.get().getUser();
-		return (!(user == null));
+		UserMeta userMeta = WWALDSession.get().getUserMeta();
+		return (!(userMeta == null));
 	}
 
 	private String getLogginInUserName() {
 		String username = "";
-		User user = WWALDSession.get().getUser();
-		if(user != null) {
-			username = user.getUsername();
+		UserMeta userMeta = WWALDSession.get().getUserMeta();
+		if(userMeta != null) {
+			username = userMeta.getIdentifier();
 		}
 		return username;
 	}

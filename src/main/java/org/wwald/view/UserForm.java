@@ -26,6 +26,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.service.IDataFacade;
 
 public class UserForm extends Form {
@@ -147,7 +148,10 @@ public class UserForm extends Form {
 			IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
 			Connection conn = ConnectionPool.getConnection(getDatabaseId());
 			if(this.origUser.getUsername() == null || this.origUser.getUsername().equals("")) {
-				dataFacade.insertUser(conn, this.user);
+				UserMeta userMeta = new UserMeta();
+				userMeta.setIdentifier(this.user.getUsername());
+				userMeta.setLoginVia(UserMeta.LoginVia.INTERNAL);
+				dataFacade.insertUser(conn, this.user, userMeta);
 			}
 			else {
 				dataFacade.updateUser(conn, this.user, userFieldsToUpdate);

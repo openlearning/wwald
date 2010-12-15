@@ -26,6 +26,7 @@ import org.wwald.model.StaticPagePOJO;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
+import org.wwald.model.UserMeta;
 import org.wwald.util.CompetencyUniqueIdGenerator;
 import org.wwald.view.UserForm;
 import org.wwald.view.UserForm.Field;
@@ -409,7 +410,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public void insertUser(Connection conn, User user) throws DataException {
+	public void insertUser(Connection conn, User user, UserMeta userMeta) throws DataException {
 		try {
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			Statement stmt = conn.createStatement();
@@ -417,7 +418,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 									   wrapForSQL(user.getUsername()),
 									   wrapForSQL(user.getEncryptedPassword()),
 									   wrapForSQL(user.getEmail()),
-									   wrapForSQL(user.getRole().toString()));
+									   wrapForSQL(user.getRole().toString()),
+									   wrapForSQL(userMeta.getIdentifier()),
+									   wrapForSQL(userMeta.getLoginVia().toString()));
 			cLogger.info("Executing SQL '" + sql + "'");
 			int rowsUpdated = stmt.executeUpdate(sql);			
 		} catch(SQLException sqle) {
@@ -548,6 +551,34 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new DataException(msg, sqle);
 		}
 		return user; 
+	}
+	
+	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn,
+													 String identifer, 
+													 UserMeta.LoginVia loginVia) 
+			throws DataException {
+		UserMeta userMeta = null;
+		try {
+			Statement stmt = conn.createStatement();
+			String query = String.format(Sql.RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA, 
+										 wrapForSQL(identifer), 
+										 wrapForSQL(loginVia.toString()));
+			ResultSet rs = stmt.executeQuery(query);
+			if(rs.next()) {
+				int userid = rs.getInt("userid");
+				String userMetaIdentifer = rs.getString("identifier");
+				String userMetaLoginVia = rs.getString("login_via");
+				userMeta = new UserMeta();
+				userMeta.setUserid(userid);
+				userMeta.setIdentifier(userMetaIdentifer);
+				userMeta.setLoginVia(UserMeta.LoginVia.valueOf(userMetaLoginVia));
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive UserMeta for '" + identifer + "' '" + loginVia + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return userMeta;
 	}
 	
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException {
@@ -874,6 +905,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				retVal = userCourseStatus.toString();
 		}
 		return retVal;
-	}
+	}	
 
 }

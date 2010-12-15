@@ -10,6 +10,7 @@ import org.wwald.model.Mentor;
 import org.wwald.model.StaticPagePOJO;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.view.UserForm;
 
 public interface IDataFacade {
@@ -49,11 +50,14 @@ public interface IDataFacade {
 	public List<StatusUpdate> getStatusUpdates(Connection c) throws DataException;
 	
 	//User
-	public void insertUser(Connection conn, User user) throws DataException;
+	public void insertUser(Connection conn, User user, UserMeta userMeta) throws DataException;
 	public void updateUser(Connection conn, User user, UserForm.Field... userFields) throws DataException;
 	public List<User> retreiveAllUsers(Connection c) throws DataException ;
 	public User retreiveUserByUsername(Connection conn, String username) throws DataException;
 	public String retreivePassword(Connection conn, String username) throws DataException;
+	
+	//UserMeta
+	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn, String identifer, UserMeta.LoginVia loginVia) throws DataException;
 	
 	//Static Pages
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException;

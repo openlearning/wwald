@@ -19,6 +19,7 @@ import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.CourseStatusPanel;
 import org.wwald.view.components.SimpleViewPageLink;
@@ -65,9 +66,9 @@ public class CourseCompetenciesPanel extends Panel {
 	}
 	
 	private Component getCourseStatusPanel(Course course) {
-		User user = WWALDSession.get().getUser();
+		UserMeta userMeta = WWALDSession.get().getUserMeta();
 		Panel panel = null;
-		if(user == null) {
+		if(userMeta == null) {
 			panel = new EmptyPanel(WicketIdConstants.COURSE_STATUS_PANEL);
 		}
 		else {

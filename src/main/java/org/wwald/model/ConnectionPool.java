@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
 import org.wwald.util.PropertyDirMap;
 import org.wwald.util.WWALDProperties;
@@ -93,5 +94,11 @@ public class ConnectionPool {
 		}
 		
 		return id;
+	}
+	
+	public static String getDatabaseIdFromRequest(ServletWebRequest servletWebRequest) {
+		String requestUrl = servletWebRequest.getHttpServletRequest().getRequestURL().toString();
+		String databaseId = getDatabaseIdFromRequestUrl(requestUrl);
+		return databaseId;
 	}
 }

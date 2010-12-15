@@ -20,6 +20,7 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
 import org.wwald.model.TwitterUser;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
@@ -113,8 +114,11 @@ public class SocialLoginPanel extends Panel {
 			@Override
 			public void onClick() {				
 		        try {
-		        	User testUser = new TwitterUser("testUser");
-		            WWALDSession.get().setUser(testUser);
+		        	UserMeta testUser = new UserMeta();
+		        	testUser.setUserid(Integer.MAX_VALUE - 1);
+		        	testUser.setIdentifier("http://twitter.com/testuser");
+		        	testUser.setLoginVia(UserMeta.LoginVia.TWITTER);
+		            WWALDSession.get().setUserMeta(testUser);
 		            setResponsePage(HomePage.class);
 		        } catch (Exception e) {
 		        	String msg = "Could not redirect to Twitter for authentication";

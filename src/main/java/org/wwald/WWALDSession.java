@@ -3,7 +3,7 @@ package org.wwald;
 import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
-import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 
 import twitter4j.Twitter;
 import twitter4j.http.AccessToken;
@@ -11,7 +11,7 @@ import twitter4j.http.RequestToken;
 
 public class WWALDSession extends WebSession {
 
-	private User user;
+	private UserMeta userMeta;
 	private Twitter twitter;
 	private RequestToken requestToken;
 	private AccessToken accessToken;
@@ -24,15 +24,16 @@ public class WWALDSession extends WebSession {
 		return (WWALDSession)Session.get();
 	}
 	
-	public User getUser() {
-		if(this.user == null) {
+	public UserMeta getUserMeta() {
+		if(this.userMeta == null) {
 			return null;
 		}
-		return this.user.duplicate();
+		//TODO: Duplicate the user meta object
+		return this.userMeta;
 	}
 	
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserMeta(UserMeta userMeta) {
+		this.userMeta = userMeta;
 	}
 	
 	public Twitter getTwitter() {

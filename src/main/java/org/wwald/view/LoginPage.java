@@ -13,6 +13,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.service.ApplicationException;
 
 public class LoginPage extends BasePage {
@@ -37,11 +38,13 @@ public class LoginPage extends BasePage {
 					String username = (String)((TextField)get("username")).getModelObject();
 					String password = (String)((TextField)get("password")).getModelObject();
 					
-					User user = 
+					UserMeta userMeta = 
 						((WWALDApplication)getApplication()).
 							getApplicationFacade().login(username, password, getDatabaseId());
-					WWALDSession.get().setUser(user);
-					if(user != null) {
+					
+					
+					WWALDSession.get().setUserMeta(userMeta);
+					if(userMeta != null) {
 						setResponsePage(HomePage.class);
 					}
 					else {
