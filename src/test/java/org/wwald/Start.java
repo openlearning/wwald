@@ -1,8 +1,5 @@
 package org.wwald;
 
-import java.io.IOException;
-import java.net.URL;
-
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
