@@ -1,6 +1,8 @@
 package org.wwald.model;
 
-public class UserMeta {
+import java.io.Serializable;
+
+public class UserMeta implements Serializable {
 	
 	public enum LoginVia {
 		INTERNAL,

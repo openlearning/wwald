@@ -41,7 +41,6 @@ public class ApplicationFacade {
 						retreiveUserMetaByIdentifierLoginVia(ConnectionPool.getConnection(databaseId), 
 														 	 user.getUsername(), 
 														 	 UserMeta.LoginVia.INTERNAL);
-				userMeta.setRole(user.getRole());
 			}
 			else {
 				cLogger.info("User " + username + " NOT logged in");
@@ -64,13 +63,13 @@ public class ApplicationFacade {
 		WWALDSession.get().invalidateNow();
 	}
 	
-	public void enrollInCourse(User user, Course course, String databaseId) throws ApplicationException {
+	public void enrollInCourse(UserMeta user, Course course, String databaseId) throws ApplicationException {
 		try {
 			UserCourseStatus userCourseStatus = getUserCourseStatus(user, course, databaseId);
 			if(!userCourseStatus.equals(UserCourseStatus.ENROLLED)) {
 				CourseEnrollmentStatus courseEnrollmentStatus = 
 					new CourseEnrollmentStatus(course.getId(), 
-											   user.getUsername(), 
+											   user.getUserid(), 
 											   UserCourseStatus.ENROLLED,
 											   new Timestamp((new Date()).getTime()));
 				this.dataFacade.addCourseEnrollmentAction(ConnectionPool.getConnection(databaseId), courseEnrollmentStatus);
@@ -89,34 +88,34 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public void dropCourse(User user, Course course, String databaseId) throws ApplicationException {
+	public void dropCourse(UserMeta userMeta, Course course, String databaseId) throws ApplicationException {
 		try {
-			UserCourseStatus userCourseStatus = getUserCourseStatus(user, course, databaseId);
+			UserCourseStatus userCourseStatus = getUserCourseStatus(userMeta, course, databaseId);
 			if(userCourseStatus.equals(UserCourseStatus.ENROLLED)) {
 				CourseEnrollmentStatus courseEnrollmentStatus = 
 					new CourseEnrollmentStatus(course.getId(), 
-											   user.getUsername(), 
+											   userMeta.getUserid(), 
 											   UserCourseStatus.DROPPED,
 											   new Timestamp((new Date()).getTime()));
 				this.dataFacade.addCourseEnrollmentAction(ConnectionPool.getConnection(databaseId), courseEnrollmentStatus);
 			}
 			else {
-				String msg = "Could not drop user " + user + 
+				String msg = "Could not drop user " + userMeta + 
 				 " from course " + course + 
 				 " because user is not enrolled in this course";
 				cLogger.error(msg);
 				throw new ApplicationException(msg);
 			}
 		} catch(DataException de) {
-			String msg = "Could not drop user '" + user + "' from course '" + course.getId() + "'";
+			String msg = "Could not drop user '" + userMeta + "' from course '" + course.getId() + "'";
 			cLogger.error(msg, de);
 			throw new ApplicationException(msg, de);
 		}
 	}
 	
-	public UserCourseStatus getUserCourseStatus(User user, Course course, String databaseId) throws DataException {
+	public UserCourseStatus getUserCourseStatus(UserMeta userMeta, Course course, String databaseId) throws DataException {
 		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(ConnectionPool.getConnection(databaseId), user, course);
+			this.dataFacade.getCourseEnrollmentStatus(ConnectionPool.getConnection(databaseId), userMeta, course);
 		return courseEnrollmentStatus.getUserCourseStatus();
 	}
 }

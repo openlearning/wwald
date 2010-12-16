@@ -151,11 +151,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, User user, Course course) throws DataException {
-		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND username=%s ORDER BY tstamp DESC;";
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, UserMeta userMeta, Course course) throws DataException {
+		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND userid=%s ORDER BY tstamp DESC;";
 		String sql = String.format(sqlTemplate,
 								   wrapForSQL(course.getId()),
-								   wrapForSQL(user.getUsername()));
+								   userMeta.getUserid());
 		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
 		try {
 			Statement stmt = conn.createStatement();
@@ -163,15 +163,15 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			
 			while(rs.next()) {
 				String courseId = rs.getString("course_id");
-				String username = rs.getString("username");
+				int userid = rs.getInt("userid");
 				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
 				Timestamp tstamp = rs.getTimestamp("tstamp");
-				statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+				statuses.add(new CourseEnrollmentStatus(courseId, userid, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
 			}
 			
 		} catch(SQLException sqle) {
 			String msg = "Could not get course enrollment status for course_id " + 
-						 course.getId() + " username " + user.getUsername();
+						 course.getId() + " userid " + userMeta.getUserid();
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
@@ -180,7 +180,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			return statuses.get(statuses.size()-1);
 		}
 		else {
-			return new CourseEnrollmentStatus(course.getId(), user.getUsername(), UserCourseStatus.UNENROLLED, null);
+			return new CourseEnrollmentStatus(course.getId(), userMeta.getUserid(), UserCourseStatus.UNENROLLED, null);
 		}
 	}
 	
@@ -189,7 +189,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
 		String sql = String.format(Sql.INSERT_COURSE_ENROLLMENT_STATUS,
 								   wrapForSQL(courseEnrollmentStatus.getCourseId()),
-								   wrapForSQL(courseEnrollmentStatus.getUsername()),
+								   courseEnrollmentStatus.getUserid(),
 								   courseEnrollmentStatus.getUserCourseStatus().getId(),
 								   wrapForSQL(timestamp.toString()));
 		try {
@@ -397,7 +397,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
 				statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getTimestamp() + 
 												   " - " +
-												   courseEnrollmentStatus.getUsername() + " " + 
+												   courseEnrollmentStatus.getUserid() + " " + 
 												   getEnrollmentStatusWithSurroundingText(courseEnrollmentStatus.getUserCourseStatus()) + 
 												   " course " + 
 												   courseEnrollmentStatus.getCourseId()));
@@ -412,7 +412,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 
 	public void insertUser(Connection conn, User user, UserMeta userMeta) throws DataException {
 		try {
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			Statement stmt = conn.createStatement();
 			String sql = String.format(Sql.INSERT_USER, 
 									   wrapForSQL(user.getUsername()),
@@ -420,9 +420,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 									   wrapForSQL(user.getEmail()),
 									   wrapForSQL(user.getRole().toString()),
 									   wrapForSQL(userMeta.getIdentifier()),
-									   wrapForSQL(userMeta.getLoginVia().toString()));
+									   wrapForSQL(userMeta.getLoginVia().toString()),
+									   wrapForSQL(user.getRole().toString()));
 			cLogger.info("Executing SQL '" + sql + "'");
-			int rowsUpdated = stmt.executeUpdate(sql);			
+			stmt.executeUpdate(sql);			
 		} catch(SQLException sqle) {
 			String msg = "Could not insert User due to an exception";
 			cLogger.error(msg, sqle);
@@ -464,6 +465,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			else {
 				cLogger.info("User updated new values '" + user + "'");
 			}
+			updateRoleInUserMeta(conn, user, userFields);
 			
 		} catch(SQLException sqle) {
 			String msg = "Could not update user due to an exception";
@@ -472,6 +474,33 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 		
+	public void updateRoleInUserMeta(Connection conn, 
+									 User user,
+									 Field[] userFields) throws DataException {
+		boolean update = false;
+		for(Field field : userFields) {
+			if(field.equals(Field.ROLE)) {
+				update = true;
+			}
+		}
+		if(update) {
+			String sql = String.format(Sql.UPDATE_USER_META_ROLE, 
+									   wrapForSQL(user.getRole().toString()),
+									   wrapForSQL(user.getUsername()),
+									   wrapForSQL(UserMeta.LoginVia.INTERNAL.toString()));
+			try {
+				Statement stmt = conn.createStatement();
+				cLogger.info("Executing Sql '" + sql + "'");
+				stmt.executeUpdate(sql);
+			}  catch(SQLException sqle) {
+				String msg = "Could not update UserMeta with new role";
+				cLogger.error(msg);
+				throw new DataException(msg, sqle);
+			}
+		}
+		
+	}
+
 	private String[] getUserFieldValues(Field[] userFields, User user) {
 		String retVal[] = null;
 		List<String> userFieldValues = new ArrayList<String>();
@@ -553,6 +582,23 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return user; 
 	}
 	
+	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException {
+		String sql = String.format(Sql.INSERT_USER_META, 
+								   wrapForSQL(userMeta.getIdentifier()), 								    
+								   wrapForSQL(userMeta.getLoginVia().toString()),
+								   wrapForSQL(userMeta.getRole().toString()));
+		try {
+			Statement stmt = conn.createStatement();
+			cLogger.info("Executing SQL '" + sql + "'");
+			int rows = stmt.executeUpdate(sql);
+			System.out.println("rows updated " + rows);
+		} catch(SQLException sqle) {
+			String msg = "Could not insert UserMeta";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn,
 													 String identifer, 
 													 UserMeta.LoginVia loginVia) 
@@ -561,8 +607,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		try {
 			Statement stmt = conn.createStatement();
 			String query = String.format(Sql.RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA, 
-										 wrapForSQL(identifer), 
+										 wrapForSQL(identifer),
 										 wrapForSQL(loginVia.toString()));
+			cLogger.info("Executing SQL '" + query + "'");
 			ResultSet rs = stmt.executeQuery(query);
 			if(rs.next()) {
 				int userid = rs.getInt("userid");
@@ -572,6 +619,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				userMeta.setUserid(userid);
 				userMeta.setIdentifier(userMetaIdentifer);
 				userMeta.setLoginVia(UserMeta.LoginVia.valueOf(userMetaLoginVia));
+				userMeta.setRole(Role.valueOf(rs.getString("role")));
 			}
 		} catch(SQLException sqle) {
 			String msg = "Could not retreive UserMeta for '" + identifer + "' '" + loginVia + "'";
@@ -871,10 +919,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 		while(rs.next()) {
 			String courseId = rs.getString("course_id");
-			String username = rs.getString("username");
+			int userid = rs.getInt("userid");
 			int userCourseStatusId = rs.getInt("course_enrollment_action_id");
 			Timestamp tstamp = rs.getTimestamp("tstamp");
-			statuses.add(new CourseEnrollmentStatus(courseId, username, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+			statuses.add(new CourseEnrollmentStatus(courseId, userid, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
 		}	
 		 
 		return statuses;

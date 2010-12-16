@@ -17,19 +17,17 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.Role;
-import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.model.UserMeta;
 import org.wwald.service.ApplicationException;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataException;
-import org.wwald.view.CoursePage;
 import org.wwald.view.GenericErrorPage;
 
 public class CourseStatusPanel extends Panel implements Serializable {
 	
 	private Course course;
-	private UserMeta user;
+	private UserMeta userMeta;
 	private ICourseStatusForUser courseStatusForUser;
 	
 	//TODO: Make all inner classes static
@@ -61,7 +59,7 @@ public class CourseStatusPanel extends Panel implements Serializable {
 									ServletWebRequest request = (ServletWebRequest)getRequest();
 									String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
 									String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
-									appFacade.enrollInCourse(null, course, databaseId); //TODO: user
+									appFacade.enrollInCourse(userMeta, course, databaseId);
 								} catch(ApplicationException ae) {
 									String msg = "Sorry we could not enroll you in the course due to an internal error. " +
 												 "We will look into this problem as soon as we can.";
@@ -102,7 +100,7 @@ public class CourseStatusPanel extends Panel implements Serializable {
 									ServletWebRequest request = (ServletWebRequest)getRequest();
 									String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
 									String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
-									appFacade.dropCourse(null, course, databaseId); //TODO: user
+									appFacade.dropCourse(userMeta, course, databaseId);
 								} catch(ApplicationException ae) {
 									String msg = "Sorry we could not drop you from the course due to an internal error. " +
 									 			 "We will look into this problem as soon as we can.";
@@ -140,8 +138,8 @@ public class CourseStatusPanel extends Panel implements Serializable {
 
 
 	private void init() {
-		this.user = WWALDSession.get().getUserMeta();
-		if(this.user != null) {
+		this.userMeta = WWALDSession.get().getUserMeta();
+		if(this.userMeta != null) {
 			
 		try {
 			//TODO: What do we do if this is null... should we introduce another course status?
@@ -160,7 +158,7 @@ public class CourseStatusPanel extends Panel implements Serializable {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		ApplicationFacade appFacade = app.getApplicationFacade();
 		String databaseId = ConnectionPool.getDatabaseIdFromRequest((ServletWebRequest)getRequest());
-		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(null, course, databaseId); //TODO: user
+		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(userMeta, course, databaseId);
 		//TODO: Can we use a map here instead of multiple if...else???
 		if(UserCourseStatus.UNENROLLED.equals(userCourseStatus) || 
 		   UserCourseStatus.DROPPED.equals(userCourseStatus)) {

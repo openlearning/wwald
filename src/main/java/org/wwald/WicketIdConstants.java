@@ -90,6 +90,7 @@ public class WicketIdConstants {
 	
 	//profile page
 	public static final String PROFILE_USER_DETAILS = "user_details_panel";
+	public static final String CHANGE_PASSWORD_PANEL = "change_password_panel";
 	public static final String PROFILE_CHANGE_PWD_FORM = "change_password_form";
 	public static final String OLD_PWD = "old_pwd";
 	public static final String NEW_PWD = "new_pwd";

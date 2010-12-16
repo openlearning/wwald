@@ -64,24 +64,14 @@ public class AccessControlledViewPageLink extends SimpleViewPageLink {
 			String databaseId = ConnectionPool.getDatabaseIdFromRequest((ServletWebRequest)getRequest());
 			IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
 			
-			//TODO: The UserMeta object itself should have roles associated with it
-			if(userMeta != null) {
-				User user = null;
-				try {
-					user = dataFacade.retreiveUserByUsername(ConnectionPool.getConnection(databaseId), userMeta.getIdentifier());
-				} catch(DataException de) {
-					String msg = "Could not get user from db while trying to determine permissions";
-					cLogger.error(msg, de);
-				}
-				if(user != null) {
-					Role userRole = user.getRole();
-					for(Role role : roles) {
-						if(role.equals(userRole)) {
-							retVal = true;
-							break;
-						}
+			if(userMeta != null) {								
+				Role userRole = userMeta.getRole();
+				for(Role role : roles) {
+					if(role.equals(userRole)) {
+						retVal = true;
+						break;
 					}
-				}
+				}				
 			}			
 		}
 		return retVal;

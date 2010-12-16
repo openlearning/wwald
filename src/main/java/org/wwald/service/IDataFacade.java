@@ -23,7 +23,7 @@ public interface IDataFacade {
 	public void insertCourse(Connection c, Course course) throws DataException;
 	public void upsertCourse(Connection c, Course course) throws DataException;
 	public void updateCourseWiki(Connection c, String wikiContents) throws DataException;
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, User user, Course course) throws DataException;
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, UserMeta userMeta, Course course) throws DataException;
 	public void addCourseEnrollmentAction(Connection c, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException;
 	
 	//Competencies
@@ -57,6 +57,7 @@ public interface IDataFacade {
 	public String retreivePassword(Connection conn, String username) throws DataException;
 	
 	//UserMeta
+	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException;
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn, String identifer, UserMeta.LoginVia loginVia) throws DataException;
 	
 	//Static Pages

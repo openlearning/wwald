@@ -69,7 +69,8 @@ public class DataInitializer {
 										   wrapForSQL(user.getEmail()),
 										   wrapForSQL(user.getRole().toString()),
 										   wrapForSQL(userMeta.getIdentifier()),
-										   wrapForSQL(userMeta.getLoginVia().toString()));
+										   wrapForSQL(userMeta.getLoginVia().toString()),
+										   wrapForSQL(user.getRole().toString()));
 				Statement stmt = conn.createStatement();
 				System.out.println("Executing SQL to create user");
 				System.out.println(sql);

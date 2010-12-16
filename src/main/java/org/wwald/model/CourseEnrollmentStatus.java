@@ -7,7 +7,7 @@ import java.util.Date;
 public class CourseEnrollmentStatus {
 	
 	private String courseId;
-	private String username;
+	private int userid;
 	private UserCourseStatus userCourseStatus;
 	private Timestamp timestamp;
 	
@@ -31,11 +31,11 @@ public class CourseEnrollmentStatus {
 	}
 	
 	public CourseEnrollmentStatus(String courseId,
-								  String username,
+								  int userid,
 								  UserCourseStatus userCourseStatus,
 								  Timestamp timestamp) {
 		this.courseId = courseId;
-		this.username = username;
+		this.userid = userid;
 		this.userCourseStatus = userCourseStatus;
 		this.timestamp = timestamp;
 	}
@@ -44,8 +44,8 @@ public class CourseEnrollmentStatus {
 		return courseId;
 	}
 
-	public String getUsername() {
-		return username;
+	public int getUserid() {
+		return this.userid;
 	}
 
 	public UserCourseStatus getUserCourseStatus() {

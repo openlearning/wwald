@@ -35,8 +35,8 @@ public class SocialLoginPanel extends Panel {
 	public SocialLoginPanel(String id) {
 		super(id);
 		
-		Link loginWithTwitterLink =	getLoginWithTwitterLink();
-		//Link loginWithTwitterLink =	getTestLoginLink();
+//		Link loginWithTwitterLink =	getLoginWithTwitterLink();
+		Link loginWithTwitterLink =	getTestLoginLink();
 		loginWithTwitterLink.add(getTwitterImage());
 		add(loginWithTwitterLink);		
 	}
@@ -114,10 +114,32 @@ public class SocialLoginPanel extends Panel {
 			@Override
 			public void onClick() {				
 		        try {
-		        	UserMeta testUser = new UserMeta();
-		        	testUser.setUserid(Integer.MAX_VALUE - 1);
-		        	testUser.setIdentifier("http://twitter.com/testuser");
-		        	testUser.setLoginVia(UserMeta.LoginVia.TWITTER);
+		        	String identifier = "http://twitter.com/testuser";
+		        	UserMeta.LoginVia loginVia = UserMeta.LoginVia.TWITTER;
+		        	String databaseId = ConnectionPool.
+		        							getDatabaseIdFromRequest((ServletWebRequest)getRequest());
+		        	IDataFacade dataFacade = WWALDApplication.get().getDataFacade(); 
+		        	UserMeta testUser = dataFacade.
+		        		retreiveUserMetaByIdentifierLoginVia(ConnectionPool.getConnection(databaseId), 
+		        											 identifier, 
+		        											 loginVia);
+		        	if(testUser == null) {
+		        		testUser = new UserMeta();
+		        		testUser.setIdentifier(identifier);
+		        		testUser.setRole(Role.STUDENT);
+		        		testUser.setLoginVia(loginVia);
+		        		dataFacade.insertUserMeta(ConnectionPool.getConnection(databaseId), testUser);
+		        	}
+		        	
+		        	testUser = dataFacade.
+	        					retreiveUserMetaByIdentifierLoginVia(ConnectionPool.getConnection(databaseId), 
+	        											 			 identifier, 
+	        											 			 loginVia);
+		        	
+		        	if(testUser == null) {
+		        		cLogger.warn("testUser is null even after inserting it's UserMeta in the database");
+		        	}
+		        	
 		            WWALDSession.get().setUserMeta(testUser);
 		            setResponsePage(HomePage.class);
 		        } catch (Exception e) {
