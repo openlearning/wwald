@@ -22,6 +22,8 @@ import org.wwald.model.User;
 import org.wwald.model.UserMeta;
 import org.wwald.service.Sql;
 
+import util.UsersFileParser.UserUserMeta;
+
 public class DataInitializer {
 
 	private ClassLoader appClassLoader;
@@ -56,25 +58,29 @@ public class DataInitializer {
 		System.out.println("populating users");
 		URL url = appClassLoader.getResource(BASE_PATH + "users.txt");
 		UsersFileParser parser = new UsersFileParser(url);
-		User users[] = parser.parse();
+		UsersFileParser.UserUserMeta users[] = parser.parse();
 		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 		if(users != null) {
-			for(User user : users) {
-				UserMeta userMeta = new UserMeta();
-				userMeta.setIdentifier(user.getUsername());
-				userMeta.setLoginVia(UserMeta.LoginVia.INTERNAL);
+			for(UserUserMeta userUserMeta : users) {
+				User user = userUserMeta.user;
+				UserMeta userMeta = userUserMeta.userMeta;
+				
 				String sql = String.format(Sql.INSERT_USER, 
 										   wrapForSQL(user.getUsername()),
 										   wrapForSQL(user.getEncryptedPassword()),
 										   wrapForSQL(user.getEmail()),
-										   wrapForSQL(user.getRole().toString()),
 										   wrapForSQL(userMeta.getIdentifier()),
 										   wrapForSQL(userMeta.getLoginVia().toString()),
-										   wrapForSQL(user.getRole().toString()));
+										   wrapForSQL(userMeta.getRole().toString()));
 				Statement stmt = conn.createStatement();
 				System.out.println("Executing SQL to create user");
 				System.out.println(sql);
-				stmt.executeUpdate(sql);
+				try {
+					stmt.executeUpdate(sql);
+				} catch(SQLException sqle) {
+					System.out.println("Caught Exception while inserting user and user_meta into the database " + sqle);
+					throw sqle;
+				}
 				System.out.println("Created user " + user);
 			}
 		}
@@ -197,11 +203,11 @@ public class DataInitializer {
 					try {
 						sql = String.format(Sql.INSERT_COURSE_MENTOR, 
 								wrapForSQL(course.getId()), 
-								wrapForSQL(mentor.getUsername()));
+								mentor.getUserid());
 						stmt = conn.createStatement();
 						stmt.executeUpdate(sql);
 					} catch(SQLException sqle) {
-						System.out.println("Could not populate mentor " + mentor.getUsername() + " for course " + course.getId() + " " + sqle);
+						System.out.println("Could not populate mentor " + mentor.getUserid() + " for course " + course.getId() + " " + sqle);
 					}
 				}
 				

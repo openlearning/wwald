@@ -1,11 +1,11 @@
 package org.wwald.model;
 
 
-public class Mentor extends User {
+public class Mentor extends UserMeta {
 	public Mentor() {}
 	
-	public Mentor(String username) {
+	public Mentor(int userid) {
 		super();
-		setUsername(username);
+		setUserid(userid);
 	}
 }

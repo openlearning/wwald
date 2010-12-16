@@ -3,7 +3,6 @@ package org.wwald.view;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.wwald.WicketIdConstants;
-import org.wwald.model.Role;
 import org.wwald.model.User;
 import org.wwald.view.UserForm.Field;
 
@@ -19,9 +18,9 @@ public class UserFormPanel extends Panel{
 		init(user, userFields);
 	}
 
-	public void setRoleChoices(Role... roles) {
-		this.userForm.setRoleChoices(roles);
-	}
+//	public void setRoleChoices(Role... roles) {
+//		this.userForm.setRoleChoices(roles);
+//	}
 	
 	public void setSubmitResponsePage(Class<? extends BasePage> responsePage) {
 		this.userForm.setSubmitResponsePage(responsePage);

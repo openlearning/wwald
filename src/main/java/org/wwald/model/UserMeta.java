@@ -48,4 +48,8 @@ public class UserMeta implements Serializable {
 		this.loginVia = loginVia;
 	}
 	
+	public String toString() {
+		return this.userid + " " + this.identifier + " " + this.loginVia + " " + this.role;
+	}
+	
 }

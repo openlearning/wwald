@@ -4,25 +4,37 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 
 public class UsersFileParser {
 	
 	private String filePath;
-	private List<User> users;
+	private List<UserUserMeta> users;
 	private User user;
+	private UserMeta userMeta;
 	private State currentState;
 	private Map<StateEnum, State> stateMap;
+	
+	public static class UserUserMeta {
+		public final User user;
+		public final UserMeta userMeta;
+		
+		public UserUserMeta(User user, UserMeta userMeta) {
+			this.user = user;
+			this.userMeta = userMeta;
+		}
+		
+		public String toString() {
+			return "---UserUserMeta---\n" + this.user.toString() + " \n" + this.userMeta.toString() + "\n---UserUserMeta---";
+		}
+	}
 	
 	private enum StateEnum {
 		ReadingAuthDetailsState,
@@ -50,8 +62,10 @@ public class UsersFileParser {
 							throw new DataFileSyntaxException(msg);
 						}
 						user = new User();
+						userMeta = new UserMeta();
 						user.setUsername(authDetails[0]);
 						user.setPassword(authDetails[1]);
+						userMeta.setIdentifier(authDetails[0]);
 						currentState = stateMap.get(StateEnum.ReadingEmailState);	
 					}
 				}
@@ -73,9 +87,14 @@ public class UsersFileParser {
 			if(line != null) {
 				Role role = Role.valueOf(line);
 				if(role != null) {
-					user.setRole(role);
-					users.add(user);
+					userMeta.setRole(role);
+					userMeta.setLoginVia(UserMeta.LoginVia.INTERNAL);
+					
+					users.add(new UserUserMeta(user, userMeta));
+					
 					user = null;
+					userMeta = null;
+					
 					currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
 				}
 				else {
@@ -95,7 +114,7 @@ public class UsersFileParser {
 	
 	public UsersFileParser(URL url) {
 		this.filePath = url.getPath();
-		this.users = new ArrayList<User>();
+		this.users = new ArrayList<UserUserMeta>();
 		this.stateMap = new HashMap<StateEnum, State>();
 		this.stateMap.put(StateEnum.ReadingAuthDetailsState, new ReadingAuthDetailsState());
 		this.stateMap.put(StateEnum.ReadingEmailState, new ReadingEmailState());
@@ -104,7 +123,7 @@ public class UsersFileParser {
 		this.currentState = stateMap.get(StateEnum.ReadingAuthDetailsState);
 	}
 	
-	public User[] parse() throws IOException, DataFileSyntaxException {
+	public UserUserMeta[] parse() throws IOException, DataFileSyntaxException {
 		BufferedReader reader = new BufferedReader(new FileReader(this.filePath));
 		String line = null;
 	
@@ -112,15 +131,15 @@ public class UsersFileParser {
 			this.currentState.processLine(line);
 		}
 		
-		User userArr[] = new User[this.users.size()];
+		UserUserMeta userArr[] = new UserUserMeta[this.users.size()];
 		return this.users.toArray(userArr);
 	}
 	
 	public static void main(String args[]) throws IOException, DataFileSyntaxException {
 		URL url = UsersFileParser.class.getClassLoader().getResource("data/users.txt");
 		UsersFileParser parser = new UsersFileParser(url);
-		User users[] = parser.parse();
-		for(User user : users) {
+		UserUserMeta users[] = parser.parse();
+		for(UserUserMeta user : users) {
 			System.out.println(user);
 		}
 	}

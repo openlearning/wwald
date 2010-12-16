@@ -9,15 +9,18 @@ public class User implements Serializable{
 	private String username;
 	private String password;
 	private String email;
-	private Role role;
 	
 	public User() {}
-	
-	public User(String username,				
-				Role role) {
+
+	public User(String username) {
 		this.username = username;
-		this.role = role;
 	}
+
+	public User(String username, String email) {
+		this.username = username;
+		this.email = email;
+	}
+	
 
 	public void setUsername(String username) {
 		this.username = username;
@@ -47,23 +50,12 @@ public class User implements Serializable{
 	public String getEmail() {
 		return this.email;
 	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-	
-	public Role getRole() {
-		return role;
-	}
-	
-	
 	
 	@Override
 	public String toString() {
 		return this.username + " " +
 			   this.username + " " +
-			   this.email + " " +  
-			   this.role;
+			   this.email;
 	}
 	
 	public User duplicate() {
@@ -71,7 +63,6 @@ public class User implements Serializable{
 		dupUser.setUsername(this.getUsername());
 		dupUser.setPassword(this.getPassword());
 		dupUser.setEmail(this.getEmail());
-		dupUser.setRole(this.getRole());
 		return dupUser;
 	}	
 }

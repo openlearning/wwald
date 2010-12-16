@@ -320,7 +320,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_ALL_MENTORS);
 			while(rs.next()) {
 				Mentor mentor = new Mentor();
-				mentor.setUsername(rs.getString("username"));
+				mentor.setUserid(rs.getInt("userid"));
+				mentor.setIdentifier(rs.getString("identifier"));
 				String role = rs.getString("role");
 				mentor.setRole(Role.valueOf(role));
 				mentors.add(mentor);
@@ -359,7 +360,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			stmt.executeUpdate(sql);
 			
 			//TODO: Good Samaritan is the default mentor for every course... if the mentor was removed then add this one
-			sql = String.format(Sql.UPDATE_COURSE_MENTORS, wrapForSQL(course.getMentor().getUsername()), wrapForSQL(course.getId()));
+			sql = String.format(Sql.UPDATE_COURSE_MENTORS, course.getMentor().getUserid(), wrapForSQL(course.getId()));
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
@@ -418,10 +419,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 									   wrapForSQL(user.getUsername()),
 									   wrapForSQL(user.getEncryptedPassword()),
 									   wrapForSQL(user.getEmail()),
-									   wrapForSQL(user.getRole().toString()),
 									   wrapForSQL(userMeta.getIdentifier()),
 									   wrapForSQL(userMeta.getLoginVia().toString()),
-									   wrapForSQL(user.getRole().toString()));
+									   wrapForSQL(Role.STUDENT.toString())); //forcing a new user to have the role of student
 			cLogger.info("Executing SQL '" + sql + "'");
 			stmt.executeUpdate(sql);			
 		} catch(SQLException sqle) {
@@ -442,7 +442,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String sql = null;
 			if(userFields == null || userFields.length == 0) {
 				sql = String.format(Sql.UPDATE_USER, 
-						   wrapForSQL(user.getRole().toString()),
+						   wrapForSQL(user.getEmail()),
 						   wrapForSQL(user.getEncryptedPassword()),
 						   wrapForSQL(user.getUsername()));
 			}
@@ -465,7 +465,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			else {
 				cLogger.info("User updated new values '" + user + "'");
 			}
-			updateRoleInUserMeta(conn, user, userFields);
 			
 		} catch(SQLException sqle) {
 			String msg = "Could not update user due to an exception";
@@ -474,33 +473,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 		
-	public void updateRoleInUserMeta(Connection conn, 
-									 User user,
-									 Field[] userFields) throws DataException {
-		boolean update = false;
-		for(Field field : userFields) {
-			if(field.equals(Field.ROLE)) {
-				update = true;
-			}
-		}
-		if(update) {
-			String sql = String.format(Sql.UPDATE_USER_META_ROLE, 
-									   wrapForSQL(user.getRole().toString()),
-									   wrapForSQL(user.getUsername()),
-									   wrapForSQL(UserMeta.LoginVia.INTERNAL.toString()));
-			try {
-				Statement stmt = conn.createStatement();
-				cLogger.info("Executing Sql '" + sql + "'");
-				stmt.executeUpdate(sql);
-			}  catch(SQLException sqle) {
-				String msg = "Could not update UserMeta with new role";
-				cLogger.error(msg);
-				throw new DataException(msg, sqle);
-			}
-		}
-		
-	}
-
 	private String[] getUserFieldValues(Field[] userFields, User user) {
 		String retVal[] = null;
 		List<String> userFieldValues = new ArrayList<String>();
@@ -511,9 +483,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 					break;
 				case EMAIL:
 					userFieldValues.add(wrapForSQL(user.getEmail()));
-					break;
-				case ROLE:
-					userFieldValues.add(wrapForSQL(user.getRole().toString()));
 					break;
 			}
 		}
@@ -531,9 +500,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			while(rs.next()) {
 				String userName = rs.getString("username");
 				String email = rs.getString("email");
-				String role = rs.getString("role");
-				User newUser = new User(userName,Role.valueOf(role));
-				newUser.setEmail(email);
+				User newUser = new User(userName, email);
 				users.add(newUser);
 			}
 			return users;
@@ -571,9 +538,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			if(rs.next()) {
 				String userName = rs.getString("username");				
 				String email = rs.getString("email");
-				String role = rs.getString("role");
-				user = new User(userName,Role.valueOf(role));
-				user.setEmail(email);
+				user = new User(userName, email);
 			}
 		} catch(SQLException sqle) {
 			String msg = "Could not retreive User from database";
@@ -797,16 +762,41 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	private void buildMentorsForCourses(Connection conn, List<Course> courses) throws SQLException {
-		String sqlToGetMentorIdsForCourse = "SELECT (mentor_username) FROM COURSE_MENTORS WHERE course_id=%s";
+		String sqlToGetMentorIdsForCourse = "SELECT (mentor_userid) FROM COURSE_MENTORS WHERE course_id=%s";
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, wrapForSQL(course.getId())));
-			List<Mentor> mentors = buildMentorObjectsFromResultSet(conn, rs);
-			if(mentors.size() != 0) {
+			
+			List<Mentor> mentors = new ArrayList<Mentor>();
+			while(rs.next()) {
+				int mentorUserid = rs.getInt("mentor_userid");
+				Statement stmt1 = conn.createStatement();
+				ResultSet mentorsResultSet = stmt1.executeQuery(String.format(Sql.RETREIVE_USER_META, mentorUserid));
+				while(mentorsResultSet.next()) {
+					String role = mentorsResultSet.getString("role");
+					Mentor mentor = new Mentor();
+					mentor.setUserid(mentorUserid);
+					mentor.setIdentifier(mentorsResultSet.getString("identifier"));
+					mentor.setLoginVia(UserMeta.LoginVia.valueOf(mentorsResultSet.getString("login_via")));
+					mentor.setRole(Role.valueOf(role));
+					if(mentor.getRole().equals(Role.MENTOR)) {
+						mentors.add(mentor);
+					}
+					else {
+						cLogger.warn("Found a user in COURSE_MENTOR table who is not a mentor " + mentorUserid);
+					}
+				}
+			}
+			
+			if(mentors.size() == 0) {
+				cLogger.warn("Mentors were not found for course : " + course.getId());				
+			}
+			else if(mentors.size() == 1){
 				course.setMentor(mentors.get(0));
 			}
-			else {
-				cLogger.warn("Mentors were not found for course : " + course.getId());
+			else if(mentors.size() > 1) {
+				course.setMentor(mentors.get(0));
+				cLogger.warn("Found multiple mentors for course " + course.getId());
 			}
 		}
 	}
@@ -885,30 +875,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return titlesList.toArray(new String[titlesList.size()]);
 	}
 
-	private List<Mentor> buildMentorObjectsFromResultSet(Connection conn, ResultSet rs) throws SQLException {
-		List<Mentor> mentors = new ArrayList<Mentor>();
-		while(rs.next()) {
-			String mentorUsername = rs.getString("mentor_username");
-			Statement stmt = conn.createStatement();
-			ResultSet mentorsResultSet = stmt.executeQuery(String.format(Sql.RETREIVE_USER_BY_USERNAME, wrapForSQL(mentorUsername)));
-			while(mentorsResultSet.next()) {
-				String email = mentorsResultSet.getString("email");
-				String role = mentorsResultSet.getString("role");
-				Mentor mentor = new Mentor();
-				mentor.setUsername(mentorUsername);
-				mentor.setEmail(email);
-				mentor.setRole(Role.valueOf(role));
-				if(mentor.getRole().equals(Role.MENTOR)) {
-					mentors.add(mentor);
-				}
-				else {
-					cLogger.warn("Found a user in COURSE_MENTOR table who is not a mentor " + mentorUsername);
-				}
-			}
-		}
-		return mentors;
-	}
-	
 	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses(Connection conn) throws SQLException {
 		//TODO: Limit this query to 5 rows
 		String sql = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";

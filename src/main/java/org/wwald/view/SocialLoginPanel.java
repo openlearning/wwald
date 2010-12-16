@@ -18,8 +18,6 @@ import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Role;
-import org.wwald.model.TwitterUser;
-import org.wwald.model.User;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
@@ -35,8 +33,8 @@ public class SocialLoginPanel extends Panel {
 	public SocialLoginPanel(String id) {
 		super(id);
 		
-//		Link loginWithTwitterLink =	getLoginWithTwitterLink();
-		Link loginWithTwitterLink =	getTestLoginLink();
+		Link loginWithTwitterLink =	getLoginWithTwitterLink();
+//		Link loginWithTwitterLink =	getTestLoginLink();
 		loginWithTwitterLink.add(getTwitterImage());
 		add(loginWithTwitterLink);		
 	}

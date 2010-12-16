@@ -43,8 +43,8 @@ public class UserForm extends Form {
 	private TextField passwordField;
 	private Label repeatPasswordFieldLabel;
 	private TextField repeatPasswordField;
-	private Label roleFieldLabel;
-	private DropDownChoice roleField;
+//	private Label roleFieldLabel;
+//	private DropDownChoice roleField;
 	
 	private Field userFieldsToUpdate[];
 	
@@ -57,8 +57,8 @@ public class UserForm extends Form {
 		USERNAME("username"),
 		EMAIL("email"),
 		PASSWORD("password"),
-		REPEAT_PASSWORD(""),
-		ROLE("role");
+//		ROLE("role"),
+		REPEAT_PASSWORD("");
 		
 		private String dbColName;
 		
@@ -83,13 +83,13 @@ public class UserForm extends Form {
 		addTextFields();
 	}
 
-	public void setRoleChoices(Role... roles) {
-		List<Role> rolesList = new ArrayList<Role>();
-		for(Role role : roles) {
-			rolesList.add(role);
-		}
-		roleField.setChoices(rolesList);
-	}
+//	public void setRoleChoices(Role... roles) {
+//		List<Role> rolesList = new ArrayList<Role>();
+//		for(Role role : roles) {
+//			rolesList.add(role);
+//		}
+//		roleField.setChoices(rolesList);
+//	}
 	
 	public void setSubmitResponsePage(Class<? extends Page> responsePage) {
 		this.responsePage = responsePage;
@@ -112,10 +112,10 @@ public class UserForm extends Form {
 				this.repeatPasswordField.setVisible(visible);
 				this.repeatPasswordFieldLabel.setVisible(visible);
 				break;
-			case ROLE:
-				this.roleField.setVisible(visible);
-				this.roleFieldLabel.setVisible(visible);
-				break;
+//			case ROLE:
+//				this.roleField.setVisible(visible);
+//				this.roleFieldLabel.setVisible(visible);
+//				break;
 			default:
 				throw new RuntimeException(field  + " not handled");
 		}
@@ -134,9 +134,9 @@ public class UserForm extends Form {
 			case REPEAT_PASSWORD:
 				this.repeatPasswordField.setEnabled(editable);
 				break;
-			case ROLE:
-				this.roleField.setEnabled(editable);
-				break;
+//			case ROLE:
+//				this.roleField.setEnabled(editable);
+//				break;
 			default:
 				throw new RuntimeException(field  + " not handled");
 		}
@@ -212,12 +212,12 @@ public class UserForm extends Form {
 		this.repeatPasswordField.setLabel(new Model("Retype Password"));
 		add(this.repeatPasswordField);
 		
-		this.roleFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_ROLE_LABEL, "Role *"); 
-		add(this.roleFieldLabel);
-		this.roleField = new DropDownChoice(WicketIdConstants.USER_DETAILS_FORM_ROLE_FIELD, new PropertyModel(this.user, "role"), getRoles());
-		this.roleField.setRequired(true);
-		this.roleField.setLabel(new Model("Role"));
-		add(this.roleField);
+//		this.roleFieldLabel = new Label(WicketIdConstants.USER_DETAILS_FORM_ROLE_LABEL, "Role *"); 
+//		add(this.roleFieldLabel);
+//		this.roleField = new DropDownChoice(WicketIdConstants.USER_DETAILS_FORM_ROLE_FIELD, new PropertyModel(this.user, "role"), getRoles());
+//		this.roleField.setRequired(true);
+//		this.roleField.setLabel(new Model("Role"));
+//		add(this.roleField);
 	
 		add(new EqualPasswordInputValidator(this.passwordField, this.repeatPasswordField));
 	}
@@ -226,11 +226,11 @@ public class UserForm extends Form {
 		return ((WWALDApplication)getApplication()).getDataFacade();
 	}
 
-	private List getRoles() {
-		List<Role> roles = new ArrayList<Role>();
-		roles.add(Role.STUDENT);
-		return roles;
-	}
+//	private List getRoles() {
+//		List<Role> roles = new ArrayList<Role>();
+//		roles.add(Role.STUDENT);
+//		return roles;
+//	}
 	
 	private final String getDatabaseId() {
 		ServletWebRequest request = (ServletWebRequest)getRequest();

@@ -56,13 +56,13 @@ public class UserDetailsPage extends AccessControlledPage {
 		userFormPanel.setFieldEditable(UserForm.Field.EMAIL, false);
 		userFormPanel.setFieldEditable(UserForm.Field.PASSWORD, false);
 		userFormPanel.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
-		userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
+//		userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
 		
 		return userFormPanel;
 	}
 
 	private Field[] getUserFieldsToUpdate() {
-		return new UserForm.Field[] {Field.ROLE};
+		return new UserForm.Field[] {Field.EMAIL};
 	}
 
 	@Override

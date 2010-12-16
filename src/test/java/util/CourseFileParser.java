@@ -83,8 +83,12 @@ public class CourseFileParser {
 						currentState = statesMap.get(StatesEnum.ReadingDescription);
 					}
 				}
+				else if(text.startsWith("//")) {
+					//do nothing it's a comment line
+				}
 				else {
-					Mentor mentor = new Mentor(text);
+					int mentorUserid = Integer.parseInt(text);
+					Mentor mentor = new Mentor(mentorUserid);
 					CourseFileParser.this.course.setMentor(mentor);
 				}
 			}
@@ -105,6 +109,9 @@ public class CourseFileParser {
 						CourseFileParser.this.course.setDescription(descBuff.toString());
 						currentState = statesMap.get(StatesEnum.ReadingCompetencies);
 					}
+				}
+				else if(text.startsWith("//")) {
+					//do nothing this is a comment
 				}
 				else {
 					while(this.newlines > 0) {

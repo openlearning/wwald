@@ -68,12 +68,12 @@ public class ProfilePage extends BasePage {
 				new UserFormPanel(WicketIdConstants.PROFILE_USER_DETAILS, 
 								  user, getUserFieldsToUpdate());
 			userFormPanel.setFieldEditable(UserForm.Field.USERNAME, false);
-			userFormPanel.setFieldEditable(UserForm.Field.ROLE, false);
+//			userFormPanel.setFieldEditable(UserForm.Field.ROLE, false);
 			userFormPanel.setFieldEditable(UserForm.Field.PASSWORD, false);
 			userFormPanel.setFieldVisible(UserForm.Field.PASSWORD, false);
 			userFormPanel.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
 			userFormPanel.setFieldVisible(UserForm.Field.REPEAT_PASSWORD, false);
-			userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);									
+//			userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);									
 			return userFormPanel;
 		}
 	}

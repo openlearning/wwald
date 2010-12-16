@@ -44,9 +44,7 @@ public class HomePage extends BasePage implements Serializable {
     	add(getStatusUpdatesPanel());
     }
 
-	private Component getCoursesPanel(PageParameters parameters) {
-		ServletWebRequest request = (ServletWebRequest)getRequest();
-		
+	private Component getCoursesPanel(PageParameters parameters) {		
 		//TODO: Should we throw the DataException out of here and let the caller handle it?
 		Panel coursesPanel = null;
 		try {
