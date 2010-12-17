@@ -40,7 +40,7 @@ public class CallbackHandlerPage extends BasePage {
 													 UserMeta.LoginVia.TWITTER);			
 			if(userMeta == null) {
 				userMeta = new UserMeta();
-				userMeta.setIdentifier(screenName);
+				userMeta.setIdentifier("http://twitter.com/" + screenName);
 				userMeta.setLoginVia(UserMeta.LoginVia.TWITTER);
 				userMeta.setRole(Role.STUDENT);
 				dataFacade.insertUserMeta(ConnectionPool.getConnection(databaseId), userMeta);
