@@ -564,6 +564,27 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
+	public UserMeta retreiveUserMeta(Connection conn, int userid) throws DataException {
+		UserMeta userMeta = null;
+		String sql = String.format(Sql.RETREIVE_USER_META, String.valueOf(userid));
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				userMeta = new UserMeta();
+				userMeta.setUserid(rs.getInt("userid"));
+				userMeta.setIdentifier(rs.getString("identifier"));
+				userMeta.setRole(Role.valueOf(rs.getString("role")));
+				userMeta.setLoginVia(UserMeta.LoginVia.valueOf(rs.getString("login_via")));
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive UserMeta for userid '" + userid + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return userMeta;
+	}
+	
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn,
 													 String identifer, 
 													 UserMeta.LoginVia loginVia) 
@@ -592,6 +613,29 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new DataException(msg, sqle);
 		}
 		return userMeta;
+	}
+	
+	public List<UserMeta> retreiveAllUserMeta(Connection conn) throws DataException {
+		List<UserMeta> allUserMeta = new ArrayList<UserMeta>();
+		
+		try {
+			Statement stmt = conn.createStatement();
+			cLogger.info("Executing Sql '" + Sql.RETREIVE_ALL_USER_META + "'");
+			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_ALL_USER_META);
+			while(rs.next()) {
+				UserMeta userMeta = new UserMeta();
+				userMeta.setUserid(rs.getInt("userid"));
+				userMeta.setIdentifier(rs.getString("identifier"));
+				userMeta.setRole(Role.valueOf(rs.getString("role")));
+				userMeta.setLoginVia(UserMeta.LoginVia.valueOf(rs.getString("login_via")));
+				allUserMeta.add(userMeta);
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not fetch all UserMeta objects";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return allUserMeta;
 	}
 	
 	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException {

@@ -58,6 +58,8 @@ public interface IDataFacade {
 	
 	//UserMeta
 	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException;
+	public List<UserMeta> retreiveAllUserMeta(Connection conn) throws DataException;
+	public UserMeta retreiveUserMeta(Connection conn, int userid) throws DataException;
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn, String identifer, UserMeta.LoginVia loginVia) throws DataException;
 	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException;
 	

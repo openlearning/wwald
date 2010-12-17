@@ -11,10 +11,10 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
-import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
@@ -33,14 +33,20 @@ public class UserDetailsPage extends AccessControlledPage {
 	
 	public UserDetailsPage(PageParameters parameters) {
 		super(parameters);
-		String username = parameters.getString("username");
+		String userid = parameters.getString("userid");
 		try {
 			IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
-			Connection conn = ConnectionPool.getConnection(getDatabaseId());
-			User user = dataFacade.retreiveUserByUsername(conn, username);
-			UserMeta userMeta = dataFacade.retreiveUserMetaByIdentifierLoginVia(conn, user.getUsername(), UserMeta.LoginVia.INTERNAL);
-			add(buildUserForm(user));
-			add(buildChangeRoleForm(userMeta));
+			Connection conn = ConnectionPool.getConnection(getDatabaseId());			
+			
+			UserMeta userMeta = dataFacade.retreiveUserMeta(conn, Integer.parseInt(userid));
+			if(userMeta.getLoginVia().equals(UserMeta.LoginVia.INTERNAL)) {
+				User user = dataFacade.retreiveUserByUsername(conn, userMeta.getIdentifier());
+				add(buildUserForm(user));
+			}
+			else {
+				add(new EmptyPanel(WicketIdConstants.USER_DETAILS_FORM));
+			}
+			add(buildChangeRoleForm(userMeta));						
 		} catch(DataException de) {
 			String msg = "Sorry but we could not process the request due to an error. We will look into this as soon as we can.";
 			cLogger.error(msg, de);

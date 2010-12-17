@@ -20,6 +20,7 @@ import org.wwald.model.Mentor;
 import org.wwald.model.Permission;
 import org.wwald.model.Role;
 import org.wwald.model.User;
+import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 import org.wwald.view.components.AccessControlledViewPageLink;
@@ -54,20 +55,20 @@ public class ManageUsersPage extends AccessControlledPage {
 	private ListView getUsersList() throws DataException {
 		IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
 		Connection conn = ConnectionPool.getConnection(getDatabaseId());
-		List<User> users = dataFacade.retreiveAllUsers(conn);
-		
-		return new ListView("users", users) {
+//		List<User> users = dataFacade.retreiveAllUsers(conn);
+		List<UserMeta> allUserMeta = dataFacade.retreiveAllUserMeta(conn);
+		return new ListView("users", allUserMeta) {
 
 			@Override
 			protected void populateItem(ListItem item) {
-				User user = (User)item.getModelObject();
+				UserMeta user = (UserMeta)item.getModelObject();
 				PageParameters parameters = new PageParameters();
-				parameters.add("username", user.getUsername());
+				parameters.add("userid", String.valueOf(user.getUserid()));
 				Link userDetailsLink = new AccessControlledViewPageLink(WicketIdConstants.USER_DETAILS_PAGE, 
 																		UserDetailsPage.class,
 																		parameters,
 																		new Role[]{Role.ADMIN});
-				Label label = new Label("user", user.getUsername());
+				Label label = new Label("user", user.getIdentifier());
 				userDetailsLink.add(label);
 				item.add(userDetailsLink);
 			}
