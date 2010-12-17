@@ -2,8 +2,22 @@
 	<b>User Details</b>
 	<div wicket:id="user_details_panel">User Details Form</div>
 	
+	<p>Change Role</p>
+	
 	<p>
-	<a wicket:id="manage_users_page" href="#">Manage Users</a>
+		<form wicket:id="change_role_form">
+			<select wicket:id="change_role_form_role_dropdown">
+				<option>Role 1</option>
+				<option>Role 2</option>
+			</select>
+			<p class="form-line">
+				<input type="submit" name="SubmitButton" value="Submit"/>
+			</p>
+		</form>
+	</p>
+	
+	<p>
+		<a wicket:id="manage_users_page" href="#">Manage Users</a>
 	</p>
 	
 </wicket:extend>

@@ -59,6 +59,7 @@ public interface IDataFacade {
 	//UserMeta
 	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException;
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn, String identifer, UserMeta.LoginVia loginVia) throws DataException;
+	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException;
 	
 	//Static Pages
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException;

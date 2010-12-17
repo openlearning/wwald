@@ -10,7 +10,7 @@ public class Sql {
 	public static String RETREIVE_USER_BY_USERNAME = "SELECT * FROM USER WHERE username=%s;";
 	
 	public static String INSERT_USER_META = "INSERT into USER_META (userid, identifier, login_via, role) VALUES (NULL, %s, %s, %s);";
-	public static String UPDATE_USER_META_ROLE = "UPDATE USER_META set role=%s WHERE identifier=%s AND login_via=%s;";
+	public static String UPDATE_USER_META_ROLE = "UPDATE USER_META set role=%s WHERE userid=%s;";
 	public static String RETREIVE_ALL_USER_META = "SELECT * from USER_META;";
 	public static String RETREIVE_USER_META = "SELECT * from USER_META where userid=%s;";
 	public static String RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA = "SELECT * from USER_META where identifier=%s AND login_via=%s;";

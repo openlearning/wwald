@@ -594,6 +594,21 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return userMeta;
 	}
 	
+	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException {
+		String sql = String.format(Sql.UPDATE_USER_META_ROLE, 
+								   wrapForSQL(userMeta.getRole().toString()),
+								   userMeta.getUserid());
+		try {
+			Statement stmt = conn.createStatement();
+			cLogger.info("Executing SQL '" + sql + "'");
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not update userMeta '" + userMeta + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException {
 		StaticPagePOJO page = null;
 		String sql = String.format(Sql.RETREIVE_STATIC_PAGE, wrapForSQL(id));
