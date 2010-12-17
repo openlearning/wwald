@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Permission;
@@ -33,7 +34,7 @@ public class UserDetailsPage extends AccessControlledPage {
 	
 	public UserDetailsPage(PageParameters parameters) {
 		super(parameters);
-		String userid = parameters.getString("userid");
+		String userid = parameters.getString(WWALDConstants.USERID);
 		try {
 			IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
 			Connection conn = ConnectionPool.getConnection(getDatabaseId());			
@@ -41,10 +42,11 @@ public class UserDetailsPage extends AccessControlledPage {
 			UserMeta userMeta = dataFacade.retreiveUserMeta(conn, Integer.parseInt(userid));
 			if(userMeta.getLoginVia().equals(UserMeta.LoginVia.INTERNAL)) {
 				User user = dataFacade.retreiveUserByUsername(conn, userMeta.getIdentifier());
-				add(buildUserForm(user));
+				InternalUsersDetailsPanel panel = new InternalUsersDetailsPanel(WicketIdConstants.INTERNAL_USER_DETAILS, user);
+				add(panel);
 			}
 			else {
-				add(new EmptyPanel(WicketIdConstants.USER_DETAILS_FORM));
+				add(new EmptyPanel(WicketIdConstants.INTERNAL_USER_DETAILS));
 			}
 			add(buildChangeRoleForm(userMeta));						
 		} catch(DataException de) {
@@ -57,17 +59,6 @@ public class UserDetailsPage extends AccessControlledPage {
 		add(manageUsersLink);			
 	}	
 
-	private Component buildUserForm(User user) {
-		UserFormPanel userFormPanel = new UserFormPanel(WicketIdConstants.USER_DETAILS_FORM, user, getUserFieldsToUpdate());
-		userFormPanel.setFieldEditable(UserForm.Field.USERNAME, false);
-		userFormPanel.setFieldEditable(UserForm.Field.EMAIL, false);
-		userFormPanel.setFieldEditable(UserForm.Field.PASSWORD, false);
-		userFormPanel.setFieldEditable(UserForm.Field.REPEAT_PASSWORD, false);
-//		userFormPanel.setRoleChoices(Role.ADMIN, Role.MENTOR, Role.STUDENT);
-		
-		return userFormPanel;
-	}
-	
 	private Component buildChangeRoleForm(final UserMeta userMeta) {
 		
 		Form changeRoleForm = new Form("change_role_form") {

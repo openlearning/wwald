@@ -88,6 +88,13 @@ public class WicketIdConstants {
 	public static final String USER_DETAILS_FORM_ROLE_FIELD = "role_field";
 	public static final String USER_DETAILS_FORM_JOINDATE_FIELD = "join_date_field";
 	
+	//internal user details
+	public static final String INTERNAL_USER_DETAILS = "internal_user_details";
+	public static final String INTERNAL_USERNAME_LABEL = "internal_username_label";
+	public static final String INTERNAL_USERNAME = "internal_username";
+	public static final String INTERNAL_USER_EMAIL_LABEL = "internal_user_email_label";
+	public static final String INTERNAL_USER_EMAIL = "internal_user_email";
+	
 	//profile page
 	public static final String PROFILE_USER_DETAILS = "user_details_panel";
 	public static final String CHANGE_PASSWORD_PANEL = "change_password_panel";

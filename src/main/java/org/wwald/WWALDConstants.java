@@ -12,4 +12,6 @@ public class WWALDConstants {
 	
 	public static final String TWITTER_CALLBACK_URL = "/callback/from/twitter";
 	
+	public static final String USERID = "userid";
+	
 }

@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.resolver.ParentResolver;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Mentor;
@@ -63,7 +64,7 @@ public class ManageUsersPage extends AccessControlledPage {
 			protected void populateItem(ListItem item) {
 				UserMeta user = (UserMeta)item.getModelObject();
 				PageParameters parameters = new PageParameters();
-				parameters.add("userid", String.valueOf(user.getUserid()));
+				parameters.add(WWALDConstants.USERID, String.valueOf(user.getUserid()));
 				Link userDetailsLink = new AccessControlledViewPageLink(WicketIdConstants.USER_DETAILS_PAGE, 
 																		UserDetailsPage.class,
 																		parameters,
