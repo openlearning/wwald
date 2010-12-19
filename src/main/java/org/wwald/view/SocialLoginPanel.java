@@ -43,12 +43,11 @@ public class SocialLoginPanel extends Panel {
 		return new Link(WicketIdConstants.LOGIN_WITH_TWITTER) {
 			@Override
 			public void onClick() {				
-		        try {
-		        	setTwitterConsumerAndSecretKey();		        	
+		        try {		        			        	
 		            StringBuffer callbackURL = getCallbackUrl();
-
 		            Twitter twitter = new TwitterFactory().getInstance();
 					WWALDSession.get().setTwitter(twitter);
+					setTwitterConsumerAndSecretKey(twitter);					
 		            RequestToken requestToken = twitter.getOAuthRequestToken(callbackURL.toString());
 		            WWALDSession.get().setRequestToken(requestToken);
 		            redirectToExternalUrl(requestToken.getAuthenticationURL());
@@ -61,7 +60,7 @@ public class SocialLoginPanel extends Panel {
 		        }
 			}
 
-			private void setTwitterConsumerAndSecretKey() throws DataException {
+			private void setTwitterConsumerAndSecretKey(Twitter twitter) throws DataException {
 				ServletWebRequest request = (ServletWebRequest)getRequest();
 				String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
 				String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
@@ -84,8 +83,9 @@ public class SocialLoginPanel extends Panel {
 					cLogger.warn("Twitter secret key is null for database " + databaseId);
 				}
 				
-				System.setProperty("twitter4j.oauth.consumerKey",twitterConsumerKey) ; 
-				System.setProperty("twitter4j.oauth.consumerSecret",twitterSecretKey) ;
+//				System.setProperty("twitter4j.oauth.consumerKey",twitterConsumerKey) ; 
+//				System.setProperty("twitter4j.oauth.consumerSecret",twitterSecretKey) ;
+				twitter.setOAuthConsumer(twitterConsumerKey, twitterSecretKey);
 //				System.setProperty("twitter4j.oauth.accessToken","xxx");
 //				System.setProperty("twitter4j.oauth.accessTokenSecret","xxx");				
 			}
