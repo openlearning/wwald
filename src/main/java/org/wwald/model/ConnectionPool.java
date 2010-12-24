@@ -17,17 +17,11 @@ import org.wwald.util.WWALDProperties;
 public class ConnectionPool {
 	
 	private static Map<String, Connection> connections;
-	private static Map<String, String> dirmappings;
-	private static String username;
-	private static String password;
-	private static String preurl;
-	private static Properties dbProps;
 	private static Logger cLogger = Logger.getLogger(ConnectionPool.class);
 	
 	static {
 		try {
 			connections = new HashMap<String, Connection>();			
-			dirmappings = new PropertyDirMap();
 			Class.forName("org.hsqldb.jdbcDriver").newInstance();
 		} catch(Exception e) {
 			cLogger.error("Could not initialize database connection ", e);

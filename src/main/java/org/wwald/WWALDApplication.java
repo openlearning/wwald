@@ -1,5 +1,7 @@
 package org.wwald;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.Application;
 import org.apache.wicket.Request;
@@ -11,6 +13,7 @@ import org.apache.wicket.settings.IExceptionSettings;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
+import org.wwald.util.PropertyDirMap;
 import org.wwald.view.CallbackHandlerPage;
 import org.wwald.view.ErrorPageInternal;
 import org.wwald.view.StaticPage;
@@ -32,7 +35,7 @@ public class WWALDApplication extends WebApplication
 {
 	public static final String HOMEDIR; 
 	public static final String WWALDDIR;
-	
+	public static PropertyDirMap DIRMAP;
 	private static Logger cLogger = Logger.getLogger(WWALDApplication.class);
 	
 	private IDataFacade dataStore;
@@ -44,6 +47,11 @@ public class WWALDApplication extends WebApplication
 		WWALDDIR = HOMEDIR + "/.wwald/";
 		if(HOMEDIR == null || HOMEDIR.equals("")) {
 			throw new RuntimeException("CANNOT START APPLICATION BECAUSE THE user.home SYSTEM PROPERTY DOES NOT EXIST !!!");
+		}
+		try {
+			DIRMAP = new PropertyDirMap();
+		} catch(IOException ioe) {
+			cLogger.error("Could not find dirmap.properties");
 		}
 	}
 	

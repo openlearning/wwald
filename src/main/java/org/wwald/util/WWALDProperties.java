@@ -9,15 +9,14 @@ import org.wwald.WWALDApplication;
 
 public class WWALDProperties extends Properties {
 	
-	private PropertyDirMap dirmap;
-	
 	public static final String DATABASE_PROPERTIES = "db.properties";
 	public static final String UI_PROPERTIES = "ui_config.properties";
 	
 	public WWALDProperties(String dbId, String propFileName) throws IOException {
-		super();
-		this.dirmap = new PropertyDirMap();	
-		String filePath = WWALDApplication.WWALDDIR + dirmap.get(dbId) + "/" + propFileName;
+		super();	
+		String filePath = WWALDApplication.WWALDDIR + 
+						  WWALDApplication.DIRMAP.get(dbId) + 
+						  "/" + propFileName;
 		InputStream is = new FileInputStream(filePath);
 		load(is);
 	}
