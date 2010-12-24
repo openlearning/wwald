@@ -15,14 +15,14 @@ import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
 import org.wwald.util.PropertyDirMap;
 import org.wwald.view.CallbackHandlerPage;
-import org.wwald.view.ErrorPageInternal;
-import org.wwald.view.StaticPage;
-import org.wwald.view.StaticPagePojo;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
+import org.wwald.view.ErrorPageInternal;
 import org.wwald.view.HomePage;
 import org.wwald.view.LoginPage;
 import org.wwald.view.Register;
+import org.wwald.view.StaticPage;
+import org.wwald.view.components.CourseThumbnailImageResource;
 
 import com.cforcoding.jmd.MarkDown;
 
@@ -33,6 +33,7 @@ import com.cforcoding.jmd.MarkDown;
  */
 public class WWALDApplication extends WebApplication
 {
+	public static final String COURSE_THUMBNAIL_IMAGE = "course_image";
 	public static final String HOMEDIR; 
 	public static final String WWALDDIR;
 	public static PropertyDirMap DIRMAP;
@@ -88,7 +89,10 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("callback", CallbackHandlerPage.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 		getApplicationSettings().setInternalErrorPage(ErrorPageInternal.class);
-		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE); 
+		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE);
+		
+		getSharedResources().add(COURSE_THUMBNAIL_IMAGE, 
+								 new CourseThumbnailImageResource());
 	}
 	
 	public IDataFacade getDataFacade() {

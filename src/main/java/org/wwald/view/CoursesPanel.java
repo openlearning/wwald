@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -17,6 +18,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.resource.ContextRelativeResource;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.apache.wicket.util.value.ValueMap;
+import org.hsqldb.WebServer;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -122,16 +125,24 @@ public class CoursesPanel extends Panel {
 	}
 	
 	private Component getCourseImage(String id) {
-		String relImagePath = "images/" + id + ".png";
-		ContextRelativeResource resource = null;
-		try {
-			resource = new ContextRelativeResource(relImagePath);
-			resource.getResourceStream().getInputStream();
-		} catch(ResourceStreamNotFoundException rsnfe) {
-			resource = 
-				new ContextRelativeResource(WWALDConstants.DEFAULT_COURSE_IMAGE_PATH);
-		}
-		return new Image("course_image", resource);
+		String dbId = 
+			ConnectionPool.getDatabaseIdFromRequest((ServletWebRequest)getRequest());
+		ValueMap vm = new ValueMap();
+		vm.put("courseId", id);
+		vm.put("dbId", dbId);
+		return new Image(WWALDApplication.COURSE_THUMBNAIL_IMAGE, 
+						 new ResourceReference(WWALDApplication.COURSE_THUMBNAIL_IMAGE), 
+						 vm);
+//		String relImagePath = "images/" + id + ".png";
+//		ContextRelativeResource resource = null;
+//		try {
+//			resource = new ContextRelativeResource(relImagePath);
+//			resource.getResourceStream().getInputStream();
+//		} catch(ResourceStreamNotFoundException rsnfe) {
+//			resource = 
+//				new ContextRelativeResource(WWALDConstants.DEFAULT_COURSE_IMAGE_PATH);
+//		}
+//		return new Image("course_image", resource);
 	}
 	
 	private String shorten(String str) {
