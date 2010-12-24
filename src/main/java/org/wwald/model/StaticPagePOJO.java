@@ -23,6 +23,8 @@ public class StaticPagePOJO {
 		this.contents = contents;
 	}
 	
-	
+	public String toString() {
+		return this.id + " : " + this.contents;
+	}
 	
 }

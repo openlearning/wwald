@@ -19,18 +19,28 @@ public class Sql {
 	
 	public static String INSERT_COURSES_WIKI = "INSERT INTO COURSES_WIKI (id, content) VALUES (%s,%s);";
 	
+	public static String RETREIVE_COURSE = "SELECT * FROM COURSE WHERE id=%s";
 	public static String INSERT_COURSE = "INSERT INTO COURSE (id, title, description) VALUES (%s, %s, %s);";
 	public static String UPDATE_COURSE = "UPDATE COURSE SET title=%s, description=%s WHERE id=%s;";
 	
 	public static String INSERT_COURSE_MENTOR = "INSERT INTO COURSE_MENTORS (course_id, mentor_userid) VALUES (%s, %s);";
 	public static String UPDATE_COURSE_MENTORS = "UPDATE COURSE_MENTORS SET mentor_userid=%s WHERE course_id=%s;";
+	public static String RETREIVE_MENTORS_FOR_COURSE = "SELECT (mentor_userid) FROM COURSE_MENTORS WHERE course_id=%s";
+	
+	public static String RETREIVE_COURSES_WIKI = "SELECT * FROM COURSES_WIKI;";
+	public static String UPDATE_COURSES_WIKI = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
 	
 	public static String INSERT_COURSE_COMPETENCIES_WIKI = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s, %s);";
+	public static String UPDATE_COMPETENCIES_WIKI = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
+	public static String RETREIVE_COMPETENCIES_WIKI = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
+	
 	public static String RETREIVE_COMPETENCIES = "SELECT * FROM COMPETENCY;";
 	public static String RETREIVE_COMPETENCIES_FOR_COURSE = "SELECT * FROM COMPETENCY WHERE course_id=%s;";
 	public static String INSERT_COMPETENCY = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s,%s,%s,%s,%s);";
+	public static String UPDATE_COMPETENCY = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
 	
 	public static String INSERT_COURSE_ENROLLMENT_STATUS = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
+	public static String RETREIVE_COURSE_ENROLLMENT_STATUS = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND userid=%s ORDER BY tstamp DESC;";
 	
 	public static String RETREIVE_STATIC_PAGE = "SELECT contents FROM STATIC_PAGES WHERE id=%s";
 	public static String INSERT_STATIC_PAGE = "INSERT INTO STATIC_PAGES VALUES (%s,%s);";

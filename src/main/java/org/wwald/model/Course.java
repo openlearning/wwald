@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.wicket.Application;
-import org.wwald.WWALDApplication;
 
 
 
@@ -145,5 +143,71 @@ public class Course implements Serializable {
 		}
 		
 		return competency;
+	}
+	
+	@Override
+	public int hashCode() {
+		int prime = 31;
+		int hashCode = 1;
+		hashCode = prime * hashCode + id.hashCode();
+		hashCode = prime * hashCode + title.hashCode();
+		hashCode = prime * hashCode + description.hashCode();
+		hashCode = prime * hashCode + mentor.hashCode();
+		for(Competency competency : this.competencies) {
+			hashCode = prime * hashCode + competency.hashCode();
+		}
+		return hashCode;
+	}
+	
+	public boolean equals(Object o) {
+		if(this == o) {
+			return true;
+		}
+		if(o == null) {
+			return false;
+		}
+		if(this.getClass() != o.getClass()) {
+			return false;
+		}
+		Course other = (Course)o;
+		if(this.getId() == null) {
+			if(other.getId() != null) {
+				return false;
+			}
+		} else if(!this.getId().equals(other.getId())) {
+			return false;
+		}
+		if(this.getTitle() == null) {
+			if(other.getTitle() != null) {
+				return false;
+			}
+		} else if(!this.getTitle().equals(other.getTitle())) {
+			return false;
+		}
+		if(this.getDescription() == null) {
+			if(other.getDescription() != null) {
+				return false;
+			}
+		} else if(!this.getDescription().equals(other.getDescription())) {
+			return false;
+		}
+		if(this.competencies == null && other.competencies != null) {
+			return false;
+		} else if(this.competencies != null && other.competencies == null){
+			return false;
+		} else if(this.competencies == null && other.competencies == null) {
+			return true;
+		} else if(this.competencies.size() != other.getCompetencies().size()){
+			return false;			
+		} else {
+			for(int i=0; i<this.competencies.size(); i++) {
+				Competency thisCompetency = this.getCompetencies().get(i);
+				Competency otherCompetency = other.getCompetencies().get(i);
+				if(!thisCompetency.equals(otherCompetency)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

@@ -29,6 +29,15 @@ public class CompetencyUniqueIdGenerator {
 		}
 	}
 	
+	public static final void reset(Connection conn) {
+		if(conn == null) {
+			id = 0;
+		}
+		else {
+			init(conn);
+		}		
+	}
+	
 	public static final synchronized int getNextCompetencyId(Connection conn) {
 		if(!initialized) {
 			if(conn == null) {

@@ -236,7 +236,11 @@ public class CourseFileParser {
 						this.resourceBuffer.append(text + "\n");
 					}
 				}
-			}	
+			}
+			
+			public String getResource() {
+				return this.resourceBuffer.toString();
+			}
 		}
 		
 		private class FinalState implements State {
@@ -257,6 +261,23 @@ public class CourseFileParser {
 		}
 		
 		public void processText(String text) throws DataFileSyntaxException {
+			if(text == null || text.trim().equals("")) {
+				return;
+			}
+			if(text.trim().equals("[end]")) {
+				// If there are no competencies in the course file then
+				// currentCompetencies will be null
+				if(currentCompetency != null) {
+					currentCompetency.setResource(((ResourcesState)this.competenciesStateMap.get(RESOURCES_STATE)).getResource());
+					competencies.add(currentCompetency);
+				}
+	
+				CourseFileParser.this.course.setCompetencies(this.competencies);
+				
+				ReadingCompetenciesState.this.currentState = 
+					ReadingCompetenciesState.this.competenciesStateMap.get(FINAL_STATE);
+				return;
+			}
 			this.currentState.processText(text);
 		}
 		

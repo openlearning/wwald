@@ -1,19 +1,15 @@
 package org.wwald.model;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.wwald.WWALDApplication;
 import org.wwald.util.PropertyDirMap;
 import org.wwald.util.WWALDProperties;
 
@@ -65,6 +61,14 @@ public class ConnectionPool {
 		}
 		
 		return conn;
+	}
+	
+	public static void closeConnection(String id) throws SQLException {
+		Connection conn = connections.get(id);
+		if(conn != null) {
+			conn.close();
+			connections.remove(id);
+		}
 	}
 
 	public static String getDatabaseIdFromRequestUrl(String requestUrl) {

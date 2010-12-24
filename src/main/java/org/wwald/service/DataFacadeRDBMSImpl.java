@@ -8,8 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,6 +37,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	private static final String password = "";
 	
 	//private static int nextCompetencyId = 10;
+	private final String NULL_CONN_ERROR_MSG = "conn cannot be null";
 	
 	private static Logger cLogger = Logger.getLogger(DataFacadeRDBMSImpl.class);
 	
@@ -46,7 +45,18 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			
 	}
 
+	/**
+	 * Retrieves the list of courses
+	 * @param conn The database connection
+	 * @throws NullPointerException if conn is null
+	 * @throws DataException if the JDBC code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 * @return The list of courses
+	 */
 	public List<Course> retreiveCourses(Connection conn) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
 		List<Course> courses = null;
 		
 		String sqlToFetchAllCourses = "SELECT * FROM COURSE;";
@@ -67,7 +77,19 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 
+	/**
+	 * Retreives the courses wiki which contains all courses which are to be
+	 * displayed on the main page
+	 * @param conn The database connection
+	 * @throws NullPointerException if conn is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 * @return The courses wiki
+	 */
 	public String retreiveCourseWiki(Connection conn) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
 		String wikiContents = "";
 		String sql = "SELECT * FROM COURSES_WIKI;";
 		Statement stmt = null;
@@ -85,12 +107,30 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
+	/**
+	 * Retrieves the course for the specified course id
+	 * @param conn The database connection
+	 * @param id The course id
+	 * @throws NullPointerException If conn or id is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException 
+	 * @return The course object for the specified course id, or null if the 
+	 * course with the specified id does not exist
+	 */
 	public Course retreiveCourse(Connection conn, String id) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(id == null) {
+			throw new NullPointerException("id cannot be null");
+		}
 		Course course = null;
 		try {
+			//TODO: USe the sql from Sql.java
 			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, wrapForSQL(id)));
+			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, 
+											 wrapForSQL(id)));
 			while(rs.next()) {
 				String title = rs.getString(2);
 				String description = rs.getString(3);
@@ -112,7 +152,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return course;
 	}
 	
-	public void insertCourse(Connection conn, Course course) throws DataException {
+	/**
+	 * Creates a new course object in the database with the bare minimum 
+	 * details, which are 'id' and 'title' of the course
+	 * @param conn The database connection
+	 * @param course The course object to be inserted (Only the 'id' and 'title'
+	 * properties are considered while inserting)
+	 * @throws NullPointerException if conn, or course is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
+	public void insertCourse(Connection conn, Course course) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(course == null) {
+			throw new NullPointerException("course cannot be null");
+		}
 		Statement stmt = null;
 		int rowsUpdated = 0;
 		try {
@@ -132,11 +189,29 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public void updateCourseWiki(Connection conn, String wikiContents) throws DataException {
+	/**
+	 * Updates the courses wiki
+	 * @param conn The database connection
+	 * @param wikiContents The wiki contents
+	 * @throws NullPointerException if conn, or wikiContents are null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
+	//TODO: Document the wiki contents
+	//TODO: Refactor method name to updateCoursesWiki
+	public void updateCourseWiki(Connection conn, String wikiContents) 
+														throws DataException {
 		//TODO: If we change the course title then the changes should be reflected in the db
 		//Also we may want to do some basic validating parsing here... or somewhere before we
 		//save the contents
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(wikiContents == null) {
+			throw new NullPointerException("wikiContents cannot be null");
+		}
 		String coursesWikiContents = (String)wikiContents;
+		//TODO: Use Sql.java
 		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
 		Statement stmt = null;
 		try {
@@ -151,8 +226,22 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, UserMeta userMeta, Course course) throws DataException {
-		String sqlTemplate = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND userid=%s ORDER BY tstamp DESC;";
+	/**
+	 * Retrieves the enrollment status for the specified course and user
+	 * @param conn The database connection
+	 * @param userMeta The userMeta object for the user whose enrollment status
+	 * we want to retrieve
+	 * @param course The course for which we want the enrollment status
+	 * @throws NullPointerException if conn, userMeta, or course is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 * @return The {@link CourseEnrollmentStatus} object
+	 */
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, 
+															UserMeta userMeta, 
+															Course course) 
+														throws DataException {
+		String sqlTemplate = Sql.RETREIVE_COURSE_ENROLLMENT_STATUS;
 		String sql = String.format(sqlTemplate,
 								   wrapForSQL(course.getId()),
 								   userMeta.getUserid());
@@ -184,14 +273,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void addCourseEnrollmentAction(Connection conn, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException {
-		//TODO: Remove hardcoded date
+	/**
+	 * Adds a course enrollment action in the database. A course enrollment
+	 * action specified an action performed by a user for either enrolling in
+	 * or dropping out of of a course.
+	 * @param conn The database connection
+	 * @param courseEnrollmentStatus The CourseEnrollmentStatus object which is
+	 * to be used for inserting the action in persistent storage
+	 */
+	public void addCourseEnrollmentAction(Connection conn, 
+										  CourseEnrollmentStatus courseEnrollmentStatus) 
+						throws DataException {
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
-		String sql = String.format(Sql.INSERT_COURSE_ENROLLMENT_STATUS,
-								   wrapForSQL(courseEnrollmentStatus.getCourseId()),
-								   courseEnrollmentStatus.getUserid(),
-								   courseEnrollmentStatus.getUserCourseStatus().getId(),
-								   wrapForSQL(timestamp.toString()));
+		String sql = 
+			String.format(Sql.INSERT_COURSE_ENROLLMENT_STATUS,
+						  wrapForSQL(courseEnrollmentStatus.getCourseId()),
+						  courseEnrollmentStatus.getUserid(),
+						  courseEnrollmentStatus.getUserCourseStatus().getId(),
+						  wrapForSQL(timestamp.toString()));
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -202,13 +301,36 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public String retreiveCompetenciesWiki(Connection conn, String courseId) throws DataException {
+	/**
+	 * Retreives the competencies wiki for the specified course id
+	 * @param conn The database connection
+	 * @param courseId The course id
+	 * @throws NullPointerException if conn or courseId is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 * @return The competencies wiki of the course or an empty string if the
+	 * course does not exist or it does not have any contents for the 
+	 * competency wiki
+	 */
+	//TODO: We return an empty string when the course does not exist as 
+	//well as when the competency wiki for that course is empty. I think we
+	//should return a null when the course does not exist
+	public String retreiveCompetenciesWiki(Connection conn, 
+										   String courseId) 
+														throws DataException {		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(courseId == null) {
+			throw new NullPointerException("courseId cannot be null");
+		}
 		String wikiContents = "";
-		String sql = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
+		String sql = Sql.RETREIVE_COMPETENCIES_WIKI;
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sql, wrapForSQL(courseId)));
+			ResultSet rs = 
+				stmt.executeQuery(String.format(sql, wrapForSQL(courseId)));
 			if(rs.next()) {
 				wikiContents = rs.getString(2);
 			}
@@ -220,7 +342,42 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return wikiContents;
 	}
 
-	public Competency retreiveCompetency(Connection conn, String courseId, String sCompetencyId) throws DataException {
+	/**
+	 * Retreives the competency for the specified course and the specified
+	 * competency id
+	 * @param conn The database connection
+	 * @param courseId The course id
+	 * @param sCompetencyId The competency id as a String
+	 * @throws NullPointerException if either conn, courseId, sCompetencyId is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 * @return The competency or null if the course or competency does not exist
+	 */
+	public Competency retreiveCompetency(Connection conn, 
+										 String courseId, 
+										 String sCompetencyId) 
+			throws DataException {
+		//check method params
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(courseId == null) {
+			throw new NullPointerException("courseId cannot be null");
+		}
+		if(sCompetencyId == null) {
+			throw new NullPointerException("sCompetencyId cannot be null");
+		}
+		try {
+			int competencyId = Integer.parseInt(sCompetencyId);
+			if(competencyId < 0) {
+				String msg = "sCompetencyId should be a positive integer";
+				throw new IllegalArgumentException(msg);
+			}
+		} catch(NumberFormatException nfe) {
+			String msg = "sCompetencyId should be a valid positive integer";
+			throw new IllegalArgumentException(msg, nfe);
+		}
+		
 		//TODO: We should not retreive Course to get Competency
 		Competency competency = null;
 		Course course = retreiveCourse(conn, courseId);
@@ -228,7 +385,26 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return competency;
 	}
 
+	/**
+	 * Update the competencies wiki for the specified course
+	 * @param conn The database connection
+	 * @param courseId The course id
+	 * @param contents The new contents of the course competency wiki
+	 * @throws NullPointerException If either conn, or courseId, or contents 
+	 * are null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
 	public void updateCompetenciesWikiContents(Connection conn, String courseId, String contents) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(courseId == null) {
+			throw new NullPointerException("courseId cannot be null");
+		}
+		if(contents == null) {
+			throw new NullPointerException("contents cannot be null");
+		}
 		String competenciesWikiContents = (String)contents;
 		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
 		Statement stmt = null;
@@ -247,21 +423,35 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new DataException(msg, sqle);
 		}
 	}
-	
-	public void updateCompetency(Connection conn, String courseId, Competency competency) throws DataException {
-		String sql = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-			String finalSql = String.format(sql, wrapForSQL(competency.getDescription()), wrapForSQL(competency.getResource()), String.valueOf(competency.getId()));
-			stmt.executeUpdate(finalSql);
-		} catch (SQLException e) {
-			cLogger.error("Could not update competency with these new values ", e);
+
+	/**
+	 * Creates an empty competency object in the database for the specified
+	 * course
+	 * @param conn The database connection
+	 * @param course The course for which the competency should be added
+	 * @param competencyTitle The competency title
+	 * @throws NullPointerException If either conn, course, or competencyTitle
+	 * is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 * @return The empty {@link Competency} object created for the specified
+	 * competencyTitle 
+	 */
+	public Competency insertCompetency(Connection conn, 
+									   Course course, 
+									   String competencyTitle) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(course == null) {
+			throw new NullPointerException("course should not be null");
+		}
+		if(competencyTitle == null) {
+			throw new NullPointerException("competencyTitle should not be null");
 		}
 		
-	}
-
-	public Competency insertCompetency(Connection conn, Course course, String competencyTitle) throws DataException {
+		//TODO CompetencyUniqueIdGenerator needs to go
 		Competency competency = new Competency(CompetencyUniqueIdGenerator.getNextCompetencyId(conn), competencyTitle, "", "");
 		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');"; 
 		Statement stmt = null;
@@ -283,29 +473,110 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return competency;
 	}
 	
+	/**
+	 * Updates {@link Competency} with the spceified {@link Competency} object.
+	 * @param conn The databse connection object
+	 * @param courseId The courseId of the {@link Course} for which we want to 
+	 * update the {@link Competency}
+	 * @param competency The updated {@link Competency} object
+	 * @throws NullPointerException If either conn, courseId, or competency are
+	 * null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
+	public void updateCompetency(Connection conn, 
+								 String courseId, 
+								 Competency competency) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(courseId == null) {
+			throw new NullPointerException("courseId should not be null");
+		}
+		if(competency == null) {
+			throw new NullPointerException("competency should not be null");
+		}
+		String sql = Sql.UPDATE_COMPETENCY;
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			String finalSql = String.format(sql, 
+											wrapForSQL(competency.getDescription()), 
+											wrapForSQL(competency.getResource()), 
+											String.valueOf(competency.getId()));
+			stmt.executeUpdate(finalSql);
+		} catch (SQLException e) {
+			cLogger.error("Could not update competency with these new values ", e);
+		}
+		
+	}
+	
+	/**
+	 * Deletes the specified {@link Competency} from the database
+	 * @param conn The database {@link Connection}
+	 * @param competency The {@link Competency} to delete
+	 * @throws NullPointerException If either conn or competency is null
+	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
 	public void deleteCompetency(Connection conn, Competency competency) throws DataException {
 		throw new RuntimeException("method not implemented");
 	}
 
+	/**
+	 * Deletes the specified {@link Mentor} from the database
+	 * @param conn The database connection
+	 * @param mentor The {@link Mentor} to delete
+	 * @throws NullPointerException If either conn or mentor is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * SQLException is wrapped in the {@link DataException}
+	 */
 	public void deleteMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public void insertMentor(Connection conn, Mentor mentor) throws DataException {
+	/**
+	 * Inserts the specified {@link Mentor} in the database
+	 * @param conn The database connection
+	 * @param mentor The {@link Mentor} to delete
+	 * @throws NullPointerException If either conn or mentor is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertMentor(Connection conn, 
+							 Mentor mentor) 
+														throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
-	public List<Mentor> retreiveMentorsForCompetency(Connection conn) throws DataException {
+	/**
+	 * Retreives {@link Mentor}s for the specified {@link Competency}
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	//TOTO: Where is the Competency?
+	public List<Mentor> retreiveMentorsForCompetency(Connection conn) 
+														throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
+	/**
+	 * Retrieves all the {@link Competency} from the database
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public List<Competency> retreiveAllCompetencies(Connection conn) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
@@ -313,6 +584,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return null;
 	}
 
+	/**
+	 * Retrieves a list containing all the mentors in the system
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException} 
+	 */
 	public List<Mentor> retreiveAllMentors(Connection conn) throws DataException {
 		List<Mentor> mentors = new ArrayList<Mentor>();
 		try {
@@ -335,25 +613,62 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return mentors;
 	}
 
-	public List<Competency> retreiveCompetenciesForCourse(Connection conn, Course course) throws DataException {
+	/**
+	 * Retrieves a list of competencies for the specified course
+	 * @param conn The database connection
+	 * @param course The course
+	 * @throws NullPointerException If either conn or course is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return A {@link List} of {@link Competency} objects for the specified
+	 * {@link Course}
+	 */
+	public List<Competency> retreiveCompetenciesForCourse(Connection conn, 
+														  Course course) 
+														  throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Retrieves a {@link List} of {@link Mentor}s for the specified {@link Course}
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return The List of {@link Mentor}s for the specified {@link Course}
+	 */
 	public List<Mentor> retreiveMentorsForCourse(Connection conn) throws DataException {
+		//TODO: Need to provide a Course object as a param
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 		return null;
 	}
 
+	/**
+	 * Updates the {@link Course}. Specifically the title and description
+	 * properties of the {@link Course} are updated. The id cannot be updated.
+	 * The course's Mentor is also updated.
+	 * @param conn The database connection
+	 * @param course The course with updated fields
+	 * @throws If either conn or course is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public void updateCourse(Connection conn, Course course) throws DataException {
 		String sql = String.format(Sql.UPDATE_COURSE, 
 								   wrapForSQL(course.getTitle()), 
 								   wrapForSQL(course.getDescription()), 
 								   wrapForSQL(course.getId()));
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(course == null) {
+			throw new NullPointerException("course cannot be null");
+		}
 		try {
 			cLogger.info("Executing SQL '''" + sql + "'''");
 			Statement stmt = conn.createStatement();
@@ -370,38 +685,90 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
+	/**
+	 * Updates a {@link Mentor}
+	 * @param conn The database connection
+	 * @param mentor The {@link Mentor} object with updated fields
+	 * @throws NullPointerException If either conn or mentor are null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException} 
+	 */
 	public void updateMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 
+	/**
+	 * Updates or inserts the specified {@link Competency}
+	 * @param conn The database connection
+	 * @param competency The {@link Competency} object
+	 * @throws NullPointerException If either conn or competency are null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException} 
+	 */
 	public void upsertCompetency(Connection conn, Competency competency) throws DataException {
 		throw new RuntimeException("method not implemented");
 	}
 
+	/**
+	 * Updates or inserts the specified {@link Course}
+	 * @param conn The database connection
+	 * @param course The {@link Course} object
+	 * @throws NullPointerException If either conn or course are null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException} 
+	 */
 	public void upsertCourse(Connection conn, Course course) throws DataException {
 		throw new RuntimeException("method not implemented");
 	}
 
+	/**
+	 * Updates or inserts the specified {@link Mentor}
+	 * @param conn The database connection
+	 * @param mentor The {@link Mentor} object
+	 * @throws NullPointerException If either conn or mentor are null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException} 
+	 */
 	public void upsertMentor(Connection conn, Mentor mentor) throws DataException {
 		if(true) {
 			throw new RuntimeException("method not implemented");
 		}
 	}
 	
+	/**
+	 * Returns a list of {@link StatusUpdate} objects
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return A {@link List} of {@link StatusUpdate} objects
+	 */
 	public List<StatusUpdate> getStatusUpdates(Connection conn) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
 		try {
 			List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses(conn);
 			List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
 //			DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
-			for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {			
-				statusUpdates.add(new StatusUpdate(courseEnrollmentStatus.getTimestamp() + 
-												   " - " +
-												   courseEnrollmentStatus.getUserid() + " " + 
-												   getEnrollmentStatusWithSurroundingText(courseEnrollmentStatus.getUserCourseStatus()) + 
-												   " course " + 
-												   courseEnrollmentStatus.getCourseId()));
+			//TODO: Factor this out into a separate StatusUpdateFormat
+			for(CourseEnrollmentStatus courseEnrollmentStatus : courseEnrollmentStatuses) {
+				
+				Timestamp timestamp = courseEnrollmentStatus.getTimestamp();
+				int userid = courseEnrollmentStatus.getUserid();
+				UserMeta userMeta = retreiveUserMeta(conn, userid);
+				String enrollmentStatus = getEnrollmentStatusWithSurroundingText(courseEnrollmentStatus.getUserCourseStatus());
+				String courseId = courseEnrollmentStatus.getCourseId();
+				
+				StatusUpdate statusUpdate = new StatusUpdate();
+				statusUpdate.setTimestamp(timestamp);
+				statusUpdate.setUserMeta(userMeta);
+				statusUpdate.setEnrollmentStatus(enrollmentStatus);
+				statusUpdate.setCourseId(courseId);
+				
+				statusUpdates.add(statusUpdate);
 			}    	
 	    	return statusUpdates;
 		} catch(SQLException sqle) {
@@ -411,7 +778,30 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	public void insertUser(Connection conn, User user, UserMeta userMeta) throws DataException {
+	/**
+	 * Inserts a {@link User} and it's corresponding {@link UserMeta} object in 
+	 * the database
+	 * @param conn The database connection
+	 * @param user The user object
+	 * @param userMeta The UserMeta object to be inserted into the database
+	 * @throws NullPointerException If either conn, user, ot userMeta is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertUser(Connection conn, 
+						   User user, 
+						   UserMeta userMeta) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(user == null) {
+			throw new NullPointerException("user cannot be null");
+		}
+		if(userMeta == null) {
+			throw new NullPointerException("userMeta cannot be null");
+		}
+		//TODO: This method must return the UserMeta object with the updated UserMeta
 		try {
 //			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			Statement stmt = conn.createStatement();
@@ -431,7 +821,30 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void updateUser(Connection conn, User user, UserForm.Field... userFields) throws DataException {
+	/**
+	 * Updates the {@link User} object in the database. Valid fields for
+	 * updating are 'email', and 'password'. The username cannot be updated.
+	 * @param conn The database connection
+	 * @param use The updated user object 
+	 * @param userFields A varags array of {@link UserForm.Field} objects which
+	 * denote which fields of the specified {@link User} object should be
+	 * updated. If a value is not specified for this parameter then both fields
+	 * 'email', and 'password' will be updated.
+	 * @throws IllegalArgumentException If {@link Field.USERNAME} is specified 
+	 * in userFields for the fields to be updated
+	 * @throws NullPointerException If either conn or user are null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void updateUser(Connection conn, 
+						   User user, 
+						   UserForm.Field... userFields) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(user == null) {
+			throw new NullPointerException("user cannot be null");
+		}
 		for(UserForm.Field field : userFields) {
 			if(field.equals(UserForm.Field.USERNAME)) {
 				throw new IllegalArgumentException("updateUser should never be given UserForm.Field.USERNAME");
@@ -492,7 +905,18 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return retVal;
 	}
 
+	/**
+	 * Retrieves all {@link User} objects from the database
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return A {@link List} of {@link User} objects
+	 */
 	public List<User> retreiveAllUsers(Connection conn) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
 		List<User> users = new ArrayList<User>();
 		try {
 			Statement stmt = conn.createStatement();
@@ -511,7 +935,23 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 	}
 	
+	/**
+	 * Retreives the encrypted for the specified username. The password is
+	 * encrypted using JASYPT's BasicPasswordEncryptor
+	 * @param conn The database connection
+	 * @param username The username
+	 * @throws NullPointerException If either conn or username is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return The encrypted password
+	 */
 	public String retreivePassword(Connection conn, String username) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(username == null) {
+			throw new NullPointerException("username should not be null");
+		}
 		String password = null;
 		String sqlTemplate = "SELECT password from USER where username=%s";
 		String sql = String.format(sqlTemplate, wrapForSQL(username));
@@ -529,11 +969,28 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return password;
 	}
 	
-	public User retreiveUserByUsername(Connection conn, String username) throws DataException {
+	/**
+	 * Retrieves the {@link User} object for the specified username
+	 * @param conn The database connection
+	 * @param username The username
+	 * @throws NullPointerException Id either conn or username is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return The {@link User} object
+	 */
+	public User retreiveUserByUsername(Connection conn, String username) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(username == null) {
+			throw new NullPointerException("username should not be null");
+		}
 		User user = null;
 		try {
 			Statement stmt = conn.createStatement();
-			String query = String.format(Sql.RETREIVE_USER_BY_USERNAME, wrapForSQL(username));
+			String query = String.format(Sql.RETREIVE_USER_BY_USERNAME, 
+										 wrapForSQL(username));
 			ResultSet rs  = stmt.executeQuery(query);
 			if(rs.next()) {
 				String userName = rs.getString("username");				
@@ -547,7 +1004,21 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return user; 
 	}
 	
+	/**
+	 * Inserts the specified UserMeta object in the database
+	 * @param conn The database connection
+	 * @param userMeta The {@link UserMeta} object
+	 * @throws NullPointerException If either conn or userMeta is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(userMeta == null) {
+			throw new NullPointerException("userMeta should not be null");
+		}
 		String sql = String.format(Sql.INSERT_USER_META, 
 								   wrapForSQL(userMeta.getIdentifier()), 								    
 								   wrapForSQL(userMeta.getLoginVia().toString()),
@@ -564,7 +1035,23 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
+	/**
+	 * Retrieves the {@link UserMeta} object from the database for the specified
+	 * userid
+	 * @param conn The database connection
+	 * @param userid The userid The userid
+	 * @throws NullPointerException If conn is null
+	 * @throws IllegalArgumentException If userid is less than 0
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public UserMeta retreiveUserMeta(Connection conn, int userid) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(userid < 0) {
+			throw new IllegalArgumentException("userid should be a positive integer");
+		}
 		UserMeta userMeta = null;
 		String sql = String.format(Sql.RETREIVE_USER_META, String.valueOf(userid));
 		try {
@@ -585,15 +1072,37 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return userMeta;
 	}
 	
+	/**
+	 * Retrieves the {@link UserMeta} object identified by identifer and loginVia
+	 * from the database
+	 * @param conn The database connection
+	 * @param identifier The UserMeta's identifier
+	 * @param loginVia The {@link UserMeta.LoginVia} value for this user
+	 * @throws NullPointerException If either conn or identifier or loginVia
+	 * are null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return The {@link UserMeta} object
+	 */
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn,
-													 String identifer, 
-													 UserMeta.LoginVia loginVia) 
-			throws DataException {
+													 	 String identifier, 
+													 	 UserMeta.LoginVia loginVia) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(identifier == null) {
+			throw new NullPointerException("identifier should not be null");
+		}
+		if(loginVia == null) {
+			throw new NullPointerException("loginVia should not be null");
+		}
+		
 		UserMeta userMeta = null;
 		try {
 			Statement stmt = conn.createStatement();
 			String query = String.format(Sql.RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA, 
-										 wrapForSQL(identifer),
+										 wrapForSQL(identifier),
 										 wrapForSQL(loginVia.toString()));
 			cLogger.info("Executing SQL '" + query + "'");
 			ResultSet rs = stmt.executeQuery(query);
@@ -608,14 +1117,26 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				userMeta.setRole(Role.valueOf(rs.getString("role")));
 			}
 		} catch(SQLException sqle) {
-			String msg = "Could not retreive UserMeta for '" + identifer + "' '" + loginVia + "'";
+			String msg = "Could not retreive UserMeta for '" + identifier + "' '" + loginVia + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
 		return userMeta;
 	}
 	
+	/**
+	 * Retrieves all {@link UserMeta} objects from the database
+	 * @param conn The database connection
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return A {@link List} of {@link UserMeta} objects. If the database does
+	 * not have any {@link UserMeta} objects then the list will be an empty list
+	 */
 	public List<UserMeta> retreiveAllUserMeta(Connection conn) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
 		List<UserMeta> allUserMeta = new ArrayList<UserMeta>();
 		
 		try {
@@ -638,7 +1159,23 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return allUserMeta;
 	}
 	
+	/**
+	 * Updates the {@link Role} of the specified {@link UserMeta} object
+	 * @param conn The database connection
+	 * @param userMeta The updated {@link UserMeta} object with the new {@link Role}
+	 * @throws NullPointerException If either conn or userMeta is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return A {@link List} of {@link UserMeta} objects. If the database does
+	 * not have any {@link UserMeta} objects then the list will be an empty list
+	 */
 	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(userMeta == null) {
+			throw new NullPointerException("userMeta should not be null");
+		}
 		String sql = String.format(Sql.UPDATE_USER_META_ROLE, 
 								   wrapForSQL(userMeta.getRole().toString()),
 								   userMeta.getUserid());
@@ -653,7 +1190,21 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
+	/**
+	 * Retrieves the static page for the specified id
+	 * @param c The database connection
+	 * @param id The id of the static page
+	 * @throws NullPointerException If either c or id is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException {
+		if(c == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(id == null) {
+			throw new NullPointerException("id should not be null");
+		}
 		StaticPagePOJO page = null;
 		String sql = String.format(Sql.RETREIVE_STATIC_PAGE, wrapForSQL(id));
 		try {
@@ -671,7 +1222,23 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	public void upsertStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
+	/**
+	 * Insert or update the static page.
+	 * @param conn The database connection
+	 * @param page The {@link StaticPagePOJO} to insert or update
+	 * @throws NullPointerException If either conn or page is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void upsertStaticPage(Connection conn, 
+								 StaticPagePOJO page) 
+														throws DataException {
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(page == null) {
+			throw new NullPointerException("page should not be null");
+		}
 		StaticPagePOJO preexistingPage = retreiveStaticPage(conn, page.getId());
 		if(preexistingPage == null) {
 			insertStaticPage(conn, page);
@@ -681,19 +1248,61 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
+	/**
+	 * Returns the value from KVTABLE for the specified key
+	 * KVTABLE is a simple key value table where the key and value are of type
+	 * VARCHAR. The key is a 64 char key while the value is a 128 char value.
+	 * @param c The database connection
+	 * @param k The key
+	 * @throws NullPointerException If either c or k is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return The value for the specified key
+	 */
 	public String retreiveFromKvTable(Connection c, String k) throws DataException {
+		if(true) {
+			throw new RuntimeException("Method not implemented");
+		}
 		return null;
 	}
 	
+	/**
+	 * Upsert (update or insert) the specifed key and value in KVTABLE
+	 * @param c The database connection
+	 * @param k The key
+	 * @param v The value
+	 * @throws NullPointerException If either c, or k, or v is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public void upsertKvTable(Connection c, String k, String v) throws DataException {
-		
+		throw new RuntimeException("Method not implemented");
 	}
 	
-	public String retreiveFromKvTableClob(Connection c, String k) throws DataException {
+	/**
+	 * Returns the value from KVTABLE_CLOB for the specified key
+	 * KVTABLE_CLOB is a simple key value table where the key is a 64 char key 
+	 * and the value is an arbitrarily long character sequence
+	 * @param c The database connection
+	 * @param k The key
+	 * @throws NullPointerException If either c or k is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @return The value for the specified key
+	 */
+	public String retreiveFromKvTableClob(Connection c, String k) 
+														throws DataException {
+		if(c == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(k == null) {
+			throw new NullPointerException("k should not be null");
+		}
 		String retVal = null;
 		try {
 			Statement stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(Sql.RETREIVE_KVTABLE_CLOB,wrapForSQL(k)));
+			ResultSet rs = 
+				stmt.executeQuery(String.format(Sql.RETREIVE_KVTABLE_CLOB,wrapForSQL(k)));
 			if(rs.next()) {
 				retVal = rs.getString("v");
 			}
@@ -705,7 +1314,25 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
+	/**
+	 * Upsert (update or insert) the specifed key and value in KVTABLE
+	 * @param c The database connection
+	 * @param k The key
+	 * @param v The value
+	 * @throws NullPointerException If either c, or k, or v is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
 	public void upsertKvTableClob(Connection c, String k, String v) throws DataException {
+		if(c == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(k == null) {
+			throw new NullPointerException("k should not be null");
+		}
+		if(v == null) {
+			throw new NullPointerException("v should not be null");
+		}
 		try {
 			String existingVal = retreiveFromKvTableClob(c, k);
 			Statement stmt = c.createStatement();
@@ -821,7 +1448,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	private void buildMentorsForCourses(Connection conn, List<Course> courses) throws SQLException {
-		String sqlToGetMentorIdsForCourse = "SELECT (mentor_userid) FROM COURSE_MENTORS WHERE course_id=%s";
+		String sqlToGetMentorIdsForCourse = Sql.RETREIVE_MENTORS_FOR_COURSE;
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, wrapForSQL(course.getId())));

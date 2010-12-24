@@ -22,6 +22,7 @@ import org.wwald.model.User;
 import org.wwald.model.UserMeta;
 import org.wwald.service.Sql;
 
+import util.KvTableFileParser.KvTableItem;
 import util.UsersFileParser.UserUserMeta;
 
 public class DataInitializer {
@@ -52,6 +53,7 @@ public class DataInitializer {
 		populateUsers(conn);
 		populateCourses(conn);		
 		populatePages(conn);
+		populateKvTableClob(conn);
 	}
 
 	private void populateUsers(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
@@ -59,7 +61,7 @@ public class DataInitializer {
 		URL url = appClassLoader.getResource(BASE_PATH + "users.txt");
 		UsersFileParser parser = new UsersFileParser(url);
 		UsersFileParser.UserUserMeta users[] = parser.parse();
-		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+//		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 		if(users != null) {
 			for(UserUserMeta userUserMeta : users) {
 				User user = userUserMeta.user;
@@ -90,6 +92,7 @@ public class DataInitializer {
 	}
 	
 	private void populatePages(Connection conn) {
+		System.out.println("Populating pages");
 		File[] files = getFilesInDirectory(PAGES_BASE_PATH);		
 		for(File file : files) {
 			String fileName = file.getName();
@@ -108,7 +111,28 @@ public class DataInitializer {
 				System.out.println("Could not populate data for static page in file " + file + " " + ioe);
 			} 
 		}
-	}	
+	}
+	
+	private void populateKvTableClob(Connection conn) throws SQLException, IOException {
+		System.out.println("populating kvtableclob");
+		URL url = appClassLoader.getResource(BASE_PATH + "kvtableclob.txt");
+		KvTableFileParser kvTableFileParser = new KvTableFileParser(url);
+		KvTableFileParser.KvTableItem items[] = kvTableFileParser.parse();
+		if(items != null) {
+			Statement stmt = conn.createStatement();
+			for(KvTableItem item : items) {
+				String sql = String.format(Sql.INSERT_KVTABLE_CLOB,
+										   wrapForSQL(item.k),
+										   wrapForSQL(item.v));
+				stmt.executeUpdate(sql);
+				System.out.println("Populated: '"+item.k + "' - '"+item.v + "'");
+			}
+		}
+		else {
+			System.out.println("coulnd not insert kv table items in the " +
+							   "database because items[] is null");
+		}
+	}
 	
 	private void populateCourses(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
 		URL coursesDirUrl = appClassLoader.getResource(COURSES_BASE_PATH);
@@ -140,7 +164,7 @@ public class DataInitializer {
 			if(competencies != null) {
 				for(Competency competency : competencies) {
 					if(competency != null) {
-						System.out.println("----- populating competency " + competency.getTitle() + " -----");
+						//System.out.println("----- populating competency " + competency.getTitle() + " -----");
 						String sql = String.format(Sql.INSERT_COMPETENCY, 
 								   				   String.valueOf(competency.getId()), 
 								   				   wrapForSQL(course.getId()),
@@ -235,88 +259,6 @@ public class DataInitializer {
 		stmt.executeUpdate(sql);
 	}
 
-//	public void populateTables(Connection conn) throws SQLException {
-//		Statement stmt = null;
-//		//create courses wiki content
-//		String sqlToAddCoursesWiki = "INSERT INTO COURSES_WIKI (id, content) VALUES (1, %s);";
-//		stmt = conn.createStatement();
-//		stmt.execute(String.format(sqlToAddCoursesWiki, wrapForSQL(courseWiki)));
-//		
-//		//create courses
-//		String sqlToAddCourses = 
-//			"INSERT INTO COURSE(id, title, description) VALUES (%s,%s,%s)";
-//		stmt = conn.createStatement();
-//		for(int i = 0; i < courses.length; i++) {
-//			stmt.execute(String.format(sqlToAddCourses, 
-//									   wrapForSQL(courses[i][0]), wrapForSQL(courses[i][1]), wrapForSQL(courses[i][2])));
-//		}
-//		
-//		//create competencies
-//		String sqlToAddCompetencies = 
-//			"INSERT INTO COMPETENCY(id, course_id, title, description, resources) VALUES (%s,%s,%s,%s,%s)";
-//		stmt = conn.createStatement();
-//		for(int i = 0; i < competencies.length; i++) {
-//			stmt.execute(String.format(sqlToAddCompetencies, 
-//										competencies[i][0], 
-//										wrapForSQL(competencies[i][1]),
-//										wrapForSQL(competencies[i][2]),
-//										wrapForSQL(competencies[i][3]), 
-//										wrapForSQL(competencies[i][4])));
-//		}
-//		
-//		//create mentors
-//		String sqlToAddMentors = 
-//			"INSERT INTO MENTOR(id, first_name, middle_initial, last_name, short_bio) VALUES (%s,%s,%s,%s,%s)";
-//		stmt = conn.createStatement();
-//		for(int i = 0; i < mentors.length; i++) {
-//			stmt.execute(String.format(sqlToAddMentors, 
-//										mentors[i][0], wrapForSQL(mentors[i][1]), wrapForSQL(mentors[i][2]), wrapForSQL(mentors[i][3]), wrapForSQL(mentors[i][4])));
-//		}
-//		
-//		//add data to course competency wiki
-//		String sqlToAddToCourseCompetencyWiki = 
-//			"INSERT INTO COURSE_COMPETENCIES_WIKI(course_id, contents) VALUES (%s, %s);";
-//		stmt = conn.createStatement();
-//		for(int i = 0; i < courseCompetenciesWiki.length; i++) {
-//			stmt.execute(String.format(sqlToAddToCourseCompetencyWiki, wrapForSQL(courseCompetenciesWiki[i][0]), wrapForSQL(courseCompetenciesWiki[i][1])));
-//		}
-//		
-//		//create course_mentors table
-//		String sqlToAddCourseMentors = 
-//			"INSERT INTO COURSE_MENTORS(course_id, mentor_id) VALUES (%s,%s);";
-//		stmt = conn.createStatement();
-//		for(int i = 0; i < courseMentors.length; i++) {
-//			stmt.execute(String.format(sqlToAddCourseMentors, 
-//										wrapForSQL(courseMentors[i][0]), courseMentors[i][1]));
-//		}
-//		
-//		//create users
-//		String sqlToAddUser = 
-//			"INSERT INTO USER VALUES(%s, %s, %s, %s, %s, %s, %s);";
-//		stmt = conn.createStatement();
-//		for(int i = 0; i < users.length; i++) {
-//			String addUserSql = String.format(sqlToAddUser, wrapForSQL(users[0][0]),
-//					  wrapForSQL(users[i][1]),
-//					  wrapForSQL(users[i][2]),
-//					  wrapForSQL(users[i][3]),
-//					  wrapForSQL(users[i][4]),
-//					  wrapForSQL(users[i][5]),
-//					  wrapForSQL(users[i][6]));
-//			stmt.executeUpdate(addUserSql);
-//			
-//		}
-//		
-//		String sqlToAddCourseEnrollmentActionMaster = "INSERT INTO COURSE_ENOLLMENT_STATUS_MASTER VALUES(%s, %s);";
-//		stmt = conn.createStatement();
-//		for(int i=0; i<courseEnrollmentStatus.length; i++) {
-//			String addCourseEnrollmentActionSql = 
-//				String.format(sqlToAddCourseEnrollmentActionMaster, 
-//							  courseEnrollmentStatus[i][0],
-//							  wrapForSQL(courseEnrollmentStatus[i][1]));
-//			stmt.executeUpdate(addCourseEnrollmentActionSql);
-//		}
-//	}
-
 	public final void createTables(Connection conn)
 							  throws IOException {
 		URL url = appClassLoader.getResource(BASE_PATH + TABLES_DATA_FILE);		
@@ -325,8 +267,8 @@ public class DataInitializer {
 		for(String sql : sqls) {
 			if(sql != null && !sql.trim().equals("")) {
 				try {
-					System.out.println("Executing table creation sql");
-					System.out.println(sql);
+//					System.out.println("Executing table creation sql");
+//					System.out.println(sql);
 					
 					Statement stmt = conn.createStatement();
 					stmt.executeUpdate(sql);					

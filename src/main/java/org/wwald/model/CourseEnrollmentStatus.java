@@ -2,8 +2,12 @@ package org.wwald.model;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
-import java.util.Date;
 
+/**
+ * This class represents the enrollment status for a user in a course
+ * @author pshah
+ *
+ */
 public class CourseEnrollmentStatus {
 	
 	private String courseId;
@@ -11,9 +15,11 @@ public class CourseEnrollmentStatus {
 	private UserCourseStatus userCourseStatus;
 	private Timestamp timestamp;
 	
-	public static class TimestampComparator<T extends CourseEnrollmentStatus> implements Comparator<T> {
+	public static class TimestampComparator<T extends CourseEnrollmentStatus> 
+													implements Comparator<T> {
 
-		public int compare(CourseEnrollmentStatus o1, CourseEnrollmentStatus o2) {
+		public int compare(CourseEnrollmentStatus o1, 
+						   CourseEnrollmentStatus o2) {
 			if(o1 != null && o2 != null) {
 				return o1.getTimestamp().compareTo(o2.getTimestamp());
 			}

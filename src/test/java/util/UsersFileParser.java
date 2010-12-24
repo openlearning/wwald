@@ -113,6 +113,9 @@ public class UsersFileParser {
 	}
 	
 	public UsersFileParser(URL url) {
+		if(url == null) {
+			throw new NullPointerException("url cannot be null");
+		}
 		this.filePath = url.getPath();
 		this.users = new ArrayList<UserUserMeta>();
 		this.stateMap = new HashMap<StateEnum, State>();
