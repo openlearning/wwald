@@ -57,8 +57,8 @@ public class UserProfiles extends BasePage {
 				parameters.add(WWALDConstants.USERID, String.valueOf(user.getUserid()));
 				
 				Link userDetailsLink = new BookmarkablePageLink(WicketIdConstants.PUBLIC_USER_PROFILE, 
-																		UserProfiles.class,
-																		parameters);
+																UserProfiles.class,
+																parameters);
 				Label label = new Label(WicketIdConstants.PUBLIC_USER_PROFILE_LABEL, user.getIdentifier());
 				userDetailsLink.add(label);
 				item.add(userDetailsLink);
