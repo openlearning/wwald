@@ -1,6 +1,7 @@
 package org.wwald.view;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,6 +17,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
+import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
@@ -45,7 +47,8 @@ public class UserProfiles extends BasePage {
 		Connection conn = ConnectionPool.getConnection(getDatabaseId());
 //		List<User> users = dataFacade.retreiveAllUsers(conn);
 		List<UserMeta> allUserMeta = dataFacade.retreiveAllUserMeta(conn);
-		return new ListView(WicketIdConstants.PUBLIC_USER_PROFILES_LIST, allUserMeta) {
+		List<UserMeta> students = keepStudents(allUserMeta);
+		return new ListView(WicketIdConstants.PUBLIC_USER_PROFILES_LIST, students) {
 
 			@Override
 			protected void populateItem(ListItem item) {
@@ -62,6 +65,17 @@ public class UserProfiles extends BasePage {
 			}
 			
 		};
+	}
+	
+	private List<UserMeta> keepStudents(List<UserMeta> allUserMeta) {
+		List<UserMeta> students = new ArrayList<UserMeta>();
+		for(UserMeta userMeta : allUserMeta) {
+			if(Role.STUDENT.equals(userMeta.getRole())) {
+				//TODO: clone duplicate the UserMeta object
+				students.add(userMeta);
+			}
+		}
+		return students;
 	}
 
 }
