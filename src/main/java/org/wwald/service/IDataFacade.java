@@ -137,9 +137,9 @@ public interface IDataFacade {
 	 * Update the competencies wiki for the specified course
 	 * @param conn The database connection
 	 * @param courseId The course id
-	 * @param contents The new contents of the course competency wiki
-	 * @throws NullPointerException If either conn, or courseId, or contents 
-	 * are null
+	 * @param contents The new contents of the course competency wiki. If these
+	 * are null then they will be considered to be an empty String ""
+	 * @throws NullPointerException If either conn, or courseId are null
 	 * @throws DataException if the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */

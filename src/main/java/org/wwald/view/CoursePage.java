@@ -34,9 +34,9 @@ public class CoursePage extends BasePage {
 			}
 			else {
 				add(new CourseCompetenciesPanel(WicketIdConstants.COURSE_COMPETENCIES_PANEL, 
-						   this.selectedCourse,
-						   selectedCompetency, 
-						   parameters));
+						   						this.selectedCourse,
+						   						selectedCompetency, 
+						   						parameters));
 			}
 		} catch(DataException de) {
 			String msg = "Sorry cannot display this page because an internal error has occured";

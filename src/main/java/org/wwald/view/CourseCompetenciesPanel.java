@@ -18,17 +18,15 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.Role;
-import org.wwald.model.User;
 import org.wwald.model.UserMeta;
 import org.wwald.view.components.AccessControlledViewPageLink;
 import org.wwald.view.components.CourseStatusPanel;
-import org.wwald.view.components.SimpleViewPageLink;
 
 public class CourseCompetenciesPanel extends Panel {
 	
 	public CourseCompetenciesPanel(final String id, 
 								   final Course course, 
-								   final Competency competency, 
+								   final Competency selectedCompetency, 
 								   final PageParameters parameters) {
 		super(id);
 		Link editCompetenciesLink = new AccessControlledViewPageLink(WicketIdConstants.COURSE_COMPETENCIES_EDIT, 
@@ -46,25 +44,53 @@ public class CourseCompetenciesPanel extends Panel {
 				setResponsePage(EditLecture.class, parameters);
 			}
 		};
+		//since a competency has not been selected, we cannot edit the lecture
+		if(selectedCompetency == null) {
+			editLecture.setVisible(false);
+		}
 		add(editLecture);
 		
 		WWALDApplication app = (WWALDApplication)Application.get();
 		
 		String description = app.getMarkDown().transform(course.getFullDescription());
 		add(new Label(WicketIdConstants.COURSE_DESCRIPTION, description).setEscapeModelStrings(false));
-		add(getCompetenciesListView(course, competency));
+		add(getCompetenciesListView(course, selectedCompetency));
 		add(new Label(WicketIdConstants.SELECTED_COURSE, course.getTitle())); 
 			
 		add(getCourseStatusPanel(course));
 		
-		add(new Label(WicketIdConstants.SELECTED_LECTURE, competency.getTitle()));
+		add(new Label(WicketIdConstants.SELECTED_LECTURE, getSelectedCompetencyTitle(selectedCompetency)));
 		//TODO: Can we use something other than labels out here
-		String competencyResources = app.getMarkDown().transform(competency.getResource());
+		String competencyResources = app.getMarkDown().transform(getSelectedCompetencyResource(selectedCompetency));
 		add(new Label(WicketIdConstants.COMPETENCY_RESOURCES, competencyResources).setEscapeModelStrings(false));
-		String competencyDescription = app.getMarkDown().transform(competency.getDescription());
+		String competencyDescription = app.getMarkDown().transform(getSelectedCompetencyDescription(selectedCompetency));
 		add(new Label(WicketIdConstants.COMPETENCY_DESCRIPTION, competencyDescription).setEscapeModelStrings(false));
 	}
 	
+	private String getSelectedCompetencyDescription(Competency competency) {
+		String retVal = "";
+		if(competency != null) {
+			retVal = competency.getDescription();
+		}
+		return retVal;
+	}
+	
+	private String getSelectedCompetencyResource(Competency competency) {
+		String retVal = "";
+		if(competency != null) {
+			retVal = competency.getResource();
+		}
+		return retVal;
+	}
+	
+	private String getSelectedCompetencyTitle(Competency competency) {
+		String retVal = "";
+		if(competency != null) {
+			retVal = competency.getTitle();
+		}
+		return retVal;
+	}
+
 	private Component getCourseStatusPanel(Course course) {
 		UserMeta userMeta = WWALDSession.get().getUserMeta();
 		Panel panel = null;
