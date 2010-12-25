@@ -554,6 +554,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				mentor.setIdentifier(rs.getString("identifier"));
 				String role = rs.getString("role");
 				mentor.setRole(Role.valueOf(role));
+				mentor.setLoginVia(UserMeta.LoginVia.valueOf(rs.getString("login_via")));
 				mentors.add(mentor);
 			}			
 		} catch(SQLException sqle) {

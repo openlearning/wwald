@@ -77,9 +77,10 @@ public class EditCompetencies extends AccessControlledPage {
 		return editCompetenciesForm;
 	}
 
-	private List getMentors() throws DataException {
+	private List<Mentor> getMentors() throws DataException {
 		WWALDApplication app = (WWALDApplication)getApplication();
-		return app.getDataFacade().retreiveAllMentors(ConnectionPool.getConnection(getDatabaseId()));
+		List<Mentor> retVal = app.getDataFacade().retreiveAllMentors(ConnectionPool.getConnection(getDatabaseId()));
+		return retVal;
 	}
 
 	private Serializable getCompetenciesWikiContents(String courseId) throws DataException {
