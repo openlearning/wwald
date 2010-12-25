@@ -15,11 +15,14 @@ public class Sql {
 	public static String RETREIVE_USER_META = "SELECT * from USER_META where userid=%s;";
 	public static String RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA = "SELECT * from USER_META where identifier=%s AND login_via=%s;";
 	
+	public static String RETREIVE_PASSWORD = "SELECT password from USER where username=%s";
+	
 	public static String RETREIVE_ALL_MENTORS = "SELECT * FROM USER_META WHERE ROLE='MENTOR';";
 	
 	public static String INSERT_COURSES_WIKI = "INSERT INTO COURSES_WIKI (id, content) VALUES (%s,%s);";
 	
 	public static String RETREIVE_COURSE = "SELECT * FROM COURSE WHERE id=%s";
+	public static String INSERT_COURSE_BASIC = "INSERT INTO COURSE (id, title) VALUES (%s,%s)";
 	public static String INSERT_COURSE = "INSERT INTO COURSE (id, title, description) VALUES (%s, %s, %s);";
 	public static String UPDATE_COURSE = "UPDATE COURSE SET title=%s, description=%s WHERE id=%s;";
 	
@@ -36,11 +39,14 @@ public class Sql {
 	
 	public static String RETREIVE_COMPETENCIES = "SELECT * FROM COMPETENCY;";
 	public static String RETREIVE_COMPETENCIES_FOR_COURSE = "SELECT * FROM COMPETENCY WHERE course_id=%s;";
+	public static String RETREIVE_COMPETENCIES_BY_COURSE_AND_COMPETENCY_TITLE = "SELECT * FROM COMPETENCY WHERE COMPETENCY.course_id=%s AND COMPETENCY.title=%s";
+	public static String INSERT_COMPETENCY_BASIC = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
 	public static String INSERT_COMPETENCY = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s,%s,%s,%s,%s);";
 	public static String UPDATE_COMPETENCY = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
 	
 	public static String INSERT_COURSE_ENROLLMENT_STATUS = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
 	public static String RETREIVE_COURSE_ENROLLMENT_STATUS = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND userid=%s ORDER BY tstamp DESC;";
+	public static String RETREIVE_ALL_COURSE_ENROLLMENT_STATUSES = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";
 	
 	public static String RETREIVE_STATIC_PAGE = "SELECT contents FROM STATIC_PAGES WHERE id=%s";
 	public static String INSERT_STATIC_PAGE = "INSERT INTO STATIC_PAGES VALUES (%s,%s);";

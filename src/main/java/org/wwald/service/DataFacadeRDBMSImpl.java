@@ -80,11 +80,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		String wikiContents = "";
-		String sql = "SELECT * FROM COURSES_WIKI;";
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_COURSES_WIKI);
 			if(rs.next()) {
 				wikiContents = rs.getString(2);
 			}
@@ -112,11 +111,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		Course course = null;
 		try {
-			//TODO: USe the sql from Sql.java
-			String sqlToGetCourseById = "SELECT * FROM COURSE WHERE id=%s";
+			String sql = String.format(Sql.RETREIVE_COURSE, 
+					 				   wrapForSQL(id));
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetCourseById, 
-											 wrapForSQL(id)));
+			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {
 				String title = rs.getString(2);
 				String description = rs.getString(3);
@@ -150,29 +148,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(course == null) {
-			throw new NullPointerException("course cannot be null");
+			String msg = "course cannot be null";
+			throw new NullPointerException(msg);
 		}
 		Statement stmt = null;
-		int rowsUpdated = 0;
+
 		try {
 			//create course
-			String sqlToCreateCourse = "INSERT INTO COURSE (id, title) VALUES (%s,%s)";
-			stmt = conn.createStatement();
-			rowsUpdated = 
-				stmt.executeUpdate(String.format(sqlToCreateCourse, 
-												 wrapForSQL(course.getId()), 
-												 wrapForSQL(course.getTitle())));
-			cLogger.info("Rows updated after inserting course " + rowsUpdated);
+			String sql = String.format(Sql.INSERT_COURSE_BASIC, 
+					 				   wrapForSQL(course.getId()), 
+					 				   wrapForSQL(course.getTitle()));
+			stmt = conn.createStatement(); 
+			stmt.executeUpdate(sql);
 			
 			//create course_competency_wiki 
 			stmt = conn.createStatement();
-			String sqlToCreateCourseCompetency = 
-				"INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
-			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, 
-											 wrapForSQL(course.getId())));
-			String msg = "Rows updated after inserting course_competencies_wiki " + 
-						 rowsUpdated; 
-			cLogger.info(msg);
+			sql = String.format(Sql.INSERT_COMPETENCY_BASIC, 
+					 			wrapForSQL(course.getId()));
+			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
 			String msg = "Could not create new course " + course;
 			cLogger.error(msg, sqle);
@@ -199,12 +192,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		String coursesWikiContents = (String)wikiContents;
 		//TODO: Use Sql.java
-		String sql = "UPDATE COURSES_WIKI SET content=%s WHERE id=1";
+		String sql = String.format(Sql.UPDATE_COURSES_WIKI, 
+				 				   wrapForSQL(coursesWikiContents));
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, 
-												 wrapForSQL(coursesWikiContents)));
+			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
 			else cLogger.info("CoursesWiki not updated");
 		} catch(SQLException sqle) {
@@ -376,14 +369,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("courseId cannot be null");
 		}
 		if(contents == null) {
-			throw new NullPointerException("contents cannot be null");
+			//throw new NullPointerException("contents cannot be null");
+			contents = "";
 		}
-		String competenciesWikiContents = (String)contents;
-		String sqlTemplate = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
+		String competenciesWikiContents = (String)contents; 
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			String sql = String.format(sqlTemplate, 
+			String sql = String.format(Sql.UPDATE_COMPETENCIES_WIKI, 
 									   wrapForSQL(competenciesWikiContents), 
 									   wrapForSQL(courseId));
 			int rowsUpdated = stmt.executeUpdate(sql);
@@ -425,14 +418,16 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 						   competencyTitle, 
 						   "", 
 						   "");
-		String sqlTemplate = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');"; 
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			String sql = String.format(sqlTemplate, 
-					   competency.getId(),
-					   wrapForSQL(course.getId()),
-					   wrapForSQL(competencyTitle));
+			String sql = String.format(Sql.INSERT_COMPETENCY, 
+					   				   competency.getId(),
+					   				   wrapForSQL(course.getId()),
+					   				   wrapForSQL(competencyTitle),
+					   				   wrapForSQL(""),
+					   				   wrapForSQL(""));
+			
 			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated == 0) {
 				String msg = "Could not insert competency '" + 
@@ -878,8 +873,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("username should not be null");
 		}
 		String password = null;
-		String sqlTemplate = "SELECT password from USER where username=%s";
-		String sql = String.format(sqlTemplate, wrapForSQL(username));
+		String sql = String.format(Sql.RETREIVE_PASSWORD, wrapForSQL(username));
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
@@ -1016,7 +1010,6 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String query = String.format(Sql.RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA, 
 										 wrapForSQL(identifier),
 										 wrapForSQL(loginVia.toString()));
-			cLogger.info("Executing SQL '" + query + "'");
 			ResultSet rs = stmt.executeQuery(query);
 			if(rs.next()) {
 				int userid = rs.getInt("userid");
@@ -1029,7 +1022,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				userMeta.setRole(Role.valueOf(rs.getString("role")));
 			}
 		} catch(SQLException sqle) {
-			String msg = "Could not retreive UserMeta for '" + identifier + "' '" + loginVia + "'";
+			String msg = "Could not retreive UserMeta for '" + 
+						 identifier + "' '" + 
+						 loginVia + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
@@ -1355,9 +1350,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	private void buildCompetenciesForCourses(Connection conn, 
 											 List<Course> courses) 
 		throws SQLException, DataException {
-
-//		String sqlToGetCompetencyIdsForCourse = "SELECT (competency_id) FROM COURSE_COMPETENCY WHERE course_id = %s";
-		String sql = "SELECT (contents) FROM COURSE_COMPETENCIES_WIKI WHERE course_id = %s";
+					 
+		String sql = Sql.RETREIVE_COMPETENCIES_WIKI;
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(String.format(sql, wrapForSQL(course.getId())));
@@ -1428,13 +1422,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		List<Competency> competencies = new ArrayList<Competency>();
 		if(rs.next()) {
-			String competencyWikiContents = rs.getString(1);
+			String competencyWikiContents = rs.getString("contents");
 			String competencyTitles[] = 
 				parseForCompetencyTitles(competencyWikiContents);
 			
 			for(String competencyTitle : competencyTitles) {
-				String sqlToFetchCompetency = 
-					"SELECT * FROM COMPETENCY WHERE COMPETENCY.course_id=%s AND COMPETENCY.title=%s";
+				String sqlToFetchCompetency = Sql.RETREIVE_COMPETENCIES_BY_COURSE_AND_COMPETENCY_TITLE;
 				Statement stmt = conn.createStatement();
 				String finalSql = String.format(sqlToFetchCompetency, 
 												wrapForSQL(course.getId()),
@@ -1484,7 +1477,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		throws SQLException {
 		
 		//TODO: Limit this query to 5 rows
-		String sql = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";
+		String sql = Sql.RETREIVE_ALL_COURSE_ENROLLMENT_STATUSES;
 		List<CourseEnrollmentStatus> statuses = 
 			new ArrayList<CourseEnrollmentStatus>();
 		
