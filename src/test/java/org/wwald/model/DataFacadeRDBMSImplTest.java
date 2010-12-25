@@ -438,6 +438,29 @@ public class DataFacadeRDBMSImplTest {
 		assertEquals(courseId, retreivedCourseId);
 		assertEquals(content, retreivedContent);
 	}
+
+	@Test
+	public void testUpdateCompetenciesWikiContentsWithNullContent() throws Exception {
+		//update competencies wiki
+		String courseId = "Physics";
+		String content = null;
+		this.dataFacade.updateCompetenciesWikiContents(this.conn, courseId, content);
+		
+		//retreive competencies wiki
+		String sql = String.format(Sql.RETREIVE_COMPETENCIES_WIKI, DataInitializer.wrapForSQL(courseId));
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		String retreivedContent = null;
+		String retreivedCourseId =  null;
+		if(rs.next()) {
+			retreivedCourseId = rs.getString("course_id");
+			retreivedContent = rs.getString("contents");
+		}
+		assertNotNull(retreivedCourseId);
+		assertNotNull(retreivedContent);
+		assertEquals(courseId, retreivedCourseId);
+		assertEquals("", retreivedContent);
+	}
 	
 	@Test(expected=NullPointerException.class)
 	public void testUpdateCompetenciesWikiContentsWithNullConn() throws Exception {
@@ -452,14 +475,6 @@ public class DataFacadeRDBMSImplTest {
 		//update competencies wiki
 		String courseId = null;
 		String content = "Lecture 1\n Lecture 2\n Lecture 3";
-		this.dataFacade.updateCompetenciesWikiContents(this.conn, courseId, content);
-	}
-	
-	@Test(expected=NullPointerException.class)
-	public void testUpdateCompetenciesWikiContentsWithNullContent() throws Exception {
-		//update competencies wiki
-		String courseId = "Physics";
-		String content = null;
 		this.dataFacade.updateCompetenciesWikiContents(this.conn, courseId, content);
 	}
 	
