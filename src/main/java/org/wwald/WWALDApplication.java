@@ -22,6 +22,7 @@ import org.wwald.view.HomePage;
 import org.wwald.view.LoginPage;
 import org.wwald.view.Register;
 import org.wwald.view.StaticPage;
+import org.wwald.view.UserProfiles;
 import org.wwald.view.components.CourseThumbnailImageResource;
 
 import com.cforcoding.jmd.MarkDown;
@@ -85,6 +86,7 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("courses", CoursePage.class);
 		mountBookmarkablePage("login", LoginPage.class);
 		mountBookmarkablePage("register", Register.class);
+		mountBookmarkablePage("users", UserProfiles.class);
 		mountBookmarkablePage("static", StaticPage.class);
 		mountBookmarkablePage("callback", CallbackHandlerPage.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));

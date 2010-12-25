@@ -33,16 +33,13 @@ public class UserDetailsPage extends AccessControlledPage {
 	private static final Logger cLogger = Logger.getLogger(UserDetailsPage.class);
 	
 	public UserDetailsPage(PageParameters parameters) {
-		super(parameters);
-		String userid = parameters.getString(WWALDConstants.USERID);
-		try {
-			IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
-			Connection conn = ConnectionPool.getConnection(getDatabaseId());			
-			
-			UserMeta userMeta = dataFacade.retreiveUserMeta(conn, Integer.parseInt(userid));
+		super(parameters);		
+		try {									
+			UserMeta userMeta = retreiveUserMeta(parameters);
 			if(userMeta.getLoginVia().equals(UserMeta.LoginVia.INTERNAL)) {
-				User user = dataFacade.retreiveUserByUsername(conn, userMeta.getIdentifier());
-				InternalUsersDetailsPanel panel = new InternalUsersDetailsPanel(WicketIdConstants.INTERNAL_USER_DETAILS, user);
+				User user = retreiveUser(userMeta.getIdentifier());
+				InternalUsersDetailsPanel panel = 
+					new InternalUsersDetailsPanel(WicketIdConstants.INTERNAL_USER_DETAILS, user);
 				add(panel);
 			}
 			else {
@@ -58,6 +55,19 @@ public class UserDetailsPage extends AccessControlledPage {
 		Link manageUsersLink = new AccessControlledViewPageLink(WicketIdConstants.MANAGE_USERS_PAGE, ManageUsersPage.class, new Role[]{Role.ADMIN});
 		add(manageUsersLink);			
 	}	
+	
+	private UserMeta retreiveUserMeta(PageParameters parameters) throws NumberFormatException, DataException {
+		String userid = parameters.getString(WWALDConstants.USERID);
+		IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
+		Connection conn = ConnectionPool.getConnection(getDatabaseId());
+		return dataFacade.retreiveUserMeta(conn, Integer.parseInt(userid));
+	}
+	
+	private User retreiveUser(String username) throws DataException {
+		IDataFacade dataFacade = ((WWALDApplication)Application.get()).getDataFacade();
+		Connection conn = ConnectionPool.getConnection(getDatabaseId());
+		return dataFacade.retreiveUserByUsername(conn, username);
+	}
 
 	private Component buildChangeRoleForm(final UserMeta userMeta) {
 		

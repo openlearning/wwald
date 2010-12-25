@@ -103,6 +103,12 @@ public class WicketIdConstants {
 	public static final String NEW_PWD = "new_pwd";
 	public static final String RETYPE_NEW_PWD = "retype_new_pwd";
 	
+	//public user pofile pages
+	public static final String PUBLIC_USER_PROFILES_LIST = "public_user_profiles_list";
+	public static final String PUBLIC_USER_PROFILE = "public_user_profile";
+	public static final String PUBLIC_USER_PROFILE_LABEL = "public_user_profile_label";
+	public static final String PUBLIC_USER_PROFILE_IDENTIFIER = "user_identifier";
+	
 	//static pages
 	public static final String EDIT_STATIC_PAGE = "edit_static_page";
 	public static final String EDIT_STATIC_PAGE_FORM = "static_page_edit_form";
@@ -122,6 +128,8 @@ public class WicketIdConstants {
 	public static final String CONTACT_PAGE_NAME  = "contact";
 	public static final String CONTACT_LINK  = "contact_link";
 	public static final String CONTACT_LABEL  = "contact_label";
+	public static final String USER_PROFILES_LINK = "userProfilesLink";
+	public static final String USER_PROFILES_LABEL = "userProfilesLabel";
 	
 	//Key Value table
 	public static final String KVTableKey = "KVTableKey";	

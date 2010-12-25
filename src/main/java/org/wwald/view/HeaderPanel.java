@@ -78,6 +78,14 @@ public class HeaderPanel extends Panel {
 		Link adminLink = new AccessControlledViewPageLink("admin_page", AdminPage.class, new Role[]{Role.ADMIN});
 		
 		add(adminLink);
+		
+		Link userProfilesLink = 
+			new BookmarkablePageLink(WicketIdConstants.USER_PROFILES_LINK, 
+									 UserProfiles.class);
+		Label userProfilesLabel = new Label(WicketIdConstants.USER_PROFILES_LABEL, 
+											"User Profiles .");
+		userProfilesLink.add(userProfilesLabel);
+		add(userProfilesLink);
 	}
 
 	private Component getHeaderImage() {
