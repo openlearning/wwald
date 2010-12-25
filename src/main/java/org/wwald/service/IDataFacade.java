@@ -37,7 +37,9 @@ public interface IDataFacade {
 	 * @return The course object for the specified course id, or null if the 
 	 * course with the specified id does not exist
 	 */
-	public Course retreiveCourse(Connection c, String courseId) throws DataException;
+	public Course retreiveCourse(Connection c, 
+								 String courseId) 
+		throws DataException;
 	
 	/**
 	 * Retreives the courses wiki which contains all courses which are to be
@@ -60,7 +62,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void updateCourse(Connection c, Course course) throws DataException;
+	public void updateCourse(Connection c, 
+							 Course course) 
+		throws DataException;
 	
 	/**
 	 * Creates a new course object in the database with the bare minimum 
@@ -72,7 +76,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */
-	public void insertCourse(Connection c, Course course) throws DataException;
+	public void insertCourse(Connection c, 
+							 Course course) 
+		throws DataException;
 	
 	/**
 	 * Updates or inserts the specified {@link Course}
@@ -82,7 +88,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException} 
 	 */
-	public void upsertCourse(Connection c, Course course) throws DataException;
+	public void upsertCourse(Connection c, 
+							 Course course) 
+		throws DataException;
 	
 	/**
 	 * Updates the courses wiki
@@ -92,7 +100,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */
-	public void updateCourseWiki(Connection c, String wikiContents) throws DataException;
+	public void updateCourseWiki(Connection c, 
+								 String wikiContents) 
+		throws DataException;
 	
 	/**
 	 * Retrieves the enrollment status for the specified course and user
@@ -105,7 +115,10 @@ public interface IDataFacade {
 	 * SQLException is wrapped in the DataException
 	 * @return The {@link CourseEnrollmentStatus} object
 	 */
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, UserMeta userMeta, Course course) throws DataException;
+	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, 
+															UserMeta userMeta, 
+															Course course) 
+		throws DataException;
 	
 	/**
 	 * Adds a course enrollment action in the database. A course enrollment
@@ -115,7 +128,9 @@ public interface IDataFacade {
 	 * @param courseEnrollmentStatus The CourseEnrollmentStatus object which is
 	 * to be used for inserting the action in persistent storage
 	 */
-	public void addCourseEnrollmentAction(Connection c, CourseEnrollmentStatus courseEnrollmentStatus) throws DataException;
+	public void addCourseEnrollmentAction(Connection c, 
+										  CourseEnrollmentStatus courseEnrollmentStatus) 
+		throws DataException;
 	
 	//Competencies
 	/**
@@ -128,7 +143,10 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */
-	public void updateCompetenciesWikiContents(Connection c, String courseId, String contents) throws DataException;	
+	public void updateCompetenciesWikiContents(Connection c, 
+											   String courseId, 
+											   String contents) 
+		throws DataException;	
 	
 	/**
 	 * Retrieves all the {@link Competency} objects from the database
@@ -149,7 +167,9 @@ public interface IDataFacade {
 	 * @return A {@link List} of {@link Competency} objects for the specified
 	 * {@link Course}
 	 */
-	public List<Competency> retreiveCompetenciesForCourse(Connection c, Course course) throws DataException;
+	public List<Competency> retreiveCompetenciesForCourse(Connection c, 
+														  Course course) 
+	    throws DataException;
 	
 	/**
 	 * Retreives the competency for the specified course and the specified
@@ -162,7 +182,10 @@ public interface IDataFacade {
 	 * SQLException is wrapped in the DataException
 	 * @return The competency or null if the course or competency does not exist
 	 */
-	public Competency retreiveCompetency(Connection c, String courseId, String competencyId) throws DataException;
+	public Competency retreiveCompetency(Connection c, 
+										 String courseId, 
+										 String competencyId) 
+		throws DataException;
 	
 	/**
 	 * Retreives the competencies wiki for the specified course id
@@ -175,7 +198,9 @@ public interface IDataFacade {
 	 * course does not exist or it does not have any contents for the 
 	 * competency wiki
 	 */
-	public String retreiveCompetenciesWiki(Connection c, String courseId) throws DataException;
+	public String retreiveCompetenciesWiki(Connection c, 
+										   String courseId) 
+		throws DataException;
 	
 	/**
 	 * Updates {@link Competency} with the specified {@link Competency} object.
@@ -188,7 +213,10 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */
-	public void updateCompetency(Connection c, String courseId, Competency competency) throws DataException;
+	public void updateCompetency(Connection c, 
+								 String courseId, 
+								 Competency competency) 
+		throws DataException;
 	
 	/**
 	 * Creates an empty competency object in the database for the specified
@@ -203,7 +231,10 @@ public interface IDataFacade {
 	 * @return The empty {@link Competency} object created for the specified
 	 * competencyTitle 
 	 */
-	public Competency insertCompetency(Connection c, Course course, String title) throws DataException;
+	public Competency insertCompetency(Connection c, 
+									   Course course, 
+									   String title) 
+		throws DataException;
 	
 	/**
 	 * Updates or inserts the specified {@link Competency}
@@ -213,7 +244,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException} 
 	 */
-	public void upsertCompetency(Connection c, Competency competency) throws DataException;
+	public void upsertCompetency(Connection c, 
+								 Competency competency) 
+		throws DataException;
 	
 	/**
 	 * Deletes the specified {@link Competency} from the database
@@ -223,7 +256,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */
-	public void deleteCompetency(Connection c, Competency competency) throws DataException;
+	public void deleteCompetency(Connection c, 
+								 Competency competency) 
+		throws DataException;
 	
 	//Mentors
 	/**
@@ -262,7 +297,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException} 
 	 */
-	public void updateMentor(Connection c, Mentor mentor) throws DataException;
+	public void updateMentor(Connection c, 
+							 Mentor mentor) 
+		throws DataException;
 	
 	/**
 	 * Inserts the specified {@link Mentor} in the database
@@ -272,7 +309,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void insertMentor(Connection c, Mentor mentor) throws DataException;
+	public void insertMentor(Connection c, 
+							 Mentor mentor) 
+		throws DataException;
 	
 	/**
 	 * Updates or inserts the specified {@link Mentor}
@@ -282,7 +321,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException} 
 	 */
-	public void upsertMentor(Connection c, Mentor mentor) throws DataException;
+	public void upsertMentor(Connection c, 
+							 Mentor mentor) 
+		throws DataException;
 	
 	/**
 	 * Deletes the specified {@link Mentor} from the database
@@ -292,7 +333,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * SQLException is wrapped in the {@link DataException}
 	 */
-	public void deleteMentor(Connection c, Mentor mentor) throws DataException;
+	public void deleteMentor(Connection c, 
+							 Mentor mentor) 
+		throws DataException;
 	
 	//Status updates
 	/**
@@ -316,7 +359,10 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void insertUser(Connection conn, User user, UserMeta userMeta) throws DataException;
+	public void insertUser(Connection conn, 
+						   User user, 
+						   UserMeta userMeta) 
+		throws DataException;
 	
 	/**
 	 * Updates the {@link User} object in the database. Valid fields for
@@ -333,7 +379,10 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void updateUser(Connection conn, User user, UserForm.Field... userFields) throws DataException;
+	public void updateUser(Connection conn, 
+						   User user, 
+						   UserForm.Field... userFields) 
+		throws DataException;
 	
 	/**
 	 * Retrieves all {@link User} objects from the database
@@ -354,7 +403,9 @@ public interface IDataFacade {
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 * @return The {@link User} object
 	 */
-	public User retreiveUserByUsername(Connection conn, String username) throws DataException;
+	public User retreiveUserByUsername(Connection conn, 
+									   String username) 
+		throws DataException;
 	
 	/**
 	 * Retreives the encrypted for the specified username. The password is
@@ -366,7 +417,9 @@ public interface IDataFacade {
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 * @return The encrypted password
 	 */
-	public String retreivePassword(Connection conn, String username) throws DataException;
+	public String retreivePassword(Connection conn, 
+								   String username) 
+		throws DataException;
 	
 	//UserMeta
 	/**
@@ -377,7 +430,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException;
+	public void insertUserMeta(Connection conn, 
+							   UserMeta userMeta) 
+		throws DataException;
 	
 	/**
 	 * Retrieves all {@link UserMeta} objects from the database
@@ -400,7 +455,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public UserMeta retreiveUserMeta(Connection conn, int userid) throws DataException;
+	public UserMeta retreiveUserMeta(Connection conn, 
+									 int userid) 
+		throws DataException;
 	
 	/**
 	 * Retrieves the {@link UserMeta} object identified by identifer and loginVia
@@ -414,7 +471,10 @@ public interface IDataFacade {
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 * @return The {@link UserMeta} object
 	 */
-	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn, String identifer, UserMeta.LoginVia loginVia) throws DataException;
+	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn, 
+														 String identifer, 
+														 UserMeta.LoginVia loginVia) 
+		throws DataException;
 	
 	/**
 	 * Updates the {@link Role} of the specified {@link UserMeta} object
@@ -437,7 +497,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException;
+	public StaticPagePOJO retreiveStaticPage(Connection c, 
+											 String id) 
+		throws DataException;
 	
 	/**
 	 * Insert or update the static page.
@@ -447,7 +509,9 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void upsertStaticPage(Connection c, StaticPagePOJO page) throws DataException;
+	public void upsertStaticPage(Connection c, 
+								 StaticPagePOJO page) 
+		throws DataException;
 	
 	//KVTable
 	/**
@@ -461,7 +525,9 @@ public interface IDataFacade {
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 * @return The value for the specified key
 	 */
-	public String retreiveFromKvTable(Connection c, String k) throws DataException;
+	public String retreiveFromKvTable(Connection c, 
+									  String k) 
+		throws DataException;
 	
 	/**
 	 * Upsert (update or insert) the specifed key and value in KVTABLE
@@ -472,7 +538,10 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void upsertKvTable(Connection c, String k, String v) throws DataException;
+	public void upsertKvTable(Connection c, 
+							  String k, 
+							  String v) 
+		throws DataException;
 	
 	/**
 	 * Returns the value from KVTABLE_CLOB for the specified key
@@ -485,7 +554,9 @@ public interface IDataFacade {
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 * @return The value for the specified key
 	 */
-	public String retreiveFromKvTableClob(Connection c, String k) throws DataException;
+	public String retreiveFromKvTableClob(Connection c, 
+										  String k) 
+		throws DataException;
 	
 	/**
 	 * Upsert (update or insert) the specifed key and value in KVTABLE
@@ -496,5 +567,8 @@ public interface IDataFacade {
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void upsertKvTableClob(Connection c, String k, String v) throws DataException;
+	public void upsertKvTableClob(Connection c, 
+								  String k, 
+								  String v) 
+		throws DataException;
 }

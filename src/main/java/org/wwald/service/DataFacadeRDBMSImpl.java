@@ -29,16 +29,16 @@ import org.wwald.util.CompetencyUniqueIdGenerator;
 import org.wwald.view.UserForm;
 import org.wwald.view.UserForm.Field;
 
-
+/**
+ * This class implements the {@link IDataFacade} interface with an RDBMS
+ * database. The code talks to the database through the JDBC interface.
+ * @author pshah
+ *
+ */
 public class DataFacadeRDBMSImpl implements IDataFacade {
 	
-	private static final String url = "jdbc:hsqldb:mem:mymemdb";
-	private static final String user = "SA";
-	private static final String password = "";
-	
-	//private static int nextCompetencyId = 10;
-	private final String NULL_CONN_ERROR_MSG = "conn cannot be null";
-	
+	private static final String METHOD_NOT_IMPLEMENTED = "method not implemented";
+	private final String NULL_CONN_ERROR_MSG = "conn cannot be null";	
 	private static Logger cLogger = Logger.getLogger(DataFacadeRDBMSImpl.class);
 	
 	public DataFacadeRDBMSImpl() {		
@@ -89,7 +89,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				wikiContents = rs.getString(2);
 			}
 		} catch(SQLException sqle) {
-			String msg = "Could not fetch courses wiki contents from the database";
+			String msg = "Could not fetch courses wiki " +
+						 "contents from the database";
 			cLogger.warn(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
@@ -99,7 +100,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveCourse(Connection, String)
 	 */
-	public Course retreiveCourse(Connection conn, String id) throws DataException {
+	public Course retreiveCourse(Connection conn, 
+								 String id) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -138,8 +142,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#insertCourse(Connection, Course)
 	 */
-	public void insertCourse(Connection conn, Course course) 
-														throws DataException {
+	public void insertCourse(Connection conn, 
+							 Course course) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -152,16 +158,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			//create course
 			String sqlToCreateCourse = "INSERT INTO COURSE (id, title) VALUES (%s,%s)";
 			stmt = conn.createStatement();
-			rowsUpdated = stmt.executeUpdate(String.format(sqlToCreateCourse, wrapForSQL(course.getId()), wrapForSQL(course.getTitle())));
+			rowsUpdated = 
+				stmt.executeUpdate(String.format(sqlToCreateCourse, 
+												 wrapForSQL(course.getId()), 
+												 wrapForSQL(course.getTitle())));
 			cLogger.info("Rows updated after inserting course " + rowsUpdated);
 			
 			//create course_competency_wiki 
 			stmt = conn.createStatement();
-			String sqlToCreateCourseCompetency = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
-			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, wrapForSQL(course.getId())));
-			cLogger.info("Rows updated after inserting course_competencies_wiki " + rowsUpdated);
+			String sqlToCreateCourseCompetency = 
+				"INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s,'');";
+			stmt.executeUpdate(String.format(sqlToCreateCourseCompetency, 
+											 wrapForSQL(course.getId())));
+			String msg = "Rows updated after inserting course_competencies_wiki " + 
+						 rowsUpdated; 
+			cLogger.info(msg);
 		} catch(SQLException sqle) {
-			cLogger.error("Could not create new course " + course, sqle);
+			String msg = "Could not create new course " + course;
+			cLogger.error(msg, sqle);
 		}
 	}
 	
@@ -170,8 +184,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	//TODO: Document the wiki contents
 	//TODO: Refactor method name to updateCoursesWiki
-	public void updateCourseWiki(Connection conn, String wikiContents) 
-														throws DataException {
+	public void updateCourseWiki(Connection conn, 
+								 String wikiContents) 
+		throws DataException {
+		
 		//TODO: If we change the course title then the changes should be reflected in the db
 		//Also we may want to do some basic validating parsing here... or somewhere before we
 		//save the contents
@@ -187,11 +203,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, wrapForSQL(coursesWikiContents)));
+			int rowsUpdated = stmt.executeUpdate(String.format(sql, 
+												 wrapForSQL(coursesWikiContents)));
 			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
 			else cLogger.info("CoursesWiki not updated");
 		} catch(SQLException sqle) {
-			String msg = "Could not update CoursesWiki with new data '" + wikiContents + "'" ;
+			String msg = "Could not update CoursesWiki with new data '" + 
+						 wikiContents + "'" ;
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
@@ -204,7 +222,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, 
 															UserMeta userMeta, 
 															Course course) 
-														throws DataException {
+		throws DataException {
+		
 		String sqlTemplate = Sql.RETREIVE_COURSE_ENROLLMENT_STATUS;
 		String sql = String.format(sqlTemplate,
 								   wrapForSQL(course.getId()),
@@ -219,7 +238,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				int userid = rs.getInt("userid");
 				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
 				Timestamp tstamp = rs.getTimestamp("tstamp");
-				statuses.add(new CourseEnrollmentStatus(courseId, userid, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+				CourseEnrollmentStatus courseEnrollmentStatus = 
+					new CourseEnrollmentStatus(courseId, 
+							userid, 
+							UserCourseStatus.getUserCourseStatus(userCourseStatusId), 
+							tstamp);
+				statuses.add(courseEnrollmentStatus);
 			}
 			
 		} catch(SQLException sqle) {
@@ -229,11 +253,15 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new DataException(msg, sqle);
 		}
 		if(statuses.size() > 0) {
-			Collections.sort(statuses, CourseEnrollmentStatus.getTimestampComparator());
+			Collections.sort(statuses, 
+							 CourseEnrollmentStatus.getTimestampComparator());
 			return statuses.get(statuses.size()-1);
 		}
 		else {
-			return new CourseEnrollmentStatus(course.getId(), userMeta.getUserid(), UserCourseStatus.UNENROLLED, null);
+			return new CourseEnrollmentStatus(course.getId(), 
+											  userMeta.getUserid(), 
+											  UserCourseStatus.UNENROLLED, 
+											  null);
 		}
 	}
 		
@@ -242,7 +270,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	public void addCourseEnrollmentAction(Connection conn, 
 										  CourseEnrollmentStatus courseEnrollmentStatus) 
-						throws DataException {
+		throws DataException {
+		
 		Timestamp timestamp = new Timestamp((new Date()).getTime());
 		String sql = 
 			String.format(Sql.INSERT_COURSE_ENROLLMENT_STATUS,
@@ -254,7 +283,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
-			String msg = "Could not add CourseEnrollmentStatus " + courseEnrollmentStatus;
+			String msg = "Could not add CourseEnrollmentStatus " + 
+						 courseEnrollmentStatus;
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
@@ -334,7 +364,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#updateCompetenciesWikiContents(Connection, String, String)
 	 */
-	public void updateCompetenciesWikiContents(Connection conn, String courseId, String contents) throws DataException {
+	public void updateCompetenciesWikiContents(Connection conn, 
+											   String courseId, 
+											   String contents) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -345,11 +379,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("contents cannot be null");
 		}
 		String competenciesWikiContents = (String)contents;
-		String sql = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
+		String sqlTemplate = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, wrapForSQL(competenciesWikiContents), wrapForSQL(courseId)));
+			String sql = String.format(sqlTemplate, 
+									   wrapForSQL(competenciesWikiContents), 
+									   wrapForSQL(courseId));
+			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated > 0) { 
 				cLogger.info("CompetenciesWiki updated");
 			}
@@ -370,7 +407,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public Competency insertCompetency(Connection conn, 
 									   Course course, 
 									   String competencyTitle) 
-														throws DataException {
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -382,21 +420,31 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		
 		//TODO CompetencyUniqueIdGenerator needs to go
-		Competency competency = new Competency(CompetencyUniqueIdGenerator.getNextCompetencyId(conn), competencyTitle, "", "");
-		String sql = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');"; 
+		Competency competency = 
+			new Competency(CompetencyUniqueIdGenerator.getNextCompetencyId(conn), 
+						   competencyTitle, 
+						   "", 
+						   "");
+		String sqlTemplate = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s, %s, %s, '', '');"; 
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			int rowsUpdated = stmt.executeUpdate(String.format(sql, 
-															   competency.getId(),
-															   wrapForSQL(course.getId()),
-															   wrapForSQL(competencyTitle)));
+			String sql = String.format(sqlTemplate, 
+					   competency.getId(),
+					   wrapForSQL(course.getId()),
+					   wrapForSQL(competencyTitle));
+			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated == 0) {
-				String msg = "Could not insert competency '" + competencyTitle + "' in course '" + course.getId() + "'";
+				String msg = "Could not insert competency '" + 
+							 competencyTitle + 
+							 "' in course '" + 
+							 course.getId() + 
+							 "'";
 				throw new DataException(msg);
 			}
 		} catch(SQLException sqle) {
-			String msg = "Could not insert competency for title '" + competencyTitle + "'";
+			String msg = "Could not insert competency for title '" + 
+						 competencyTitle + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
@@ -410,7 +458,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public void updateCompetency(Connection conn, 
 								 String courseId, 
 								 Competency competency) 
-														throws DataException {
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -420,17 +469,17 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		if(competency == null) {
 			throw new NullPointerException("competency should not be null");
 		}
-		String sql = Sql.UPDATE_COMPETENCY;
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			String finalSql = String.format(sql, 
-											wrapForSQL(competency.getDescription()), 
-											wrapForSQL(competency.getResource()), 
-											String.valueOf(competency.getId()));
-			stmt.executeUpdate(finalSql);
+			String sql = String.format(Sql.UPDATE_COMPETENCY, 
+									   wrapForSQL(competency.getDescription()), 
+									   wrapForSQL(competency.getResource()), 
+									   String.valueOf(competency.getId()));
+			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
-			cLogger.error("Could not update competency with these new values ", e);
+			String msg = "Could not update competency with these new values";
+			cLogger.error(msg, e);
 		}
 		
 	}
@@ -439,18 +488,22 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#deleteCompetency(Connection, Competency)
 	 */
-	public void deleteCompetency(Connection conn, Competency competency) throws DataException {
-		throw new RuntimeException("method not implemented");
+	public void deleteCompetency(Connection conn, 
+								 Competency competency) 
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 
 	
 	/**
 	 * @see org.wwald.service.IDataFacade#deleteMentor(Connection, Mentor)
 	 */
-	public void deleteMentor(Connection conn, Mentor mentor) throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
+	public void deleteMentor(Connection conn, 
+							 Mentor mentor) 
+		throws DataException {
+
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 
 	
@@ -459,10 +512,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	public void insertMentor(Connection conn, 
 							 Mentor mentor) 
-														throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 
 		
@@ -471,10 +523,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	//TOTO: Where is the Competency?
 	public List<Mentor> retreiveMentorsForCompetency(Connection conn) 
-														throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
+		throws DataException {
+		
+		if(true)
+			throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
+		
 		return null;
 	}
 
@@ -482,10 +535,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveAllCompetencies(Connection)
 	 */
-	public List<Competency> retreiveAllCompetencies(Connection conn) throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
+	public List<Competency> retreiveAllCompetencies(Connection conn) 
+		throws DataException {
+		
+		if(true)
+			throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
+		
 		return null;
 	}
 
@@ -521,10 +576,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	public List<Competency> retreiveCompetenciesForCourse(Connection conn, 
 														  Course course) 
-														  throws DataException {
-		if(true) {
+		throws DataException {
+		
+		if(true)
 			throw new RuntimeException("method not implemented");
-		}
+		
 		return null;
 	}
 	
@@ -532,11 +588,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveMentorsForCourse(Connection)
 	 */
-	public List<Mentor> retreiveMentorsForCourse(Connection conn) throws DataException {
+	public List<Mentor> retreiveMentorsForCourse(Connection conn) 
+		throws DataException {
+		
 		//TODO: Need to provide a Course object as a param
-		if(true) {
+		if(true)
 			throw new RuntimeException("method not implemented");
-		}
+		
 		return null;
 	}
 
@@ -544,7 +602,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#updateCourse(Connection, Course)
 	 */
-	public void updateCourse(Connection conn, Course course) throws DataException {
+	public void updateCourse(Connection conn, 
+							 Course course) 
+		throws DataException {
+		
 		String sql = String.format(Sql.UPDATE_COURSE, 
 								   wrapForSQL(course.getTitle()), 
 								   wrapForSQL(course.getDescription()), 
@@ -561,7 +622,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			stmt.executeUpdate(sql);
 			
 			//TODO: Good Samaritan is the default mentor for every course... if the mentor was removed then add this one
-			sql = String.format(Sql.UPDATE_COURSE_MENTORS, course.getMentor().getUserid(), wrapForSQL(course.getId()));
+			sql = String.format(Sql.UPDATE_COURSE_MENTORS, 
+								course.getMentor().getUserid(), 
+								wrapForSQL(course.getId()));
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
@@ -575,48 +638,59 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#updateMentor(Connection, Mentor)
 	 */
-	public void updateMentor(Connection conn, Mentor mentor) throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
+	public void updateMentor(Connection conn, Mentor mentor) 
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 
 	
 	/**
 	 * @see org.wwald.service.IDataFacade#upsertCompetency(Connection, Competency)
 	 */
-	public void upsertCompetency(Connection conn, Competency competency) throws DataException {
-		throw new RuntimeException("method not implemented");
+	public void upsertCompetency(Connection conn, 
+								 Competency competency) 
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 
 	
 	/**
 	 * @see org.wwald.service.IDataFacade#upsertCourse(Connection, Course)
 	 */
-	public void upsertCourse(Connection conn, Course course) throws DataException {
-		throw new RuntimeException("method not implemented");
+	public void upsertCourse(Connection conn, 
+							 Course course) 
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 
 	
 	/**
 	 * @see org.wwald.service.IDataFacade#upsertMentor(Connection, Mentor)
 	 */
-	public void upsertMentor(Connection conn, Mentor mentor) throws DataException {
-		if(true) {
-			throw new RuntimeException("method not implemented");
-		}
+	public void upsertMentor(Connection conn, 
+							 Mentor mentor) 
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 	
 	
 	/**
 	 * @see org.wwald.service.IDataFacade#getStatusUpdates(Connection)
 	 */
-	public List<StatusUpdate> getStatusUpdates(Connection conn) throws DataException {
+	public List<StatusUpdate> getStatusUpdates(Connection conn) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
+		
 		try {
-			List<CourseEnrollmentStatus> courseEnrollmentStatuses = getAllCourseEnrollmentStatuses(conn);
+			List<CourseEnrollmentStatus> courseEnrollmentStatuses = 
+				getAllCourseEnrollmentStatuses(conn);
 			List<StatusUpdate> statusUpdates = new ArrayList<StatusUpdate>();
 //			DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 			//TODO: Factor this out into a separate StatusUpdateFormat
@@ -625,7 +699,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				Timestamp timestamp = courseEnrollmentStatus.getTimestamp();
 				int userid = courseEnrollmentStatus.getUserid();
 				UserMeta userMeta = retreiveUserMeta(conn, userid);
-				String enrollmentStatus = getEnrollmentStatusWithSurroundingText(courseEnrollmentStatus.getUserCourseStatus());
+				String enrollmentStatus = 
+					getEnrollmentStatusWithSurroundingText(courseEnrollmentStatus.getUserCourseStatus());
 				String courseId = courseEnrollmentStatus.getCourseId();
 				
 				StatusUpdate statusUpdate = new StatusUpdate();
@@ -651,7 +726,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public void insertUser(Connection conn, 
 						   User user, 
 						   UserMeta userMeta) 
-														throws DataException {
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -687,7 +763,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	public void updateUser(Connection conn, 
 						   User user, 
-						   UserForm.Field... userFields) throws DataException {
+						   UserForm.Field... userFields) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -696,7 +774,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		for(UserForm.Field field : userFields) {
 			if(field.equals(UserForm.Field.USERNAME)) {
-				throw new IllegalArgumentException("updateUser should never be given UserForm.Field.USERNAME");
+				String msg = "updateUser should never be given UserForm.Field.USERNAME";
+				throw new IllegalArgumentException(msg);
 			}
 		}
 		try {
@@ -722,10 +801,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			}
 			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated == 0) {
-				cLogger.warn("Tried updating user but 0 rows were affected '" + user + "'");
+				String msg = "Tried updating user but 0 rows were affected '" + 
+							 user + "'";
+				cLogger.warn(msg);
 			}
 			else {
-				cLogger.info("User updated new values '" + user + "'");
+				String msg = "User updated new values '" + user + "'";
+				cLogger.info(msg);
 			}
 			
 		} catch(SQLException sqle) {
@@ -735,7 +817,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 		
-	private String[] getUserFieldValues(Field[] userFields, User user) {
+	private String[] getUserFieldValues(Field[] userFields, 
+										User user) {
 		String retVal[] = null;
 		List<String> userFieldValues = new ArrayList<String>();
 		for(Field userField : userFields) {
@@ -784,7 +867,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreivePassword(Connection, String)
 	 */
-	public String retreivePassword(Connection conn, String username) throws DataException {
+	public String retreivePassword(Connection conn, 
+								   String username) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -812,8 +898,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveUserByUsername(Connection, String)
 	 */
-	public User retreiveUserByUsername(Connection conn, String username) 
-														throws DataException {
+	public User retreiveUserByUsername(Connection conn, 
+									   String username) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -842,7 +930,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#insertUserMeta(Connection, UserMeta)
 	 */
-	public void insertUserMeta(Connection conn, UserMeta userMeta) throws DataException {
+	public void insertUserMeta(Connection conn, 
+							   UserMeta userMeta) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -869,12 +960,16 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveUserMeta(Connection, int)
 	 */
-	public UserMeta retreiveUserMeta(Connection conn, int userid) throws DataException {
+	public UserMeta retreiveUserMeta(Connection conn, 
+									 int userid) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(userid < 0) {
-			throw new IllegalArgumentException("userid should be a positive integer");
+			String msg = "userid should be a positive integer";
+			throw new IllegalArgumentException(msg);
 		}
 		UserMeta userMeta = null;
 		String sql = String.format(Sql.RETREIVE_USER_META, String.valueOf(userid));
@@ -903,7 +998,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	public UserMeta retreiveUserMetaByIdentifierLoginVia(Connection conn,
 													 	 String identifier, 
 													 	 UserMeta.LoginVia loginVia) 
-														throws DataException {
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -944,7 +1040,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveAllUserMeta(Connection)
 	 */
-	public List<UserMeta> retreiveAllUserMeta(Connection conn) throws DataException {
+	public List<UserMeta> retreiveAllUserMeta(Connection conn) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
@@ -974,12 +1072,16 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#updateUserMetaRole(Connection, UserMeta)
 	 */
-	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException {
+	public void updateUserMetaRole(Connection conn, 
+								   UserMeta userMeta) 
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(userMeta == null) {
-			throw new NullPointerException("userMeta should not be null");
+			String msg = "userMeta should not be null";
+			throw new NullPointerException(msg);
 		}
 		String sql = String.format(Sql.UPDATE_USER_META_ROLE, 
 								   wrapForSQL(userMeta.getRole().toString()),
@@ -999,12 +1101,16 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveStaticPage(Connection, String)
 	 */
-	public StaticPagePOJO retreiveStaticPage(Connection c, String id) throws DataException {
+	public StaticPagePOJO retreiveStaticPage(Connection c, 
+											 String id) 
+		throws DataException {
+		
 		if(c == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(id == null) {
-			throw new NullPointerException("id should not be null");
+			String msg = "id should not be null";
+			throw new NullPointerException(msg);
 		}
 		StaticPagePOJO page = null;
 		String sql = String.format(Sql.RETREIVE_STATIC_PAGE, wrapForSQL(id));
@@ -1029,12 +1135,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 */
 	public void upsertStaticPage(Connection conn, 
 								 StaticPagePOJO page) 
-														throws DataException {
+		throws DataException {
+		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(page == null) {
-			throw new NullPointerException("page should not be null");
+			String msg = "page should not be null";
+			throw new NullPointerException(msg);
 		}
 		StaticPagePOJO preexistingPage = retreiveStaticPage(conn, page.getId());
 		if(preexistingPage == null) {
@@ -1049,10 +1157,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveFromKvTable(Connection, String)
 	 */
-	public String retreiveFromKvTable(Connection c, String k) throws DataException {
-		if(true) {
-			throw new RuntimeException("Method not implemented");
-		}
+	public String retreiveFromKvTable(Connection c, 
+									  String k) 
+		throws DataException {
+		
+		if(true)
+			throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
+
 		return null;
 	}
 	
@@ -1060,27 +1171,35 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#upsertKvTable(Connection, String, String)
 	 */
-	public void upsertKvTable(Connection c, String k, String v) throws DataException {
-		throw new RuntimeException("Method not implemented");
+	public void upsertKvTable(Connection c, 
+							  String k, 
+							  String v) 
+		throws DataException {
+		
+		throw new RuntimeException(METHOD_NOT_IMPLEMENTED);
 	}
 	
 	
 	/**
 	 * @see org.wwald.service.IDataFacade#retreiveFromKvTableClob(Connection, String)
 	 */
-	public String retreiveFromKvTableClob(Connection c, String k) 
-														throws DataException {
+	public String retreiveFromKvTableClob(Connection c, 
+										  String k) 
+		throws DataException {
+		
 		if(c == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(k == null) {
-			throw new NullPointerException("k should not be null");
+			String msg = "k should not be null";
+			throw new NullPointerException(msg);
 		}
 		String retVal = null;
 		try {
 			Statement stmt = c.createStatement();
 			ResultSet rs = 
-				stmt.executeQuery(String.format(Sql.RETREIVE_KVTABLE_CLOB,wrapForSQL(k)));
+				stmt.executeQuery(String.format(Sql.RETREIVE_KVTABLE_CLOB,
+												wrapForSQL(k)));
 			if(rs.next()) {
 				retVal = rs.getString("v");
 			}
@@ -1096,39 +1215,55 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#upsertKvTableClob(Connection, String, String)
 	 */
-	public void upsertKvTableClob(Connection c, String k, String v) throws DataException {
+	public void upsertKvTableClob(Connection c, 
+								  String k, 
+								  String v) 
+		throws DataException {
+		
 		if(c == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
 		if(k == null) {
-			throw new NullPointerException("k should not be null");
+			String msg = "k should not be null";
+			throw new NullPointerException(msg);
 		}
 		if(v == null) {
-			throw new NullPointerException("v should not be null");
+			String msg = "v should not be null";
+			throw new NullPointerException(msg);
 		}
 		try {
 			String existingVal = retreiveFromKvTableClob(c, k);
 			Statement stmt = c.createStatement();
 			String sql = null;
 			if(existingVal == null) {
-				sql = String.format(Sql.INSERT_KVTABLE_CLOB, wrapForSQL(k), wrapForSQL(v));
+				sql = String.format(Sql.INSERT_KVTABLE_CLOB, 
+									wrapForSQL(k), 
+									wrapForSQL(v));
 			}
 			else {
-				sql = String.format(Sql.UPDATE_KVTABLE_CLOB, wrapForSQL(v), wrapForSQL(k));
+				sql = String.format(Sql.UPDATE_KVTABLE_CLOB, 
+									wrapForSQL(v), 
+									wrapForSQL(k));
 			}
 			stmt.executeUpdate(sql);
 		} catch(DataException de) {
-			String msg = "Could not check if the key already exists before upserting the value in KVTABLE_CLOB ('" + k + "','" + v + "')";
+			String msg = "Could not check if the key already exists " +
+						 "before upserting the value in " +
+						 "KVTABLE_CLOB ('" + k + "','" + v + "')";
 			cLogger.error(msg, de);
 			throw new DataException(msg, de);
 		} catch(SQLException sqle) {
-			String msg = "Could not upsert into KVTABLE_CLOB ('" + k + "','" + v + "')";
+			String msg = "Could not upsert into " +
+						 "KVTABLE_CLOB ('" + k + "','" + v + "')";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
 	}
 
-	private void insertStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
+	private void insertStaticPage(Connection conn, 
+								  StaticPagePOJO page) 
+		throws DataException {
+		
 		String sql = String.format(Sql.INSERT_STATIC_PAGE, 
 								   wrapForSQL(page.getId()), 
 								   wrapForSQL(page.getContents()));
@@ -1142,7 +1277,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	private void updateStaticPage(Connection conn, StaticPagePOJO page) throws DataException {
+	private void updateStaticPage(Connection conn, 
+								  StaticPagePOJO page) 
+		throws DataException {
+		
 		String sql = String.format(Sql.UPDATE_STATIC_PAGE, 
 								   wrapForSQL(page.getContents()), 
 								   wrapForSQL(page.getId()));
@@ -1168,8 +1306,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	 * @return courses A List of Course objects which were mentioned in the wiki contents 
 	 * @throws IOException
 	 */
-	private List<Course> buildCourseObjectsFromCoursesWikiContent(Connection conn,
-														  String wikiContent) throws IOException, DataException {
+	private List<Course> 
+			buildCourseObjectsFromCoursesWikiContent(Connection conn,
+													 String wikiContent) 
+		throws IOException, DataException {
+		
 		List<Course> courses = new ArrayList<Course>();
 		BufferedReader bufferedReader = new BufferedReader(new StringReader(
 				wikiContent));
@@ -1194,7 +1335,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 	
-	private List<Course> buildCourseObjectsFromResultSet(ResultSet rs) throws SQLException {
+	private List<Course> buildCourseObjectsFromResultSet(ResultSet rs) 
+		throws SQLException {
+		
 		if(rs == null) {
 			return null;
 		}
@@ -1209,7 +1352,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return courses;
 	}
 	
-	private void buildCompetenciesForCourses(Connection conn, List<Course> courses) throws SQLException, DataException {
+	private void buildCompetenciesForCourses(Connection conn, 
+											 List<Course> courses) 
+		throws SQLException, DataException {
+
 //		String sqlToGetCompetencyIdsForCourse = "SELECT (competency_id) FROM COURSE_COMPETENCY WHERE course_id = %s";
 		String sql = "SELECT (contents) FROM COURSE_COMPETENCIES_WIKI WHERE course_id = %s";
 		for(Course course : courses) {
@@ -1221,17 +1367,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 
-	private void buildMentorsForCourses(Connection conn, List<Course> courses) throws SQLException {
+	private void buildMentorsForCourses(Connection conn, 
+										List<Course> courses) 
+		throws SQLException {
+		
 		String sqlToGetMentorIdsForCourse = Sql.RETREIVE_MENTORS_FOR_COURSE;
 		for(Course course : courses) {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, wrapForSQL(course.getId())));
+			ResultSet rs = 
+				stmt.executeQuery(String.format(sqlToGetMentorIdsForCourse, 
+												wrapForSQL(course.getId())));
 			
 			List<Mentor> mentors = new ArrayList<Mentor>();
 			while(rs.next()) {
 				int mentorUserid = rs.getInt("mentor_userid");
 				Statement stmt1 = conn.createStatement();
-				ResultSet mentorsResultSet = stmt1.executeQuery(String.format(Sql.RETREIVE_USER_META, mentorUserid));
+				ResultSet mentorsResultSet = 
+					stmt1.executeQuery(String.format(Sql.RETREIVE_USER_META, 
+													 mentorUserid));
 				while(mentorsResultSet.next()) {
 					String role = mentorsResultSet.getString("role");
 					Mentor mentor = new Mentor();
@@ -1243,7 +1396,9 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 						mentors.add(mentor);
 					}
 					else {
-						cLogger.warn("Found a user in COURSE_MENTOR table who is not a mentor " + mentorUserid);
+						String msg = "Found a user in COURSE_MENTOR table " +
+									 "who is not a mentor " + mentorUserid;
+						cLogger.warn(msg);
 					}
 				}
 			}
@@ -1262,17 +1417,24 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 
 	//TODO: course is being pased all round the place.... make safe
-	private List<Competency> buildCompetencyObjectsFromResultSet(Connection conn, Course course, ResultSet rs) throws SQLException, DataException {
+	private List<Competency> 
+		buildCompetencyObjectsFromResultSet(Connection conn, 
+											Course course, 
+											ResultSet rs) 
+		throws SQLException, DataException {
+		
 		if(rs == null) {
 			return null;
 		}
 		List<Competency> competencies = new ArrayList<Competency>();
 		if(rs.next()) {
 			String competencyWikiContents = rs.getString(1);
-			String competencyTitles[] = parseForCompetencyTitles(competencyWikiContents);
+			String competencyTitles[] = 
+				parseForCompetencyTitles(competencyWikiContents);
 			
 			for(String competencyTitle : competencyTitles) {
-				String sqlToFetchCompetency = "SELECT * FROM COMPETENCY WHERE COMPETENCY.course_id=%s AND COMPETENCY.title=%s";
+				String sqlToFetchCompetency = 
+					"SELECT * FROM COMPETENCY WHERE COMPETENCY.course_id=%s AND COMPETENCY.title=%s";
 				Statement stmt = conn.createStatement();
 				String finalSql = String.format(sqlToFetchCompetency, 
 												wrapForSQL(course.getId()),
@@ -1283,11 +1445,16 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 					String title = rsForCompetencies.getString(3);
 					String description = rsForCompetencies.getString(4);
 					String resource = rsForCompetencies.getString(5);
-					Competency competency = new Competency(id, title, description, resource);
+					Competency competency = new Competency(id, 
+														   title, 
+														   description, 
+														   resource);
 					competencies.add(competency);
 				}
 				else {
-					Competency competency = insertCompetency(conn, course, competencyTitle);
+					Competency competency = insertCompetency(conn, 
+															 course, 
+															 competencyTitle);
 					if(competency != null) {
 						competencies.add(competency);
 					}
@@ -1299,7 +1466,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 
 	private String[] parseForCompetencyTitles(String competencyWikiContents) {
 		List<String> titlesList = new ArrayList<String>();
-		BufferedReader bufferedReader = new BufferedReader(new StringReader(competencyWikiContents));
+		BufferedReader bufferedReader = 
+			new BufferedReader(new StringReader(competencyWikiContents));
 		String line = null;
 		try {
 			while((line = bufferedReader.readLine()) != null) {
@@ -1311,10 +1479,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		return titlesList.toArray(new String[titlesList.size()]);
 	}
 
-	private List<CourseEnrollmentStatus> getAllCourseEnrollmentStatuses(Connection conn) throws SQLException {
+	private List<CourseEnrollmentStatus> 
+		getAllCourseEnrollmentStatuses(Connection conn) 
+		throws SQLException {
+		
 		//TODO: Limit this query to 5 rows
 		String sql = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";
-		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
+		List<CourseEnrollmentStatus> statuses = 
+			new ArrayList<CourseEnrollmentStatus>();
 		
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
@@ -1324,7 +1496,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			int userid = rs.getInt("userid");
 			int userCourseStatusId = rs.getInt("course_enrollment_action_id");
 			Timestamp tstamp = rs.getTimestamp("tstamp");
-			statuses.add(new CourseEnrollmentStatus(courseId, userid, UserCourseStatus.getUserCourseStatus(userCourseStatusId), tstamp));
+			CourseEnrollmentStatus courseEnrollmentStatus = 
+				new CourseEnrollmentStatus(courseId, 
+										   userid, 
+										   UserCourseStatus.
+										   	getUserCourseStatus(userCourseStatusId), 
+										   						tstamp);
+			statuses.add(courseEnrollmentStatus);
 		}	
 		 
 		return statuses;
