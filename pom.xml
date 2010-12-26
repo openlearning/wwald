@@ -74,6 +74,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- EASYMOCK DEPENDENCY FOR TESTING -->
+		<dependency>
+    		<groupId>easymock</groupId>
+    		<artifactId>easymock</artifactId>
+    		<version>2.0</version>
+		</dependency>
+		
 		<!--  JETTY DEPENDENCIES FOR TESTING  -->
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>

@@ -52,6 +52,13 @@ CREATE TABLE COURSE_MENTORS (
 		CONSTRAINT course_mentors_col1_fk FOREIGN KEY (course_id) REFERENCES COURSE(id),
 		CONSTRAINT course_mentors_col2_fk FOREIGN KEY (mentor_userid) REFERENCES USER_META(userid));
 
+CREATE TABLE COURSE_ENROLLMENTS (
+	userid INTEGER NOT NULL,
+	course_id VARCHAR(16) NOT NULL,	
+	PRIMARY KEY(course_id, userid),		
+		CONSTRAINT course_enrollments_col1_fk FOREIGN KEY (userid) REFERENCES USER_META(userid),
+		CONSTRAINT course_enrollments_col2_fk FOREIGN KEY (course_id) REFERENCES COURSE(id));
+
 CREATE TABLE STATIC_PAGES (
 	id VARCHAR(32) NOT NULL PRIMARY KEY,	
 	contents LONGVARCHAR);

@@ -44,6 +44,13 @@ public class Sql {
 	public static String INSERT_COMPETENCY = "INSERT INTO COMPETENCY (id, course_id, title, description, resources) VALUES (%s,%s,%s,%s,%s);";
 	public static String UPDATE_COMPETENCY = "UPDATE COMPETENCY SET COMPETENCY.description=%s, COMPETENCY.resources=%s WHERE COMPETENCY.id=%s";
 	
+	public static String RETREIVE_ALL_COURSE_ENROLLMENTS = "SELECT * FROM COURSE_ENROLLMENTS;";
+	public static String RETREIVE_COURSE_ENROLLMENTS_BY_USER = "";
+	public static String RETREIVE_COURSE_ENROLLMENTS_BY_COURSE = "";
+	public static String RETREIVE_COURSE_ENROLLMENTS_BY_USER_AND_COURSE = "SELECT userid, course_id FROM COURSE_ENROLLMENTS WHERE userid=%s AND course_id=%s;";
+	public static String INSERT_COURSE_ENROLLMENT = "INSERT INTO COURSE_ENROLLMENTS VALUES (%s, %s)";
+	public static String DELETE_COURSE_ENROLLMENT = "DELETE FROM COURSE_ENROLLMENTS WHERE userid=%s AND course_id=%s;";
+	
 	public static String INSERT_COURSE_ENROLLMENT_STATUS = "INSERT INTO COURSE_ENROLLMENT_ACTIONS VALUES (%s, %s, %s, %s);";
 	public static String RETREIVE_COURSE_ENROLLMENT_STATUS = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS WHERE course_id=%s AND userid=%s ORDER BY tstamp DESC;";
 	public static String RETREIVE_ALL_COURSE_ENROLLMENT_STATUSES = "SELECT * FROM COURSE_ENROLLMENT_ACTIONS;";

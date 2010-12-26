@@ -19,7 +19,6 @@ import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.wwald.model.UserMeta.LoginVia;
 import org.wwald.service.DataException;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.Sql;
@@ -28,21 +27,12 @@ import org.wwald.view.UserForm;
 
 import util.DataInitializer;
 import util.TestObjectsRepository;
-import util.UsersFileParser.UserUserMeta;
 
 public class DataFacadeRDBMSImplTest {
 
 	private DataFacadeRDBMSImpl dataFacade;
 	private Connection conn;
 	public static final String DATABASE_ID = "localhost";
-
-	static {
-		try {
-			//ClassPathUpdater.add( "~/tmp/wwaldtestdata" );
-		} catch( Exception e ) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Before
 	public void setUp() throws Exception {
@@ -158,7 +148,7 @@ public class DataFacadeRDBMSImplTest {
 	}
 	
 	@Test
-	public void testUpdateCoursesWiki() throws Exception {
+	public void testUpdateCourseWiki() throws Exception {
 		String newCoursesWiki = "NC | New Course Title";
 		this.dataFacade.updateCourseWiki(this.conn, newCoursesWiki);
 		String retreiveCoursesWikiSql = Sql.RETREIVE_COURSES_WIKI;
@@ -187,70 +177,142 @@ public class DataFacadeRDBMSImplTest {
 	}
 	
 	@Test
-	public void testGetCourseEnrollmentStatusWhenNotEnrolled() throws Exception {
-		UserMeta userMeta = 
-			TestObjectsRepository.
-				getInstance().getUserUserMeta("dvidakovich").userMeta;
+	public void testAddCourseEnrollment() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
 		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
-		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(conn, userMeta, course);
-		assertNotNull(courseEnrollmentStatus);
-		assertEquals(UserCourseStatus.UNENROLLED, 
-					 courseEnrollmentStatus.getUserCourseStatus());
+		this.dataFacade.insertCourseEnrollment(this.conn, user, course);
+		
+		//retrieve and test
+		String sql = String.format(Sql.RETREIVE_COURSE_ENROLLMENTS_BY_USER_AND_COURSE, 
+								   user.getUserid(),
+								   DataInitializer.wrapForSQL(course.getId()));
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		rs.next();
+		int retrievedUserid = rs.getInt("userid");
+		String courseId = rs.getString("course_id");
+		
+		assertEquals(user.getUserid(), retrievedUserid);
+		assertEquals(course.getId(), courseId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testAddCourseEnrollmentWithNullConn() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.insertCourseEnrollment(null, user, course);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testAddCourseEnrollmentWithNullUserMeta() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.insertCourseEnrollment(this.conn, null, course);
 	}
 	
 	@Test
-	public void testGetCourseEnrollmentStatusWhenEnrolled() throws Exception {
-		//create some test objects
-		UserMeta userMeta = 
-			TestObjectsRepository.
-				getInstance().getUserUserMeta("dvidakovich").userMeta;
+	public void testDeleteCourseEnrollment_WhenEnrolled() throws Exception {
+		//first insert a course enrollment
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
 		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.insertCourseEnrollment(this.conn, user, course);
 		
-		Timestamp timestamp = new Timestamp((new Date()).getTime());
+		//call api to delete the course enrollment
+		this.dataFacade.deleteCourseEnrollment(this.conn, user, course);
 		
-		//insert course enrollment status for the test objects
+		//retrieve and verify
+		
 		String sql = 
-			String.format(Sql.INSERT_COURSE_ENROLLMENT_STATUS,
-						  DataInitializer.wrapForSQL(course.getId()),
-						  userMeta.getUserid(),
-						  UserCourseStatus.ENROLLED.getId(),
-						  DataInitializer.wrapForSQL(timestamp.toString()));
-		Statement stmt = conn.createStatement();
-		stmt.executeUpdate(sql);
+			String.format(Sql.RETREIVE_COURSE_ENROLLMENTS_BY_USER_AND_COURSE, 
+						  user.getUserid(),
+						  DataInitializer.wrapForSQL(course.getId()));
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		//We should not have any records in the ResultSet
+		assertEquals(false, rs.next());
+	}
+	
+	@Test
+	public void testDeleteCourseEnrollment_WhenNotEnrolled() throws Exception {
+		//call api to delete the course enrollment
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.deleteCourseEnrollment(this.conn, user, course);
+		//we do not expect anything to happen, just verifying that an
+		//Exception is not thrown
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testDeleteCourseEnrollmentWithNullConn() throws Exception {
+		//call api to delete the course enrollment
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.deleteCourseEnrollment(null, user, course);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testDeleteCourseEnrollmentWithNullUserMeta() throws Exception {
+		//call api to delete the course enrollment
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.deleteCourseEnrollment(this.conn, null, course);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testDeleteCourseEnrollmentWithNullCourse() throws Exception {
+		//call api to delete the course enrollment
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.deleteCourseEnrollment(this.conn, user, null);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testAddCourseEnrollmentWithNullCourse() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.insertCourseEnrollment(this.conn, user, null);
+	}
+	
+	@Test
+	public void testCheckEnrollmentByUserMetaAndCourse_WhenNotEnrolled() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		boolean enrolled = this.dataFacade.checkEnrollmentByUserMetaAndCourse(this.conn, user, course);
+		assertEquals(false, enrolled);
+	}
+	
+	@Test
+	public void testCheckEnrollmentByUserMetaAndCourse_WhenEnrolled() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		this.dataFacade.insertCourseEnrollment(this.conn, user, course);
 		
-		//retreive and verify course enrollment status
-		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(conn, userMeta, course);
-		assertNotNull(courseEnrollmentStatus);
-		assertEquals(UserCourseStatus.ENROLLED, 
-					 courseEnrollmentStatus.getUserCourseStatus());
+		boolean enrolled = this.dataFacade.checkEnrollmentByUserMetaAndCourse(this.conn, user, course);
+		assertEquals(true, enrolled);
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testGetCourseEnrollmentStatusForNullConnection() throws Exception {
-		UserMeta userMeta = 
-			TestObjectsRepository.
-				getInstance().getUserUserMeta("dvidakovich").userMeta;
+	public void testCheckEnrollmentByUserMetaAndCourseWithNullConn() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
 		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
-		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(null, userMeta, course);
+		boolean enrolled = this.dataFacade.checkEnrollmentByUserMetaAndCourse(null, user, course);
+		assertEquals(false, enrolled);
 	}
 	
 	@Test(expected=NullPointerException.class)
-	public void testGetCourseEnrollmentStatusForNullUser() throws Exception {
+	public void testCheckEnrollmentByUserMetaAndCourseWithNullUserMeta() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
 		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
-		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(this.conn, null, course);
+		boolean enrolled = this.dataFacade.checkEnrollmentByUserMetaAndCourse(this.conn, null, course);
+		assertEquals(false, enrolled);
 	}
-	
+
 	@Test(expected=NullPointerException.class)
-	public void testGetCourseEnrollmentStatusForNullCourse() throws Exception {
-		UserMeta userMeta = 
-			TestObjectsRepository.
-				getInstance().getUserUserMeta("dvidakovich").userMeta;
-		CourseEnrollmentStatus courseEnrollmentStatus = 
-			this.dataFacade.getCourseEnrollmentStatus(this.conn, userMeta, null);
+	public void testCheckEnrollmentByUserMetaAndCourseWithNullCourse() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Course course = TestObjectsRepository.getInstance().getCourse("Physics");
+		boolean enrolled = this.dataFacade.checkEnrollmentByUserMetaAndCourse(this.conn, user, null);
+		assertEquals(false, enrolled);
 	}
 	
 	@Test

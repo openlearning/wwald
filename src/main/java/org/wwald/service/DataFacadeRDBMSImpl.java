@@ -29,6 +29,8 @@ import org.wwald.util.CompetencyUniqueIdGenerator;
 import org.wwald.view.UserForm;
 import org.wwald.view.UserForm.Field;
 
+import util.DataInitializer;
+
 /**
  * This class implements the {@link IDataFacade} interface with an RDBMS
  * database. The code talks to the database through the JDBC interface.
@@ -208,55 +210,118 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 	}
 	
-	
 	/**
-	 * @see org.wwald.service.IDataFacade#getCourseEnrollmentStatus(Connection, UserMeta, Course)
+	 * @see org.wwald.service.IDataFacade#insertCourseEnrollment(Connection, UserMeta, Course)
 	 */
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection conn, 
-															UserMeta userMeta, 
-															Course course) 
-		throws DataException {
+	public void insertCourseEnrollment(Connection conn,
+									UserMeta userMeta, 
+									Course course) throws 
+		DataException {
 		
-		String sqlTemplate = Sql.RETREIVE_COURSE_ENROLLMENT_STATUS;
-		String sql = String.format(sqlTemplate,
-								   wrapForSQL(course.getId()),
-								   userMeta.getUserid());
-		List<CourseEnrollmentStatus> statuses = new ArrayList<CourseEnrollmentStatus>();
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(userMeta == null) {
+			String msg = "userMeta cannot be null";
+			throw new NullPointerException(msg);
+		}
+		if(course == null) {
+			String msg = "course cannot be null";
+			throw new NullPointerException(msg);
+		}
+		
+		String sql = String.format(Sql.INSERT_COURSE_ENROLLMENT,
+								   userMeta.getUserid(),
+								   DataInitializer.wrapForSQL(course.getId()));
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
-			
-			while(rs.next()) {
-				String courseId = rs.getString("course_id");
-				int userid = rs.getInt("userid");
-				int userCourseStatusId = rs.getInt("course_enrollment_action_id");
-				Timestamp tstamp = rs.getTimestamp("tstamp");
-				CourseEnrollmentStatus courseEnrollmentStatus = 
-					new CourseEnrollmentStatus(courseId, 
-							userid, 
-							UserCourseStatus.getUserCourseStatus(userCourseStatusId), 
-							tstamp);
-				statuses.add(courseEnrollmentStatus);
-			}
-			
+			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
-			String msg = "Could not get course enrollment status for course_id " + 
-						 course.getId() + " userid " + userMeta.getUserid();
+			String msg = "Could not insert course enrollment '" + 
+						 userMeta.getUserid() + "' '" + 
+						 course.getId();
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
-		if(statuses.size() > 0) {
-			Collections.sort(statuses, 
-							 CourseEnrollmentStatus.getTimestampComparator());
-			return statuses.get(statuses.size()-1);
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#deleteCourseEnrollment(Connection, UserMeta, Course)
+	 */
+	public void deleteCourseEnrollment(Connection conn, 
+			   						   UserMeta userMeta, 
+			   						   Course course) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
 		}
-		else {
-			return new CourseEnrollmentStatus(course.getId(), 
-											  userMeta.getUserid(), 
-											  UserCourseStatus.UNENROLLED, 
-											  null);
+		if(userMeta == null) {
+			String msg = "userMeta cannot be null";
+			throw new NullPointerException(msg);
+		}
+		if(course == null) {
+			String msg = "course cannot be null";
+			throw new NullPointerException(msg);
+		}
+		
+		String sql = String.format(Sql.DELETE_COURSE_ENROLLMENT,
+								   userMeta.getUserid(),
+								   DataInitializer.wrapForSQL(course.getId()));
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not delete enrollment of user '" + 
+						 userMeta.getUserid() + 
+						 "' from course '" + 
+						 course.getId() + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
 		}
 	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#checkEnrollmentByUserMetaAndCourse(Connection, UserMeta, Course)
+	 */
+	public boolean checkEnrollmentByUserMetaAndCourse(Connection conn, 
+			  										  UserMeta userMeta, 
+			  										  Course course) 	
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(userMeta == null) {
+			String msg = "userMeta cannot be null";
+			throw new NullPointerException(msg);
+		}
+		if(course == null) {
+			String msg = "course cannot be null";
+			throw new NullPointerException(msg);
+		}
+		
+		boolean retVal = false;
+		try {
+			String sql = 
+				String.format(Sql.RETREIVE_COURSE_ENROLLMENTS_BY_USER_AND_COURSE,
+							  userMeta.getUserid(),
+							  DataInitializer.wrapForSQL(course.getId()));
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				retVal = true;
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not check enrollment in course '" + 
+						 course.getId() + "' of user '" + 
+						 userMeta.getUserid() + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return retVal;
+	}
+	
 		
 	/**
 	 * @see org.wwald.service.IDataFacade#addCourseEnrollmentAction(Connection, CourseEnrollmentStatus)

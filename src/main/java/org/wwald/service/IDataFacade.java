@@ -97,28 +97,62 @@ public interface IDataFacade {
 	 * @param conn The database connection
 	 * @param wikiContents The wiki contents
 	 * @throws NullPointerException if conn, or wikiContents are null
-	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * @throws DataException If the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
 	 */
 	public void updateCourseWiki(Connection c, 
 								 String wikiContents) 
 		throws DataException;
 	
+	
 	/**
-	 * Retrieves the enrollment status for the specified course and user
+	 * Adds the specified course as a course enrolled for the specified user
 	 * @param conn The database connection
-	 * @param userMeta The userMeta object for the user whose enrollment status
-	 * we want to retrieve
-	 * @param course The course for which we want the enrollment status
-	 * @throws NullPointerException if conn, userMeta, or course is null
-	 * @throws DataException if the jdbc code throws a SqlException. The 
+	 * @param userMeta The user
+	 * @param course The course
+	 * @throws NullPointerException If either conn, userMeta, or course are null 
+	 * @throws DataException If the jdbc code throws a SqlException. The 
 	 * SQLException is wrapped in the DataException
-	 * @return The {@link CourseEnrollmentStatus} object
 	 */
-	public CourseEnrollmentStatus getCourseEnrollmentStatus(Connection c, 
-															UserMeta userMeta, 
-															Course course) 
+	public void insertCourseEnrollment(Connection conn,
+									   UserMeta userMeta, 
+									   Course course)
+	    throws DataException;
+	
+	
+	/**
+	 * Deletes the enrollment of the specified {@link UserMeta} from the 
+	 * specified {@link Course}. If the user is not enrolled for the course
+	 * then no action will be taken. 
+	 * @param conn The database connection
+	 * @param userMeta The user
+	 * @param course The course
+	 * @throws NullPointerException If either conn, userMeta, or course are null 
+	 * @throws DataException If the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
+	public void deleteCourseEnrollment(Connection conn, 
+									   UserMeta userMeta, 
+									   Course course) 
 		throws DataException;
+	
+	
+	/**
+	 * Verified if the specified user is enrolled in the specified course
+	 * @param conn The database connection 
+	 * @param userMeta The specified user
+	 * @param course The specified course
+	 * @return true if the user is enrolled for the specified course, false 
+	 * otherwise
+	 * @throws NullPointerException If either conn, userMeta, or course are null
+	 * @throws DataException If the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
+	public boolean checkEnrollmentByUserMetaAndCourse(Connection conn, 
+													  UserMeta userMeta, 
+													  Course course) 
+		throws DataException;
+	
 	
 	/**
 	 * Adds a course enrollment action in the database. A course enrollment
