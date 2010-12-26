@@ -47,7 +47,7 @@ public class HeaderPanel extends Panel {
 		Link registerLink = new BookmarkablePageLink(WicketIdConstants.REGISTER_LINK, Register.class);
 		Label registerLabel = new Label(WicketIdConstants.REGISTER_LABEL, "Register .");
 		registerLink.add(registerLabel);
-		add(registerLink);
+		//add(registerLink);
 		
 		Link profileLink = new AccessControlledViewPageLink(WicketIdConstants.PROFILE_LINK, ProfilePage.class, new Role[]{Role.ADMIN, Role.STUDENT, Role.MENTOR});
 		Label profileLabel = new Label(WicketIdConstants.PROFILE_LABEL, "Profile .");
@@ -69,7 +69,7 @@ public class HeaderPanel extends Panel {
 		
 		if(userLoggedIn()) {
 			loginLink.setVisible(false);
-			registerLink.setVisible(false);
+//			registerLink.setVisible(false);
 		}
 		else {
 			logoutLink.setVisible(false);

@@ -85,7 +85,7 @@ public class WWALDApplication extends WebApplication
 	public void init() {
 		mountBookmarkablePage("courses", CoursePage.class);
 		mountBookmarkablePage("login", LoginPage.class);
-		mountBookmarkablePage("register", Register.class);
+//		mountBookmarkablePage("register", Register.class);
 		mountBookmarkablePage("users", UserProfiles.class);
 		mountBookmarkablePage("static", StaticPage.class);
 		mountBookmarkablePage("callback", CallbackHandlerPage.class);
