@@ -29,7 +29,6 @@ import org.wwald.util.CompetencyUniqueIdGenerator;
 import org.wwald.view.UserForm;
 import org.wwald.view.UserForm.Field;
 
-import util.DataInitializer;
 
 /**
  * This class implements the {@link IDataFacade} interface with an RDBMS
@@ -232,7 +231,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 		String sql = String.format(Sql.INSERT_COURSE_ENROLLMENT,
 								   userMeta.getUserid(),
-								   DataInitializer.wrapForSQL(course.getId()));
+								   wrapForSQL(course.getId()));
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -267,7 +266,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		
 		String sql = String.format(Sql.DELETE_COURSE_ENROLLMENT,
 								   userMeta.getUserid(),
-								   DataInitializer.wrapForSQL(course.getId()));
+								   wrapForSQL(course.getId()));
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -306,7 +305,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String sql = 
 				String.format(Sql.RETREIVE_COURSE_ENROLLMENTS_BY_USER_AND_COURSE,
 							  userMeta.getUserid(),
-							  DataInitializer.wrapForSQL(course.getId()));
+							  wrapForSQL(course.getId()));
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {

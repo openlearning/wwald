@@ -17,8 +17,6 @@ import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.model.UserMeta;
 
-import util.DataInitializer;
-
 public class ApplicationFacade {
 	
 	private IDataFacade dataFacade;
@@ -192,7 +190,7 @@ public class ApplicationFacade {
 		String sql = 
 			String.format(Sql.RETREIVE_COURSE_ENROLLMENTS_BY_USER_AND_COURSE, 
 						  userMeta.getUserid(), 
-						  DataInitializer.wrapForSQL(course.getId()));
+						  DataFacadeRDBMSImpl.wrapForSQL(course.getId()));
 		try {
 			Connection conn = ConnectionPool.getConnection(databaseId);
 			Statement stmt = conn.createStatement();
