@@ -59,7 +59,7 @@ public class CourseStatusPanel extends Panel implements Serializable {
 									ServletWebRequest request = (ServletWebRequest)getRequest();
 									String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
 									String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
-									appFacade.enrollInCourse(userMeta, course, databaseId);
+									appFacade.enrollInCourse(userMeta, course, ConnectionPool.getConnection(databaseId));
 								} catch(ApplicationException ae) {
 									String msg = "Sorry we could not enroll you in the course due to an internal error. " +
 												 "We will look into this problem as soon as we can.";
@@ -100,7 +100,7 @@ public class CourseStatusPanel extends Panel implements Serializable {
 									ServletWebRequest request = (ServletWebRequest)getRequest();
 									String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
 									String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
-									appFacade.dropCourse(userMeta, course, databaseId);
+									appFacade.dropCourse(userMeta, course, ConnectionPool.getConnection(databaseId));
 								} catch(ApplicationException ae) {
 									String msg = "Sorry we could not drop you from the course due to an internal error. " +
 									 			 "We will look into this problem as soon as we can.";
@@ -158,7 +158,7 @@ public class CourseStatusPanel extends Panel implements Serializable {
 		WWALDApplication app = (WWALDApplication)getApplication();
 		ApplicationFacade appFacade = app.getApplicationFacade();
 		String databaseId = ConnectionPool.getDatabaseIdFromRequest((ServletWebRequest)getRequest());
-		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(userMeta, course, databaseId);
+		UserCourseStatus userCourseStatus = appFacade.getUserCourseStatus(userMeta, course, ConnectionPool.getConnection(databaseId));
 		//TODO: Can we use a map here instead of multiple if...else???
 		if(UserCourseStatus.UNENROLLED.equals(userCourseStatus) || 
 		   UserCourseStatus.DROPPED.equals(userCourseStatus)) {

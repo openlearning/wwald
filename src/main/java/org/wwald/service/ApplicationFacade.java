@@ -8,7 +8,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.jasypt.util.password.BasicPasswordEncryptor;
+import org.apache.wicket.Session;
+import org.jasypt.util.password.PasswordEncryptor;
 import org.wwald.WWALDSession;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
@@ -27,22 +28,32 @@ public class ApplicationFacade {
 		this.dataFacade = dataFacade;
 	}
 	
-	public UserMeta login(String username, String password, String databaseId) throws ApplicationException{
+	public UserMeta login(String username, 
+						  String password, 
+						  Connection conn,
+						  PasswordEncryptor passwordEncryptor) 
+		throws ApplicationException {
+		
 		User user = null;
 		UserMeta userMeta = null;
 		try {
 			cLogger.info("Trying to login user '" + username + "'");
-			String passwordInDb = dataFacade.retreivePassword(ConnectionPool.getConnection(databaseId), username);
-			BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
-			if(passwordInDb != null && passwordEncryptor.checkPassword(password, passwordInDb)) {
-				user = dataFacade.retreiveUserByUsername(ConnectionPool.getConnection(databaseId), username);
+			
+			String passwordInDb = 
+				dataFacade.retreivePassword(conn, username);
+			
+			if(passwordInDb != null && 
+					passwordEncryptor.checkPassword(password, passwordInDb)) {
+				user = 
+					dataFacade.retreiveUserByUsername(conn, username);
 				if(user == null) {
-					cLogger.error("THIS SHOULD NEVER HAPPEN. COULD GET PASSWORD BUT COULD NOT GET USER OBJECT");
+					cLogger.error("THIS SHOULD NEVER HAPPEN. COULD GET PASSWORD " +
+								  "BUT COULD NOT GET USER OBJECT");
 				}
 				cLogger.info("User " + username + " logged in succesully");
 				userMeta = 
 					dataFacade.
-						retreiveUserMetaByIdentifierLoginVia(ConnectionPool.getConnection(databaseId), 
+						retreiveUserMetaByIdentifierLoginVia(conn, 
 														 	 user.getUsername(), 
 														 	 UserMeta.LoginVia.INTERNAL);
 			}
@@ -57,24 +68,14 @@ public class ApplicationFacade {
 		return userMeta; 
 	}
 	
-	public void logout() {
-		UserMeta userMeta = WWALDSession.get().getUserMeta();
-		String msg = "Logging out user ";
-		if(userMeta != null) {
-			msg += userMeta.getIdentifier();
-		}
-		cLogger.info(msg);
-		WWALDSession.get().invalidateNow();
-	}
-	
 	public void enrollInCourse(UserMeta user, 
 							   Course course, 
-							   String databaseId) 
+							   Connection conn) 
 		throws ApplicationException {
 		
 		try {
 			UserCourseStatus userCourseStatus = 
-				getUserCourseStatus(user, course, databaseId);
+				getUserCourseStatus(user, course, conn);
 			if(!userCourseStatus.equals(UserCourseStatus.ENROLLED)) {
 				//update the UserCourseStatus
 				CourseEnrollmentStatus courseEnrollmentStatus = 
@@ -84,8 +85,7 @@ public class ApplicationFacade {
 											   new Timestamp((new Date()).getTime()));
 				this.
 					dataFacade.
-						addCourseEnrollmentAction(ConnectionPool.getConnection(databaseId), 
-												  courseEnrollmentStatus);
+						addCourseEnrollmentAction(conn, courseEnrollmentStatus);
 				
 				//TODO: Audit point because step 1 of a 2 step action is done
 				String msg1 = "'" + user.getUserid() + 
@@ -96,9 +96,7 @@ public class ApplicationFacade {
 				
 				//add entry in COURSE_ENROLLMENTS table
 				this.dataFacade.
-					insertCourseEnrollment(ConnectionPool.getConnection(databaseId), 
-										   user, 
-										   course);
+					insertCourseEnrollment(conn, user, course);
 				
 				//TODO: Audit point
 				String msg2 = "'" + user.getUserid() + 
@@ -125,13 +123,13 @@ public class ApplicationFacade {
 	
 	public void dropCourse(UserMeta userMeta, 
 						   Course course, 
-						   String databaseId) 
+						   Connection conn) 
 		throws ApplicationException {
 		
 		try {
 			//add course enrollment status for status updates
 			UserCourseStatus userCourseStatus = 
-				getUserCourseStatus(userMeta, course, databaseId);
+				getUserCourseStatus(userMeta, course, conn);
 			
 			if(userCourseStatus.equals(UserCourseStatus.ENROLLED)) {
 				CourseEnrollmentStatus courseEnrollmentStatus = 
@@ -141,7 +139,7 @@ public class ApplicationFacade {
 											   new Timestamp((new Date()).getTime()));
 				
 				this.dataFacade.
-					addCourseEnrollmentAction(ConnectionPool.getConnection(databaseId), 
+					addCourseEnrollmentAction(conn, 
 											  courseEnrollmentStatus);
 				
 				//TODO: Add audit point for step 1 of this 2 step action
@@ -153,9 +151,7 @@ public class ApplicationFacade {
 				
 				//now delete row from course_enrollment table
 				this.dataFacade.
-					deleteCourseEnrollment(ConnectionPool.getConnection(databaseId), 
-										   userMeta, 
-										   course);
+					deleteCourseEnrollment(conn, userMeta, course);
 				
 				//TODO: Add audit point for step 2 of this 2 step action
 				String msg2 = "Dropping user '" + userMeta.getUserid() + 
@@ -180,9 +176,10 @@ public class ApplicationFacade {
 		}
 	}
 	
+	//TODO: This method is not tested... also can we refactor this so we go through DataFacade and not directly to the database
 	public UserCourseStatus getUserCourseStatus(UserMeta userMeta, 
 												Course course, 
-												String databaseId) 
+												Connection conn) 
 		throws DataException {
 		
 		UserCourseStatus retVal = UserCourseStatus.UNENROLLED;
@@ -192,7 +189,6 @@ public class ApplicationFacade {
 						  userMeta.getUserid(), 
 						  DataFacadeRDBMSImpl.wrapForSQL(course.getId()));
 		try {
-			Connection conn = ConnectionPool.getConnection(databaseId);
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {

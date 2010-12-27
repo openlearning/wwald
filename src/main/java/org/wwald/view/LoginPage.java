@@ -12,7 +12,7 @@ import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
-import org.wwald.model.User;
+import org.wwald.model.ConnectionPool;
 import org.wwald.model.UserMeta;
 import org.wwald.service.ApplicationException;
 
@@ -40,7 +40,11 @@ public class LoginPage extends BasePage {
 					
 					UserMeta userMeta = 
 						((WWALDApplication)getApplication()).
-							getApplicationFacade().login(username, password, getDatabaseId());
+							getApplicationFacade().
+								login(username, 
+									  password, 
+									  ConnectionPool.getConnection(getDatabaseId()),
+									  new BasicPasswordEncryptor());
 					
 					
 					WWALDSession.get().setUserMeta(userMeta);

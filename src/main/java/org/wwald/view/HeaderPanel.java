@@ -2,6 +2,7 @@ package org.wwald.view;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -22,6 +23,8 @@ import org.wwald.util.WWALDProperties;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
 public class HeaderPanel extends Panel {
+	
+	private static final Logger cLogger = Logger.getLogger(HeaderPanel.class);
 	public HeaderPanel(String id) {
 		super(id);
 				
@@ -57,7 +60,13 @@ public class HeaderPanel extends Panel {
 		Link logoutLink = new Link(WicketIdConstants.LOGOUT_LINK) {
 			@Override
 			public void onClick() {
-				((WWALDApplication)getApplication()).getApplicationFacade().logout();
+				UserMeta userMeta = WWALDSession.get().getUserMeta();
+				String msg = "Logging out user ";
+				if(userMeta != null) {
+					msg += userMeta.getIdentifier();
+				}
+				cLogger.info(msg);
+				WWALDSession.get().invalidateNow();
 				setResponsePage(HomePage.class);
 			}
 		};
