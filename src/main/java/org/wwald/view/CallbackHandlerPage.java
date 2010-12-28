@@ -10,6 +10,8 @@ import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
+import org.wwald.util.LoggingFilter;
+import org.wwald.util.LoginLogger;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -28,8 +30,8 @@ public class CallbackHandlerPage extends BasePage {
 		try {
 			AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 			WWALDSession.get().setRequestToken(null);
-			String screenName = accessToken.getScreenName();
-			cLogger.info("User logged in with Twitter '" + screenName + "', '" + accessToken.getUserId() + "'");
+			String screenName = accessToken.getScreenName();			
+			LoginLogger.successfullLogin(screenName, UserMeta.LoginVia.TWITTER, WWALDSession.get().getId());
 			
 			String databaseId = getDatabaseId();
 			IDataFacade dataFacade = WWALDApplication.get().getDataFacade();

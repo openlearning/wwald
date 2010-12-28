@@ -15,6 +15,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.UserMeta;
 import org.wwald.service.ApplicationException;
+import org.wwald.util.LoginLogger;
 
 public class LoginPage extends BasePage {
 
@@ -49,9 +50,11 @@ public class LoginPage extends BasePage {
 					
 					WWALDSession.get().setUserMeta(userMeta);
 					if(userMeta != null) {
+						LoginLogger.successfullLogin(userMeta.getIdentifier(), UserMeta.LoginVia.INTERNAL, WWALDSession.get().getId());
 						setResponsePage(HomePage.class);
 					}
 					else {
+						LoginLogger.unsuccessfullLoginInternal(username);
 						parameters.add(WicketIdConstants.MESSAGES, 
 									   "Incorrect username or password, please try again.");
 						setResponsePage(LoginPage.class, parameters);
