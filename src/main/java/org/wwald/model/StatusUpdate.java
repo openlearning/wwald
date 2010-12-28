@@ -35,6 +35,10 @@ public class StatusUpdate implements Serializable {
 			   " course " + this.courseId;
 	}
 	
+	public String getShortText() {
+		return this.enrollmentStatus + " course ";
+	}
+	
 	public void setUserMeta(UserMeta userMeta) {
 		this.userMeta = userMeta;
 	}

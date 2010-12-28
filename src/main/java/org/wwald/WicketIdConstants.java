@@ -40,7 +40,13 @@ public class WicketIdConstants {
 	
 	public static final String STATUS_UPDATES_PANEL = "status_updates_panel";
 	public static final String STATUS_UPDATES = "status_updates";
+	public static final String A_STATUS_UPDATE = "a_status_update";
+	public static final String STATUS_UPDATE_DATE = "status_update_date";
+	public static final String STATUS_UPDATE_USER_LINK = "status_update_user_link";
+	public static final String STATUS_UPDATE_USER = "status_update_user";
 	public static final String STATUS_UPDATE_TEXT = "status_update_text";
+	public static final String STATUS_UPDATE_COURSE_LINK = "status_update_course_link";
+	public static final String STATUS_UPDATE_COURSE_LABEL = "status_update_course";
 	
 	public static final String RHS_SIDEBAR = "rhs_sidebar";
 	

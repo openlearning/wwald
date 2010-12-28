@@ -14,6 +14,14 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.StatusUpdate;
 import org.wwald.service.DataException;
 
+/**
+ * This {@link Panel} displays various status updates which have happened in the
+ * social learning environment.
+ * At the moment it only displays course enrollments and course drops
+ * 
+ * @author pshah
+ *
+ */
 public class StatusUpdatesPanel extends Panel {
 
 	public StatusUpdatesPanel(String id) {
@@ -27,18 +35,42 @@ public class StatusUpdatesPanel extends Panel {
 		}
 	}
 	
+//	private ListView getStatusUpdateListView() throws DataException {
+//		ServletWebRequest request = (ServletWebRequest)getRequest();
+//		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
+//		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+//		List<StatusUpdate> statusUpdates = ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection(databaseId));
+//    	return
+//    	new ListView(WicketIdConstants.STATUS_UPDATES, statusUpdates) {
+//
+//			@Override
+//			protected void populateItem(ListItem item) {
+//				StatusUpdate statusUpdate = (StatusUpdate)item.getModelObject();
+//				item.add(new Label(WicketIdConstants.STATUS_UPDATE_TEXT, statusUpdate.getText()));
+//			}
+//    		
+//    	};
+//    }
+	
 	private ListView getStatusUpdateListView() throws DataException {
 		ServletWebRequest request = (ServletWebRequest)getRequest();
 		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
 		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
-		List<StatusUpdate> statusUpdates = ((WWALDApplication)getApplication()).getDataFacade().getStatusUpdates(ConnectionPool.getConnection(databaseId));
+		List<StatusUpdate> statusUpdates = 
+			((WWALDApplication)getApplication()).
+				getDataFacade().
+					getStatusUpdates(ConnectionPool.getConnection(databaseId));
     	return
     	new ListView(WicketIdConstants.STATUS_UPDATES, statusUpdates) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				StatusUpdate statusUpdate = (StatusUpdate)item.getModelObject();
-				item.add(new Label(WicketIdConstants.STATUS_UPDATE_TEXT, statusUpdate.getText()));
+//				item.add(new Label(WicketIdConstants.STATUS_UPDATE_TEXT, statusUpdate.getText()));
+				StatusUpdatePanel statusUpdatePanel = 
+					new StatusUpdatePanel(WicketIdConstants.A_STATUS_UPDATE, 
+										  statusUpdate);
+				item.add(statusUpdatePanel);
 			}
     		
     	};
