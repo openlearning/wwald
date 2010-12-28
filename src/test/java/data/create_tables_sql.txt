@@ -65,23 +65,51 @@ CREATE TABLE STATIC_PAGES (
 	
 CREATE TABLE DISCUSSION (
 	id VARCHAR(64) PRIMARY KEY,
-	title VARCHAR(128));
+	title VARCHAR(256),
+	description LONGVARCHAR);
 	
 CREATE TABLE QUESTION (
-	discussion_id VARCHAR(64),
-	id INTEGER,
+	id IDENTITY,
+	discussion_id VARCHAR(64),	
 	title VARCHAR (128),
 	contents LONGVARCHAR,
-	PRIMARY KEY(discussion_id, id),
 		CONSTRAINT question_col1_fk FOREIGN KEY (discussion_id) REFERENCES DISCUSSION(id));
 
 CREATE TABLE ANSWER (
-	discussion_id VARCHAR(64),
-	question_id INTEGER,
-	id INTEGER,
+	id IDENTITY,
+	question_id INTEGER,	
 	contents LONGVARCHAR,
-	PRIMARY KEY(discussion_id, question_id, id),
-		CONSTRAINT answer_fk FOREIGN KEY (discussion_id, question_id) REFERENCES QUESTION(discussion_id, id));
+		CONSTRAINT answer_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
+
+CREATE TABLE QUESTION_TAGS (
+	id IDENTITY,
+	question_id INTEGER,
+	tag VARCHAR(128),
+		CONSTRAINT question_tags_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
+	
+CREATE TABLE QUESTION_LIKES (
+	question_id INTEGER PRIMARY KEY,
+	likes INTEGER,
+		CONSTRAINT question_likes_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
+		
+CREATE TABLE QUESTION_USER_LIKES (
+	question_id INTEGER,
+	userid INTEGER,
+	PRIMARY KEY(question_id, userid),
+		CONSTRAINT question_user_likes_col1_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id),
+		CONSTRAINT question_user_likes_col2_fk FOREIGN KEY (userid) REFERENCES USER_META(userid));
+		
+CREATE TABLE ANSWER_LIKES (
+	answer_id INTEGER PRIMARY KEY,
+	likes INTEGER,
+		CONSTRAINT answer_likes_fk FOREIGN KEY (answer_id) REFERENCES ANSWER(id));
+		
+CREATE TABLE ANSWER_USER_LIKES (
+	answer_id INTEGER,
+	userid INTEGER,
+	PRIMARY KEY(answer_id, userid),
+		CONSTRAINT answer_user_likes_col1_fk FOREIGN KEY (answer_id) REFERENCES ANSWER(id),
+		CONSTRAINT answer_user_likes_col2_fk FOREIGN KEY (userid) REFERENCES USER_META(userid));
 
 CREATE TABLE KVTABLE (
 	k VARCHAR(64) NOT NULL PRIMARY KEY,
