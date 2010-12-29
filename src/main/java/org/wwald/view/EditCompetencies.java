@@ -9,7 +9,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.wwald.WWALDApplication;
@@ -50,10 +49,15 @@ public class EditCompetencies extends AccessControlledPage {
 
 					TextArea courseDescriptionTextArea = (TextArea)get(1);
 					course.setDescription((String)courseDescriptionTextArea.getModelObject());
-					((WWALDApplication)getApplication()).getDataFacade().updateCourse(conn, course);
+					((WWALDApplication)getApplication()).
+						getDataFacade().updateCourse(conn, course);
 															
 					TextArea competenciesListTextArea = (TextArea)get(2);					
-					((WWALDApplication)getApplication()).getDataFacade().updateCompetenciesWikiContents(ConnectionPool.getConnection(getDatabaseId()), course.getId(), (String)competenciesListTextArea.getModelObject());
+					((WWALDApplication)getApplication()).
+						getDataFacade().
+							updateCompetenciesWikiContents(ConnectionPool.getConnection(getDatabaseId()), 
+														   course.getId(), 
+														   (String)competenciesListTextArea.getModelObject());
 					
 					setResponsePage(CoursePage.class, pageParams);
 				} catch(DataException de) {

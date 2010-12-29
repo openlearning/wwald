@@ -1,6 +1,7 @@
 package org.wwald.service;
 
 import java.io.BufferedReader;
+import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -26,6 +27,7 @@ import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.model.UserMeta;
 import org.wwald.util.CompetencyUniqueIdGenerator;
+import org.wwald.util.ParseException;
 import org.wwald.view.UserForm;
 import org.wwald.view.UserForm.Field;
 
@@ -439,6 +441,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		String competenciesWikiContents = (String)contents; 
 		Statement stmt = null;
 		try {
+			competenciesWikiContents = 
+				parseCompetenciesWikiContentsForTitleUpdates(conn,
+														 	 courseId, 
+														 	 competenciesWikiContents);
 			stmt = conn.createStatement();
 			String sql = String.format(Sql.UPDATE_COMPETENCIES_WIKI, 
 									   wrapForSQL(competenciesWikiContents), 
@@ -454,10 +460,60 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			String msg = "Could not update CompetenciesWiki due to an Exception";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
+		} catch(IOException ioe) {
+			String msg = "Could not update CompetenciesWiki due to an Exception";
+			cLogger.error(msg, ioe);
+			throw new DataException(msg, ioe);
+		} catch(ParseException pe) {
+			//TODO: When this Exceptios is thrown we display the GenericErrorPage
+			//in the browser... I think we should tell the user what went wrong
+			//the whole GenericErrorPage mechanism needs to change...
+			
+			//already logged in the throwing method
+			throw new DataException("Could not update competencies wiki contents", 
+									pe);
 		}
 	}
 
 	
+	private String parseCompetenciesWikiContentsForTitleUpdates(Connection conn,
+																String courseId,
+																String competenciesWikiContents) 
+		throws IOException, SQLException, ParseException {
+		
+		StringBuffer retVal = new StringBuffer();
+		
+		BufferedReader reader = 
+			new BufferedReader(new CharArrayReader(competenciesWikiContents.toCharArray()));
+		String line = null;
+		while((line = reader.readLine()) != null) {
+			if(line != null && line.contains("->")) {
+				String tokens[] = line.split("->");
+				if(tokens != null && 
+				   tokens[0] != null && tokens[1] != null && 
+				   tokens.length == 2) {
+					
+					String origTitle = tokens[0].trim();
+					String newTitle = tokens[1].trim();
+					updateCompetencyTitle(conn, courseId, origTitle, newTitle);
+					retVal.append(newTitle + "\n");
+				}
+				else {
+					String msg = "The competencies list wiki contains a line " +
+								 "with incorrect syntax '" + line + "'";
+					cLogger.error(msg);
+					throw new ParseException(msg);
+				}
+			}
+			else {
+				retVal.append(line + "\n");
+			}
+		}
+		
+		return retVal.toString();
+	}
+	
+
 	/**
 	 * @see org.wwald.service.IDataFacade#insertCompetency(Connection, Course, String)
 	 */
@@ -1602,5 +1658,26 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		return retVal;
 	}	
+	
+	private void updateCompetencyTitle(Connection conn, 
+									   String courseId,
+									   String origTitle, 
+									   String newTitle) 
+		throws SQLException {
+		
+		String msg = "Updating title of competency from '" + 
+					 origTitle + "' to '" + newTitle + "'";
+		cLogger.info(msg);
+		
+		String sql = 
+			String.format(Sql.UPDATE_COMPETENCY_TITLE,
+						  wrapForSQL(newTitle), 
+						  wrapForSQL(courseId), 
+						  wrapForSQL(origTitle));
+		Statement stmt = conn.createStatement();
+		int rowCnt = stmt.executeUpdate(sql);
+		
+		cLogger.info("updated title " + rowCnt + " rows affected");		
+	}
 
 }

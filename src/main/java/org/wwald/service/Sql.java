@@ -35,6 +35,7 @@ public class Sql {
 	
 	public static String INSERT_COURSE_COMPETENCIES_WIKI = "INSERT INTO COURSE_COMPETENCIES_WIKI (course_id, contents) VALUES (%s, %s);";
 	public static String UPDATE_COMPETENCIES_WIKI = "UPDATE COURSE_COMPETENCIES_WIKI SET contents=%s WHERE course_id=%s;";
+	public static String UPDATE_COMPETENCY_TITLE = "UPDATE COMPETENCY SET title=%s WHERE course_id=%s AND title=%s";
 	public static String RETREIVE_COMPETENCIES_WIKI = "SELECT * FROM COURSE_COMPETENCIES_WIKI WHERE course_id=%s;";
 	
 	public static String RETREIVE_COMPETENCIES = "SELECT * FROM COMPETENCY;";

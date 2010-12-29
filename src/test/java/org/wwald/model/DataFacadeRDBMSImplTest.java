@@ -1,8 +1,7 @@
 package org.wwald.model;
 
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -482,7 +481,11 @@ public class DataFacadeRDBMSImplTest {
 	public void testUpdateCompetenciesWikiContents() throws Exception {
 		//update competencies wiki
 		String courseId = "Physics";
-		String content = "Lecture 1\n Lecture 2\n Lecture 3";
+		String content = "Physics lecture 1 -> Lecture 1\nPhysics lecture 2\nPhysics lecture 3";
+		//a newline is being added at the end by the method that parses
+		//competencies wiki contents for title update requests
+		//TODO: Should we do anything about it???
+		String expectedContent = "Lecture 1\nPhysics lecture 2\nPhysics lecture 3\n";
 		this.dataFacade.updateCompetenciesWikiContents(this.conn, courseId, content);
 		
 		//retreive competencies wiki
@@ -498,7 +501,20 @@ public class DataFacadeRDBMSImplTest {
 		assertNotNull(retreivedCourseId);
 		assertNotNull(retreivedContent);
 		assertEquals(courseId, retreivedCourseId);
-		assertEquals(content, retreivedContent);
+		assertEquals(expectedContent, retreivedContent);
+		
+		//verify that the competency title was changed
+		sql = String.format("SELECT * from COMPETENCY WHERE course_id=%s AND title=%s;", 
+							DataInitializer.wrapForSQL(courseId),
+							DataInitializer.wrapForSQL("Lecture 1"));
+		stmt = this.conn.createStatement();
+		rs = stmt.executeQuery(sql);
+		boolean competencyTitleChanged = false;
+		if(rs.next()) {
+			//System.out.println(rs.getString("title"));
+			competencyTitleChanged = true;
+		}
+		assertTrue(competencyTitleChanged);
 	}
 
 	@Test
