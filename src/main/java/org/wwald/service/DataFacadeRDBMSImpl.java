@@ -27,7 +27,10 @@ import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.model.UserMeta;
 import org.wwald.util.CompetencyUniqueIdGenerator;
+import org.wwald.util.CourseWikiParser;
 import org.wwald.util.ParseException;
+import org.wwald.util.CourseWikiParser.CourseTitlePair;
+import org.wwald.util.CourseWikiParser.UpdateHint;
 import org.wwald.view.UserForm;
 import org.wwald.view.UserForm.Field;
 
@@ -194,11 +197,36 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("wikiContents cannot be null");
 		}
 		String coursesWikiContents = (String)wikiContents;
-		//TODO: Use Sql.java
-		String sql = String.format(Sql.UPDATE_COURSES_WIKI, 
-				 				   wrapForSQL(coursesWikiContents));
-		Statement stmt = null;
+		
+		
 		try {
+			UpdateHint updateHint = (new CourseWikiParser()).parseForUpdate(wikiContents);
+			coursesWikiContents = updateHint.updatedWikiContents;
+			
+			List<CourseTitlePair> updatedCourseTitlePairs = 
+				updateHint.updatedCourseTitlePairs;
+			for(CourseTitlePair courseTitlePair : updatedCourseTitlePairs) {
+				String updateTitleSql = String.format("UPDATE COURSE SET title=%s WHERE id=%s;", 
+												 	  wrapForSQL(courseTitlePair.updatedCourseTitle), 
+												 	  wrapForSQL(courseTitlePair.courseId));
+				Statement updateTitleStmt = conn.createStatement();
+				int rowCnt = updateTitleStmt.executeUpdate(updateTitleSql);
+				if(rowCnt > 0) {
+					cLogger.info("Updated title for course '" + 
+								 courseTitlePair.courseId + "' from '" + 
+								 courseTitlePair.courseTitle + "' to '" + 
+								 courseTitlePair.updatedCourseTitle + "'");
+				} else {
+					cLogger.info("Could NOT update title for course '" + 
+							 	 courseTitlePair.courseId + "' from '" + 
+							 	 courseTitlePair.courseTitle + "' to '" + 
+							 	 courseTitlePair.updatedCourseTitle + "'");
+				}
+			}
+			
+			String sql = String.format(Sql.UPDATE_COURSES_WIKI, 
+					 				   wrapForSQL(coursesWikiContents));
+			Statement stmt = null;
 			stmt = conn.createStatement();
 			int rowsUpdated = stmt.executeUpdate(sql);
 			if(rowsUpdated > 0) cLogger.info("CoursesWiki updated");
@@ -208,9 +236,15 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 						 wikiContents + "'" ;
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
+		} catch(ParseException pe) {
+			String msg = "Could not update CoursesWiki with new data due to " +
+						 "a syntax error in the wiki '" + wikiContents + "'" ;
+			cLogger.error(msg, pe);
+			throw new DataException(msg, pe);
 		}
 	}
-	
+
+
 	/**
 	 * @see org.wwald.service.IDataFacade#insertCourseEnrollment(Connection, UserMeta, Course)
 	 */
@@ -1658,6 +1692,12 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		return retVal;
 	}	
+	
+	private String parseCourseWikiContentsForTitleUpdates(Connection conn,
+														  String wikiContents) {
+		System.out.println("Received request to update course title");
+		return wikiContents;
+	}
 	
 	private void updateCompetencyTitle(Connection conn, 
 									   String courseId,

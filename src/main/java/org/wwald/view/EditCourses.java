@@ -36,16 +36,15 @@ public class EditCourses extends AccessControlledPage {
 					TextArea textArea = (TextArea)get(0);
 					WWALDApplication app = (WWALDApplication)getApplication();
 					app.getDataFacade().updateCourseWiki(ConnectionPool.getConnection(getDatabaseId()), (String)textArea.getModelObject());
-					
+					setResponsePage(HomePage.class);
 				} catch(DataException de) {
-					String msg = "Sorry we could not perform the action you requested, " +
-								 "due to an internal error. We will look into this issue as soon as we can";
-					PageParameters pageParams = getPage().getPageParameters();
-					if(pageParams != null) {
-						pageParams.add(WicketIdConstants.MESSAGES, msg);
-					}
-				}
-				setResponsePage(HomePage.class);
+					String msg = "Sorry we could not perform the action you requested " +
+					 "due to an internal error. We will look into this " +
+					 "issue as soon as we can";
+					PageParameters pageParams =  new PageParameters();
+					pageParams.add(WicketIdConstants.MESSAGES, msg);
+					setResponsePage(GenericErrorPage.class, pageParams);
+				}				
 			}
 		};
 		WWALDApplication app = (WWALDApplication)getApplication();

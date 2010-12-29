@@ -33,13 +33,15 @@ public class DataFacadeRDBMSImplTest {
 	private Connection conn;
 	public static final String DATABASE_ID = "localhost";
 	
+		
+	
 	@Before
 	public void setUp() throws Exception {
 		CompetencyUniqueIdGenerator.reset(null);
 		this.dataFacade = new DataFacadeRDBMSImpl();
 		DataInitializer di = new DataInitializer();
 		this.conn = ConnectionPool.getConnection(DATABASE_ID);
-		di.initData(conn);
+		di.initData(conn);		
 	}
 	
 	@Test
@@ -74,7 +76,7 @@ public class DataFacadeRDBMSImplTest {
 		expectedCourseWiki.append("Physics | Introduction to Physics\n");
 		expectedCourseWiki.append("Bio101 | Introduction to Biology\n");
 		expectedCourseWiki.append("OrganicChem | Introduction to Organic Chemistry\n");
-
+		
 		String courseWiki = this.dataFacade.retreiveCourseWiki(this.conn);
 		assertEquals(expectedCourseWiki.toString(), courseWiki);
 	}
@@ -147,8 +149,8 @@ public class DataFacadeRDBMSImplTest {
 	}
 	
 	@Test
-	public void testUpdateCourseWiki() throws Exception {
-		String newCoursesWiki = "NC | New Course Title";
+	public void testUpdateCourseWiki1() throws Exception {
+		String newCoursesWiki = "NC | New Course Title\n";
 		this.dataFacade.updateCourseWiki(this.conn, newCoursesWiki);
 		String retreiveCoursesWikiSql = Sql.RETREIVE_COURSES_WIKI;
 		Statement stmt = this.conn.createStatement();
@@ -163,6 +165,41 @@ public class DataFacadeRDBMSImplTest {
 					  retreivedCoursesWiki);
 		assertEquals("found more than 1 coures wiki records in the database", 1, count);
 		assertEquals(newCoursesWiki, retreivedCoursesWiki);
+	}
+	
+	@Test
+	public void testUpdateCourseWiki2() throws Exception {
+		StringBuffer updateCourseWiki = new StringBuffer();
+		updateCourseWiki.append("Physics | Introduction to Physics\n");
+		updateCourseWiki.append("Bio101 | Introduction to Biology -> Intro To Bio\n");
+		updateCourseWiki.append("OrganicChem | Introduction to Organic Chemistry\n");
+		
+		StringBuffer expectedCourseWiki = new StringBuffer();
+		expectedCourseWiki.append("Physics | Introduction to Physics\n");
+		expectedCourseWiki.append("Bio101 | Intro To Bio\n");
+		expectedCourseWiki.append("OrganicChem | Introduction to Organic Chemistry\n");
+		
+		this.dataFacade.updateCourseWiki(this.conn, updateCourseWiki.toString());
+		String retreiveCoursesWikiSql = Sql.RETREIVE_COURSES_WIKI;
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(retreiveCoursesWikiSql);
+		String retreivedCoursesWiki = null;
+		int count = 0;
+		while (rs.next()) {
+			retreivedCoursesWiki = rs.getString("content");
+			count++;
+		}
+		assertNotNull("Could not retreive inserted courses wiki from the database", 
+					  retreivedCoursesWiki);
+		assertEquals("found more than 1 coures wiki records in the database", 1, count);
+		assertEquals(expectedCourseWiki.toString(), retreivedCoursesWiki);
+		
+		String retreiveCourseSql = String.format(Sql.RETREIVE_COURSE, 
+												 DataInitializer.wrapForSQL("Bio101"));
+		stmt = this.conn.createStatement();
+		rs = stmt.executeQuery(retreiveCourseSql);
+		rs.next();
+		assertEquals("Intro To Bio", rs.getString("title"));
 	}
 	
 	@Test(expected=NullPointerException.class)
