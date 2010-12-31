@@ -20,7 +20,10 @@ import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
-
+/**
+ * Displays the public UserProfile of a user
+ * This includes the name, enrolled courses
+ */
 public class UserProfile extends BasePage {
 
 	private static final Logger cLogger = Logger.getLogger(UserProfile.class);
