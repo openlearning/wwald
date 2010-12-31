@@ -302,6 +302,62 @@ public class DataFacadeRDBMSImplTest {
 		this.dataFacade.deleteCourseEnrollment(this.conn, user, null);
 	}
 	
+	@Test
+	public void testRetreiveCourseEnrollmentsForUser_WhenEnrolled() throws Exception {
+		UserMeta user = 
+			TestObjectsRepository.
+				getInstance().getUserUserMeta("mevans").userMeta;
+		Course coursePhysics = 
+			TestObjectsRepository.getInstance().getCourse("Physics");
+		Course courseOrganicChem = 
+			TestObjectsRepository.getInstance().getCourse("OrganicChem");
+		
+		//first create registration for the user in a few courses
+		this.dataFacade.insertCourseEnrollment(conn, user, coursePhysics);
+		this.dataFacade.insertCourseEnrollment(conn, user, courseOrganicChem);
+		
+		//verify if the user was indeed registered
+		List<String> courseEnrollments = 
+			this.dataFacade.retreiveCourseEnrollmentsForUser(this.conn, user);
+		assertNotNull(courseEnrollments);
+		assertEquals(2, courseEnrollments.size());
+		assertEquals("OrganicChem", courseEnrollments.get(0));
+		assertEquals("Physics", courseEnrollments.get(1));
+	}
+	
+	@Test
+	public void testRetreiveCourseEnrollmentsForUser_WhenNotEnrolled() throws Exception {
+		UserMeta user = 
+			TestObjectsRepository.
+				getInstance().getUserUserMeta("mevans").userMeta;
+
+		//verify that the user is not enrolled in any course
+		List<String> courseEnrollments = 
+			this.dataFacade.retreiveCourseEnrollmentsForUser(this.conn, user);
+		assertNotNull(courseEnrollments);
+		assertEquals(0, courseEnrollments.size());
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveCourseEnrollmentsForUserWithNullConn() throws Exception {
+		UserMeta user = 
+			TestObjectsRepository.
+				getInstance().getUserUserMeta("mevans").userMeta;
+
+		List<String> courseEnrollments = 
+			this.dataFacade.retreiveCourseEnrollmentsForUser(null, user);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveCourseEnrollmentsForUserWithNullUserMeta() throws Exception {
+		UserMeta user = 
+			TestObjectsRepository.
+				getInstance().getUserUserMeta("mevans").userMeta;
+
+		List<String> courseEnrollments = 
+			this.dataFacade.retreiveCourseEnrollmentsForUser(null, user);
+	}
+	
 	@Test(expected=NullPointerException.class)
 	public void testAddCourseEnrollmentWithNullCourse() throws Exception {
 		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;

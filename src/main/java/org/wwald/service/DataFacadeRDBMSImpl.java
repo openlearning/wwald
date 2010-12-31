@@ -317,6 +317,39 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 	
 	/**
+	 * @see org.wwald.service.IDataFacade#retreiveCourseEnrollmentsForUser(Connection, UserMeta)
+	 */
+	public List<String> retreiveCourseEnrollmentsForUser(Connection conn, 
+			   											UserMeta userMeta)
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(userMeta == null) {
+			throw new NullPointerException("UserMeta cannot be null");
+		}
+		
+		List<String> coursesEnrolled = new ArrayList<String>();
+		
+		String sql = String.format(Sql.RETREIVE_COURSE_ENROLLMENTS_BY_USER, 
+								   userMeta.getUserid());
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				String courseId = rs.getString("course_id");
+				coursesEnrolled.add(courseId);
+			}
+			return coursesEnrolled;
+		} catch(SQLException sqle) {
+			String msg = "Could not fetch courses enrolled by user " + 
+						 userMeta.getUserid();
+			throw new DataException(msg, sqle);
+		}		
+	}
+	
+	/**
 	 * @see org.wwald.service.IDataFacade#checkEnrollmentByUserMetaAndCourse(Connection, UserMeta, Course)
 	 */
 	public boolean checkEnrollmentByUserMetaAndCourse(Connection conn, 

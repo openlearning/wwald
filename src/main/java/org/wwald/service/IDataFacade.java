@@ -138,6 +138,21 @@ public interface IDataFacade {
 	
 	
 	/**
+	 * Retrieve all the courses where the specified {@link UserMeta} is enrolled. 
+	 * @param conn The database connection
+	 * @param userMeta The user
+	 * @return A {@link List} containing all the courseId's in which the
+	 * 		   specified user has enrolled in
+	 * @throws NullPointerException If either conn or userMeta is null
+	 * @throws DataException If the jdbc code throws a SqlException. The 
+	 * SQLException is wrapped in the DataException
+	 */
+	public List<String> retreiveCourseEnrollmentsForUser(Connection conn, 
+														UserMeta userMeta)
+		throws DataException;
+	
+	
+	/**
 	 * Verified if the specified user is enrolled in the specified course
 	 * @param conn The database connection 
 	 * @param userMeta The specified user
