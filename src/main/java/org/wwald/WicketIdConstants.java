@@ -115,6 +115,11 @@ public class WicketIdConstants {
 	public static final String PUBLIC_USER_PROFILE_LABEL = "public_user_profile_label";
 	public static final String PUBLIC_USER_PROFILE_IDENTIFIER = "user_identifier";
 	
+	//CourseEnrolledByUserPanel
+	public static final String ENROLLED_COURSES = "enrolled_courses";
+	public static final String ENROLLED_COURSE_LINK = "enrolled_course_link";
+	public static final String ENROLLED_COURSE_LINK_LABEL = "enrolled_course_link_label";
+	
 	//static pages
 	public static final String EDIT_STATIC_PAGE = "edit_static_page";
 	public static final String EDIT_STATIC_PAGE_FORM = "static_page_edit_form";

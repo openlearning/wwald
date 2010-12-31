@@ -49,7 +49,7 @@ public class UserProfile extends BasePage {
 		List<String> courseIds = 
 			dataFacade.retreiveCourseEnrollmentsForUser(conn, 
 														userMeta);
-		return new ListView("enrolled_courses", courseIds) {
+		return new ListView(WicketIdConstants.ENROLLED_COURSES, courseIds) {
 
 			@Override
 			protected void populateItem(ListItem item) {
@@ -57,8 +57,12 @@ public class UserProfile extends BasePage {
 				PageParameters pageParams = new PageParameters();
 				pageParams.add(WWALDConstants.SELECTED_COURSE, courseId);
 				Link enrolledCourseLink = 
-					new BookmarkablePageLink("enrolled_course_link", CoursePage.class, pageParams);
-				Label enrolledCourseLinkLabel = new Label("enrolled_course_link_label", courseId);
+					new BookmarkablePageLink(WicketIdConstants.ENROLLED_COURSE_LINK, 
+											 CoursePage.class, 
+											 pageParams);
+				Label enrolledCourseLinkLabel = 
+					new Label(WicketIdConstants.ENROLLED_COURSE_LINK_LABEL, 
+							  courseId);
 				enrolledCourseLink.add(enrolledCourseLinkLabel);
 				
 				item.add(enrolledCourseLink);
