@@ -67,4 +67,13 @@ public class Sql {
 	public static String INSERT_KVTABLE_CLOB = "INSERT INTO KVTABLE_CLOB (k, v) VALUES (%s, %s);";
 	public static String UPDATE_KVTABLE_CLOB = "UPDATE KVTABLE_CLOB SET v=%s WHERE k=%s;";
 	public static String RETREIVE_KVTABLE_CLOB = "SELECT v FROM KVTABLE_CLOB WHERE k=%s;";
+	
+	public static String RETREIVE_ALL_DISCUSSIONS = "SELECT * FROM DISCUSSION;";
+	public static String RETREIVE_DISCUSSION_FORUM = "SELECT * FROM DISCUSSION WHERE id=%s;";
+	public static String INSERT_DISCUSSION_FORUM = "INSERT INTO DISCUSSION (id, title, description) VALUES (%s, %s, %s);";
+	public static String DELETE_DISCUSSION_FORUM = "DELETE FROM DISCUSSION WHERE id=%s";
+	public static String RETREIVE_ALL_QUESTIONS = "SELECT * FROM QUESTION;";
+	public static String RETREIVE_QUESTIONS_FOR_DISCUSSION_FORUM = "SELECT * FROM QUESTION WHERE discussion_id=%s";
+	public static String RETREIVE_QUESTION_FOR_DISCUSSION_FORUM = "SELECT * FROM QUESTION WHERE discussion_id=%s AND id=%s";
+	public static String INSERT_QUESTION = "INSERT INTO QUESTION (discussion_id, title, contents) VALUES (%s, %s, %s);";
 }

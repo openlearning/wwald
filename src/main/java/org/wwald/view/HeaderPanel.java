@@ -95,6 +95,14 @@ public class HeaderPanel extends Panel {
 											"User Profiles .");
 		userProfilesLink.add(userProfilesLabel);
 		add(userProfilesLink);
+		
+		Link forumsLink = 
+			new BookmarkablePageLink(WicketIdConstants.FORUMS_LINK, 
+									 ForumsPage.class);
+		Label forumsLinkLabel = new Label(WicketIdConstants.FORUMS_LABEL, 
+										  "Forums");
+		forumsLink.add(forumsLinkLabel);
+		add(forumsLink);
 	}
 
 	private Component getHeaderImage() {

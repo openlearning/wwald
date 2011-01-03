@@ -141,6 +141,8 @@ public class WicketIdConstants {
 	public static final String CONTACT_LABEL  = "contact_label";
 	public static final String USER_PROFILES_LINK = "userProfilesLink";
 	public static final String USER_PROFILES_LABEL = "userProfilesLabel";
+	public static final String FORUMS_LINK = "forums_link";
+	public static final String FORUMS_LABEL = "forums_label";
 	
 	//Key Value table
 	public static final String KVTableKey = "KVTableKey";	

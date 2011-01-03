@@ -6,7 +6,9 @@ import java.util.List;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
+import org.wwald.model.Forum;
 import org.wwald.model.Mentor;
+import org.wwald.model.Question;
 import org.wwald.model.StaticPagePOJO;
 import org.wwald.model.StatusUpdate;
 import org.wwald.model.User;
@@ -619,5 +621,79 @@ public interface IDataFacade {
 	public void upsertKvTableClob(Connection c, 
 								  String k, 
 								  String v) 
+		throws DataException;
+	
+	/**
+	 * Returns a {@link List} of all discussion forums represented by
+	 * {@link Forum} objects.
+	 * @param conn The database connection
+	 * @return A {@link List} of {@link Forum} objects
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public List<Forum> retreiveAllDiscussionForums(Connection conn) 
+		throws DataException;
+	
+	/**
+	 * Retreives the {@link Forum} object for the specified forumId
+	 * @param conn
+	 * @param forumId
+	 * @return
+	 * @throws DataException
+	 */
+	public Forum retreiveDiscussionForum(Connection conn, String forumId) 
+		throws DataException;
+	
+	/**
+	 * Inserts the specified {@link Forum} in peristent storage
+	 * @param conn The database connection
+	 * @param forum The {@link Forum} to insert
+	 * @throws NullPointerException If either conn or forum is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertDiscussionForum(Connection conn, Forum forum)
+		throws DataException;
+	
+	/**
+	 * Deletes a discussion forum. A discussion forum can only be deleted if
+	 * it contains no questions. If an attempt is made to delete a forum with
+	 * questions, an Exception will be thrown
+	 * @param conn The database connection
+	 * @param forum The {@link Forum}
+	 * @throws NullPointerException If either conn or forum is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 * @throws CannotPerformActionException If the discussion forum contains
+	 * questions
+	 */
+	public void deleteDiscussionForum(Connection conn, Forum forum) 
+		throws DataException, CannotPerformActionException;
+	
+	/**
+	 * Inserts a {@link Question} into the specified {@link Forum}
+	 * @param conn The database connection
+	 * @param question The question to insert
+	 * @param The forum in which the question must be inserted
+	 * @throws NullPointerException If either conn, or question, or forum is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertQuestion(Connection conn, Question question) 
+		throws DataException;
+	
+	/**
+	 * Returns a {@link List} of all {@link Question} obejcts from the specified
+	 * {@link  Forum}
+	 * @param conn The database connection
+	 * @param forum The forum from which we want to retreive the questions
+	 * @return a {@link List} of {@link Question}s asked in the specified forum
+	 * @throws NullPointerException If either conn or forum is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public List<Question> retreiveAllQuestionsForForum(Connection conn, 
+													   Forum forum) 
 		throws DataException;
 }

@@ -18,6 +18,7 @@ import org.wwald.view.CallbackHandlerPage;
 import org.wwald.view.CoursePage;
 import org.wwald.view.ErrorPage404;
 import org.wwald.view.ErrorPageInternal;
+import org.wwald.view.ForumsPage;
 import org.wwald.view.HomePage;
 import org.wwald.view.LoginPage;
 import org.wwald.view.Register;
@@ -89,6 +90,7 @@ public class WWALDApplication extends WebApplication
 		mountBookmarkablePage("users", UserProfiles.class);
 		mountBookmarkablePage("static", StaticPage.class);
 		mountBookmarkablePage("callback", CallbackHandlerPage.class);
+		mountBookmarkablePage("forums", ForumsPage.class);
 		mount(new QueryStringUrlCodingStrategy("error404", ErrorPage404.class));
 		getApplicationSettings().setInternalErrorPage(ErrorPageInternal.class);
 		getExceptionSettings().setUnexpectedExceptionDisplay(IExceptionSettings.SHOW_INTERNAL_ERROR_PAGE);

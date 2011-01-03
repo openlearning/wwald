@@ -18,6 +18,7 @@ import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.wwald.service.CannotPerformActionException;
 import org.wwald.service.DataException;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.Sql;
@@ -119,12 +120,15 @@ public class DataFacadeRDBMSImplTest {
 	
 	@Test
 	public void testInsertCourse() throws Exception {
+		//call API to insert a course
 		Course newCourse = new Course("NC", "New Course Title", null);
 		this.dataFacade.insertCourse(this.conn, newCourse);
 		String retreiveCourseSql = 
 			String.format(Sql.RETREIVE_COURSE, 
 						  DataInitializer.wrapForSQL(newCourse.getId()), 
 						  DataInitializer.wrapForSQL(newCourse.getTitle()));
+		
+		//verify that the course was inserted
 		Statement stmt = this.conn.createStatement();
 		ResultSet rs = stmt.executeQuery(retreiveCourseSql);
 		Course retreivedCourse = null;
@@ -136,6 +140,27 @@ public class DataFacadeRDBMSImplTest {
 		assertNotNull("could not fetch the inserted course from the database", retreivedCourse);
 		assertEquals(newCourse.getId(), retreivedCourse.getId());
 		assertEquals(newCourse.getTitle(), retreivedCourse.getTitle());
+		
+		//verify that a CourseCompetenciesWiki has been created
+		String retreiveCompetenciesWiki = 
+			String.format(Sql.RETREIVE_COMPETENCIES_WIKI, 
+						  DataInitializer.wrapForSQL(newCourse.getId()));
+		Statement retreiveCompetenciesWikiStmt = this.conn.createStatement();
+		ResultSet competenciesWikiRS = 
+			retreiveCompetenciesWikiStmt.executeQuery(retreiveCompetenciesWiki);
+		competenciesWikiRS.next();
+		assertEquals(newCourse.getId(), competenciesWikiRS.getString("course_id"));
+		assertEquals("", competenciesWikiRS.getString("contents"));
+		
+		//verify that the forum has been created
+		String retreiveForumSql = String.format(Sql.RETREIVE_DISCUSSION_FORUM, 
+												DataInitializer.wrapForSQL(newCourse.getId()));
+		Statement retreiveForumStmt = this.conn.createStatement();
+		ResultSet retreiveForumRS = retreiveForumStmt.executeQuery(retreiveForumSql);
+		retreiveForumRS.next();
+		assertEquals(newCourse.getId(), retreiveForumRS.getString("id"));
+		assertEquals(newCourse.getTitle(), retreiveForumRS.getString("title"));
+		assertNotNull(retreiveForumRS.getString("description"));
 	}
 
 	@Test(expected=NullPointerException.class)
@@ -1546,6 +1571,271 @@ public class DataFacadeRDBMSImplTest {
 	@Test(expected=NullPointerException.class)
 	public void testUpsertKvTableClobWithNullV() throws Exception {
 		this.dataFacade.upsertKvTableClob(this.conn, "", null);
+	}
+	
+	@Test
+	public void retreiveAllDiscussionForums() throws Exception {
+		//first let's add some forums
+		String forumIds[] = {"Bio101", "OrganicChem", "Physics"};
+		String forumTitles[] = {"Introduction to Biology", "Introduction to Organic Chemistry", "Introduction to Physics"};
+		String forumDescs[] = {"Introduction to Biology", "Introduction to Organic Chemistry", "Introduction to Physics"};
+//		for(int i=0; i<3; i++) {
+//			String sql = String.format(Sql.INSERT_DISCUSSION_FORUM, 
+//									   DataInitializer.wrapForSQL(forumIds[i]), 
+//									   DataInitializer.wrapForSQL(forumTitles[i]), 
+//									   DataInitializer.wrapForSQL(forumDescs[i]));
+//			Statement stmt = this.conn.createStatement();
+//			stmt.executeUpdate(sql);
+//		}
+		
+		//verify if the forums can be retreived with our API
+		List<Forum> forums = 
+			this.dataFacade.retreiveAllDiscussionForums(this.conn);
+		assertNotNull(forums);
+		assertEquals(3, forums.size());
+		for(int i=0; i<3; i++) {
+			Forum forum = forums.get(i);
+			assertEquals(forumIds[i], forum.getId());
+			assertEquals(forumTitles[i], forum.getTitle());
+			assertEquals(forumDescs[i], forum.getDescription());
+		}
+		
+	}
+	
+//	@Test
+//	public void retreiveAllDiscussionForums_WhenNoneExist() throws Exception {
+//		List<Forum> forums = 
+//			this.dataFacade.retreiveAllDiscussionForums(this.conn);
+//		assertNotNull(forums);
+//		assertEquals(0, forums.size());
+//	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveAllDiscussionForumsWithNullConn() throws Exception {
+		this.dataFacade.retreiveAllDiscussionForums(null);
+	}
+	
+	@Test
+	public void testRetreiveDiscussionForum() throws Exception {
+		String forumId = "Physics";
+		String expectedTitleNContents = "Introduction to Physics";
+		
+		Forum forum = 
+			this.dataFacade.retreiveDiscussionForum(this.conn, forumId);
+		assertNotNull(forum);
+		assertEquals(forumId, forum.getId());
+		assertEquals(expectedTitleNContents, forum.getTitle());
+		assertEquals(expectedTitleNContents, forum.getDescription());
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveDiscussionForumWithNullConn() throws Exception {
+		String forumId = "Physics";
+		this.dataFacade.retreiveDiscussionForum(null, forumId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveDiscussionForumWithNullForumId() throws Exception {
+		this.dataFacade.retreiveDiscussionForum(this.conn, null);
+	}
+	
+	@Test
+	public void testInsertDiscussionForum() throws Exception {
+		String id = "RDBMS";
+		String title = "Relational datbase management systems";
+		String description = "description of the forum";
+		Forum forum = new Forum(id, title, description);
+		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		String sql = "SELECT * FROM DISCUSSION WHERE id='RDBMS'";
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		rs.next();
+		assertEquals(id, rs.getString("id"));
+		assertEquals(title, rs.getString("title"));
+		assertEquals(description, rs.getString("description"));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertDiscussionForumWithNullConn() throws Exception {
+		String id = "RDBMS";
+		String title = "Relational datbase management systems";
+		String description = "description of the forum";
+		Forum forum = new Forum(id, title, description);
+		
+		this.dataFacade.insertDiscussionForum(null, forum);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertDiscussionForumWithNullForum() throws Exception {
+		this.dataFacade.insertDiscussionForum(this.conn, null);
+	}
+	
+	@Test
+	public void testDeleteDiscussionForum() throws Exception {
+		//first let's insert a discussion forum
+		String id = "RDBMS";
+		String title = "Relational datbase management systems";
+		String description = "description of the forum";
+		Forum forum = new Forum(id, title, description);		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		
+		//delete the discussion forum
+		this.dataFacade.deleteDiscussionForum(this.conn, forum);
+		
+		//ensure that the forum was deleted
+		String sql = String.format(Sql.RETREIVE_DISCUSSION_FORUM, DataInitializer.wrapForSQL(forum.getId()));
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		assertFalse(rs.next());
+	}
+	
+	@Test(expected=CannotPerformActionException.class)
+	public void testDeleteDiscussionForum_WhenQuestionsExist() throws Exception {
+		//first let's insert a discussion forum and a question
+		String forumId = "RDBMS";
+		String forumTitle = "Relational datbase management systems";
+		String forumDescription = "description of the forum";
+		Forum forum = new Forum(forumId, forumTitle, forumDescription);		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		
+		Question question = new Question("What is an RDBMS", "Please explain what an RDBMS is.", forumId);
+		String insertQuestionSql = 
+			String.format(Sql.INSERT_QUESTION, 
+						  DataInitializer.wrapForSQL(question.getDiscussionId()), 
+						  DataInitializer.wrapForSQL(question.getTitle()), 
+						  DataInitializer.wrapForSQL(question.getContents()));
+		Statement insertQuestionStatement = this.conn.createStatement();
+		insertQuestionStatement.executeUpdate(insertQuestionSql);
+		
+		//delete the discussion forum
+		this.dataFacade.deleteDiscussionForum(this.conn, forum);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testDeleteDiscussionForumWithNullConn() throws Exception {
+		String id = "RDBMS";
+		String title = "Relational datbase management systems";
+		String description = "description of the forum";
+		Forum forum = new Forum(id, title, description);
+		
+		this.dataFacade.deleteDiscussionForum(null, forum);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testDeleteDiscussionForumWithNullForum() throws Exception {
+		this.dataFacade.deleteDiscussionForum(this.conn, null);
+	}
+	
+	@Test
+	public void testInsertQuestion() throws Exception {
+		//first let's create the forum for the question
+		String forumId = "RDBMS";
+		String forumTitle = "Relational datbase management systems";
+		String forumDescription = "description of the forum";
+		Forum forum = new Forum(forumId, forumTitle, forumDescription);		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		
+		Question question = new Question("What is an RDBMS", "Please explain what an RDBMS is.", forumId);
+		
+		//call the API we want to test - insertQuestion
+		this.dataFacade.insertQuestion(this.conn, question);
+		
+		//verify if the question was inserted
+		String sql = String.format(Sql.RETREIVE_QUESTIONS_FOR_DISCUSSION_FORUM, 
+								   DataInitializer.wrapForSQL(question.getDiscussionId()));
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		rs.next();
+		assertEquals(forumId, rs.getString("discussion_id"));
+		assertEquals(question.getTitle(), rs.getString("title"));
+		assertEquals(question.getContents(), rs.getString("contents"));
+	}
+	
+	@Test(expected=DataException.class)
+	public void testInsertQuestion_WithWrongForumId() throws Exception {
+		//first let's create the forum for the question
+		String forumId = "RDBMS";
+		String forumTitle = "Relational datbase management systems";
+		String forumDescription = "description of the forum";
+		Forum forum = new Forum(forumId, forumTitle, forumDescription);		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		
+		Question question = new Question("What is an RDBMS", "Please explain what an RDBMS is.", forumId+"incorrect");
+		
+		//call the API we want to test - insertQuestion
+		this.dataFacade.insertQuestion(this.conn, question);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertQuestionWithNullConn() throws Exception {
+		//first let's create the forum for the question
+		String forumId = "RDBMS";
+		String forumTitle = "Relational datbase management systems";
+		String forumDescription = "description of the forum";
+		Forum forum = new Forum(forumId, forumTitle, forumDescription);		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		
+		Question question = new Question("What is an RDBMS", "Please explain what an RDBMS is.", forumId);
+		
+		//call the API we want to test - insertQuestion
+		this.dataFacade.insertQuestion(null, question);
+	}
+
+	@Test(expected=NullPointerException.class)
+	public void testInsertQuestionWithNullQuestion() throws Exception {
+		//first let's create the forum for the question
+		String forumId = "RDBMS";
+		String forumTitle = "Relational datbase management systems";
+		String forumDescription = "description of the forum";
+		Forum forum = new Forum(forumId, forumTitle, forumDescription);		
+		this.dataFacade.insertDiscussionForum(this.conn, forum);
+		
+		//call the API we want to test - insertQuestion
+		this.dataFacade.insertQuestion(this.conn, null);
+	}
+	
+	@Test
+	public void testRetreiveAllQuestionsForForum() throws Exception {
+//		//let's first insert three questions
+		String forumId = "Physics";
+		String forumTitle = "This is a Physics forum";
+		String forumDescription = "description of the forum";
+		Forum forum = new Forum(forumId, forumTitle, forumDescription);
+//		Question question1 = new Question("Newton's first law of motion", 
+//										 "Please explain Newtons first law of motion.", 
+//										 forumId);		
+//		
+//		Question question2 = new Question("Newton's second law of motion", 
+//				 						  "Please explain Newton's second law of motion.", 
+//				 						  forumId);
+//		
+//		Question question3 = new Question("Newton's third law of motion", 
+//				  						  "Please explain Newton's third law of motion.", 
+//				  						  forumId);
+//		Question insertedQuestions[] = {question1, question2, question3};
+//		
+//		this.dataFacade.insertQuestion(this.conn, question1);
+//		this.dataFacade.insertQuestion(this.conn, question2);
+//		this.dataFacade.insertQuestion(this.conn, question3);
+		
+		//let's call the API to retreive and verify the questions
+		String expectedTitleTemplate = "Question ";
+		String expectedContentsTemplate = "Contents for question ";
+		
+		List<Question> questions = 
+			this.dataFacade.retreiveAllQuestionsForForum(this.conn, forum);
+		assertNotNull(questions);
+		assertEquals(3, questions.size());
+
+		for(int i=0; i<3; i++) {
+			assertEquals(i, questions.get(i).getId());
+			assertEquals(expectedTitleTemplate + i, questions.get(i).getTitle());
+			assertEquals(expectedContentsTemplate + i, questions.get(i).getContents());
+			assertEquals(forum.getId(), questions.get(i).getDiscussionId());
+		}
+		
+		
 	}
 	
 	@Test

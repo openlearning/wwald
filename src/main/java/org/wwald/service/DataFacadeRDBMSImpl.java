@@ -18,8 +18,10 @@ import org.apache.log4j.Logger;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
+import org.wwald.model.Forum;
 import org.wwald.model.Mentor;
 import org.wwald.model.NonExistentCourse;
+import org.wwald.model.Question;
 import org.wwald.model.Role;
 import org.wwald.model.StaticPagePOJO;
 import org.wwald.model.StatusUpdate;
@@ -172,6 +174,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			sql = String.format(Sql.INSERT_COMPETENCY_BASIC, 
 					 			wrapForSQL(course.getId()));
 			stmt.executeUpdate(sql);
+			
+			//create forum for course
+			Forum forum = 
+				new Forum(course.getId(), 
+						  course.getTitle(), 
+						  "Q & A forum for the course '" + course.getTitle() + "'");
+			insertDiscussionForum(conn, forum);
 		} catch(SQLException sqle) {
 			String msg = "Could not create new course " + course;
 			cLogger.error(msg, sqle);
@@ -1441,6 +1450,195 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#retreiveAllDiscussionForums(Connection)
+	 */
+	public List<Forum> retreiveAllDiscussionForums(Connection conn) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		List<Forum> retVal = new ArrayList<Forum>();
+		
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(Sql.RETREIVE_ALL_DISCUSSIONS);
+			while(rs.next()) {
+				Forum forum = new Forum(rs.getString("id"),
+									    rs.getString("title"),
+									    rs.getString("description"));
+				retVal.add(forum);
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive all discussion forums";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return retVal;
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#retreiveDiscussionForum(Connection, String)
+	 */
+	public Forum retreiveDiscussionForum(Connection conn, String forumId) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(forumId == null) {
+			throw new NullPointerException("forumId cannot be null");
+		}
+		
+		Forum forum = null;
+		String sql = String.format(Sql.RETREIVE_DISCUSSION_FORUM, 
+								   wrapForSQL(forumId));
+		
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				String id = rs.getString("id");
+				String title = rs.getString("title");
+				String description = rs.getString("description");
+				forum = new Forum(id, title, description);
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive discussion forum for forumId '" + 
+						 forumId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		
+		return forum;
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#insertDiscussionForum(Connection, Forum)
+	 */
+	public void insertDiscussionForum(Connection conn, Forum forum) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(forum == null) {
+			throw new NullPointerException("Forum cannot be null");
+		}
+		String sql = String.format(Sql.INSERT_DISCUSSION_FORUM, 
+								   wrapForSQL(forum.getId()),
+								   wrapForSQL(forum.getTitle()), 
+								   wrapForSQL(forum.getDescription()));
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not insert discussion forum";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#deleteDiscussionForum(Connection, Forum)
+	 */
+	public void deleteDiscussionForum(Connection conn, Forum forum) 
+		throws DataException, CannotPerformActionException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(forum == null) {
+			throw new NullPointerException("forum cannot be null");
+		}
+		
+		try {
+			//verify that the discussion forum does not have any questions
+			//TODO: We just need the count and not all the questions
+			String verifySql = String.format(Sql.RETREIVE_QUESTIONS_FOR_DISCUSSION_FORUM, 
+											 wrapForSQL(forum.getId()));
+			
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(verifySql);
+			
+			if(rs.next()) {
+				String msg = "Cannot delete discussion forum '" + 
+							 forum.getId() + 
+							 "' because the discussion forum contains questions";
+				cLogger.error(msg);
+				throw new CannotPerformActionException(msg);
+			}
+			
+			//delete the discussion forum
+			String sql = String.format(Sql.DELETE_DISCUSSION_FORUM, 
+									   wrapForSQL(forum.getId()));
+			stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not delete discussion forum";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#insertQuestion(Connection, Question, Forum)
+	 */
+	public void insertQuestion(Connection conn, Question question) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(question == null) {
+			throw new NullPointerException("question should not be null");
+		}
+		
+		String sql = String.format(Sql.INSERT_QUESTION, 
+								   wrapForSQL(question.getDiscussionId()), 
+								   wrapForSQL(question.getTitle()), 
+								   wrapForSQL(question.getContents()));
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not insert question '" + question + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#retreiveAllQuestionsForForum(Connection, Forum)
+	 */
+	public List<Question> retreiveAllQuestionsForForum(Connection conn, 
+			   										   Forum forum) 
+		throws DataException {
+		
+		List<Question> questions = new ArrayList<Question>();
+		
+		String sql = String.format(Sql.RETREIVE_QUESTIONS_FOR_DISCUSSION_FORUM, 
+								   wrapForSQL(forum.getId()));
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				String discussionId = rs.getString("discussion_id");
+				String title = rs.getString("title");
+				String contents = rs.getString("contents");
+				questions.add(new Question(id, title, contents, discussionId));
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive all questions for forum '" + 
+						 forum.getId() + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return questions;
 	}
 
 	private void insertStaticPage(Connection conn, 

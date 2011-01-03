@@ -151,6 +151,8 @@ public class DataInitializer {
 		
 		populateCourse(coursesList, conn);
 		
+		populateForums(coursesList, conn);
+		
 		populateCourseCompetenciesWiki(coursesList, conn);
 		
 		populateCompetency(coursesList, conn);
@@ -239,6 +241,31 @@ public class DataInitializer {
 		}
 	}
 
+	private void populateForums(List<Course> coursesList, Connection conn) 
+		throws SQLException {
+		
+		for(Course course : coursesList) {
+			//create the forum
+			String sql = String.format(Sql.INSERT_DISCUSSION_FORUM, 
+									   wrapForSQL(course.getId()),
+									   wrapForSQL(course.getTitle()),
+									   wrapForSQL(course.getTitle()));
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+			System.out.println("Added forum for '" + course.getId() + "'");
+			//add some questions to the forum
+			for(int i=0; i<3; i++) {
+				String questionSql = String.format(Sql.INSERT_QUESTION, 
+						   wrapForSQL(course.getId()),
+						   wrapForSQL("Question " + String.valueOf(i)),
+						   wrapForSQL("Contents for question " + String.valueOf(i)));
+				stmt = conn.createStatement();
+				int rows = stmt.executeUpdate(questionSql);
+				System.out.println("Added question for '" + course.getId() + "'");
+			}
+			
+		}
+	}
 	
 	private void populateCoursesWiki(List<Course> coursesList, Connection conn) throws SQLException {
 		System.out.println("----- populating courses wiki -----");
