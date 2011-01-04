@@ -1,7 +1,10 @@
 package org.wwald.view;
 
 import org.apache.log4j.Logger;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.Link;
 
 public class ForumPage extends BasePage {
 
@@ -12,6 +15,7 @@ public class ForumPage extends BasePage {
 		String forumId = parameters.getString("forum");
 		try {			
 			if(forumId != null) {
+				add(getAskQuestionLink(forumId));
 				String questionId = parameters.getString("question");
 				if(questionId != null) {
 					QuestionPanel questionPanel = 
@@ -36,5 +40,20 @@ public class ForumPage extends BasePage {
 			cLogger.error(msg);
 			setResponsePage(GenericErrorPage.class);
 		}
+	}
+
+	private Component getAskQuestionLink(final String forumId) {
+		Link askQuestionLink = new Link("ask_question_link") {
+
+			@Override
+			public void onClick() {
+				PageParameters pageParams = new PageParameters();
+				pageParams.add("forum", forumId);
+				setResponsePage(AskQuestionPage.class, pageParams);
+			}
+			
+		};
+		
+		return askQuestionLink;
 	}
 }

@@ -9,6 +9,10 @@ public class Question implements Serializable {
 	private String contents;
 	private String discussionId;
 	
+	public Question() {
+		
+	}
+	
 	public Question(int id,
 					String title, 
 					String contents, 

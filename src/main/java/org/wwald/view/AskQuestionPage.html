@@ -1,0 +1,23 @@
+<wicket:extend>
+	<div syle="margin-bottom: 15px;">
+		<span wicket:id="messages" class="messages">Form validation messages</span>
+	</div>
+	<div style="margin-bottom: 10px; font-weight: bold;">
+		<span>
+		Enter the title and text of your question below, and click on the submit button to ask your question.
+		</span>
+	</div>
+	<form wicket:id="question_form">
+	<!-- We should use CSS to size the text fields -->
+		<p>
+			<span style="font-weight: bold;">Title</span> : 
+			<input wicket:id="question_title_text_field" type="text" size="65"/>			
+		</p>
+		<p>
+			<textarea wicket:id="question_textarea" rows="20" cols="80"></textarea>
+		</p>
+		<p>
+			<input type="submit" name="SubmitButton" value="Submit"/>
+		</p>
+	</form>
+</wicket:extend>
