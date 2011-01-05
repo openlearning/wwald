@@ -696,4 +696,17 @@ public interface IDataFacade {
 	public List<Question> retreiveAllQuestionsForForum(Connection conn, 
 													   Forum forum) 
 		throws DataException;
+	
+	/**
+	 * Retreives the question specified by forumId and questionId
+	 * @param conn
+	 * @param forumId
+	 * @param questionId
+	 * @return
+	 * @throws DataException
+	 */
+	public Question retreiveQuestion(Connection conn, 
+									 String forumId, 
+									 int questionId) 
+		throws DataException;
 }

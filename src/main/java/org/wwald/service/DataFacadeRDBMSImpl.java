@@ -1640,6 +1640,50 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		}
 		return questions;
 	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#retreiveAllQuestionsForForum(Connection, Forum)
+	 */
+	public Question retreiveQuestion(Connection conn, 
+			 						 String forumId, 
+			 						 int questionId) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		if(forumId == null) {
+			throw new NullPointerException("forumId cannot be null");
+		}
+		
+		if(questionId < 0) {
+			throw new IllegalArgumentException("questionId has to be a positive integer");
+		}
+		
+		Question question = null;
+		try {
+			Statement stmt = conn.createStatement();
+			String sql = 
+				String.format(Sql.RETREIVE_QUESTION_FOR_DISCUSSION_FORUM, 
+							  wrapForSQL(forumId),
+							  questionId);
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				int id = rs.getInt("id");
+				String discussionId = rs.getString("discussion_id");
+				String title = rs.getString("title");
+				String contents = rs.getString("contents");
+				question = new Question(id, title, contents, discussionId);
+			}
+			return question;
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive question id " + questionId + 
+						 " from forum '" + forumId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}		
+	}
 
 	private void insertStaticPage(Connection conn, 
 								  StaticPagePOJO page) 

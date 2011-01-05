@@ -1838,6 +1838,43 @@ public class DataFacadeRDBMSImplTest {
 		
 	}
 	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveQuestionWithNullConn() throws Exception {
+		//TODO: Should we create an API to get forums from TestObjectRepository
+		String forumId = "Physics";
+		int questionId = 0;
+		this.dataFacade.retreiveQuestion(null, forumId, questionId);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveQuestionWithNullForumId() throws Exception {
+		//TODO: Should we create an API to get forums from TestObjectRepository
+		String forumId = "Physics";
+		int questionId = 0;
+		this.dataFacade.retreiveQuestion(this.conn, null, questionId);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testRetreiveQuestionWithInvalidQuestionId() throws Exception {
+		//TODO: Should we create an API to get forums from TestObjectRepository
+		String forumId = "Physics";
+		int questionId = -1;
+		this.dataFacade.retreiveQuestion(this.conn, forumId, questionId);
+	}
+	
+	@Test
+	public void testRetreiveQuestion() throws Exception {
+		//TODO: Should we create an API to get forums from TestObjectRepository
+		String forumId = "Physics";
+		int questionId = 0;
+		Question question = 
+			this.dataFacade.retreiveQuestion(this.conn, forumId, questionId);
+		assertNotNull(question);
+		assertEquals(0, question.getId());
+		assertEquals("Question 0", question.getTitle());
+		assertEquals("Contents for question 0", question.getContents());
+	}
+	
 	@Test
 	public void testWrapForSQL() {
 		String origStr1 = "str";
