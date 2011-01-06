@@ -4,7 +4,10 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.wwald.WWALDSession;
+import org.wwald.model.UserMeta;
 
 public class ForumPage extends BasePage {
 
@@ -43,6 +46,8 @@ public class ForumPage extends BasePage {
 	}
 
 	private Component getAskQuestionLink(final String forumId) {
+		UserMeta userMeta = WWALDSession.get().getUserMeta();
+		
 		Link askQuestionLink = new Link("ask_question_link") {
 
 			@Override
@@ -54,6 +59,13 @@ public class ForumPage extends BasePage {
 			
 		};
 		
-		return askQuestionLink;
+		BookmarkablePageLink loginLink = 
+			new BookmarkablePageLink("ask_question_link", LoginPage.class);
+		if(userMeta != null) {
+			return askQuestionLink;
+		}
+		else {
+			return loginLink;
+		}
 	}
 }

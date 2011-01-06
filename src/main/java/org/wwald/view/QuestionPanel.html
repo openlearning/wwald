@@ -7,4 +7,23 @@
 			<span wicket:id="question_contents">Question Contents</span>
 		</p>
 	</div>
+	
+	<div syle="margin-top: 10px;">
+		<p style="margin-bottom: 5px; margin-top: 15px;">
+			<span>Answer this question</span>
+		</p>
+		<div>
+			<a wicket:id="login_to_answer" href="#">
+				<span wicket:id="login_to_answer_label">Label</span>
+			</a>
+		</div>	
+		<form wicket:id="answer_form">			
+			<p>
+				<textarea wicket:id="answer_field" rows="20" cols="80"></textarea>
+			</p>
+			<p>
+				<input type="submit" name="SubmitButton" value="Submit">
+			</p>
+		</form>
+	</div>
 </wicket:panel>
