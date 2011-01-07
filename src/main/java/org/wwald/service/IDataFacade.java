@@ -3,6 +3,7 @@ package org.wwald.service;
 import java.sql.Connection;
 import java.util.List;
 
+import org.wwald.model.Answer;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
@@ -703,10 +704,22 @@ public interface IDataFacade {
 	 * @param forumId
 	 * @param questionId
 	 * @return
-	 * @throws DataException
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
 	public Question retreiveQuestion(Connection conn, 
 									 String forumId, 
 									 int questionId) 
+		throws DataException;
+
+	/**
+	 * Inserts the specified {@link Answer} in the database
+	 * @param conn The database connection
+	 * @param answer The {@link Answer}
+	 * @throws NullPointerException If either conn or answer is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertAnswer(Connection conn, Answer answer) 
 		throws DataException;
 }

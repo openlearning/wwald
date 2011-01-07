@@ -1875,6 +1875,31 @@ public class DataFacadeRDBMSImplTest {
 		assertEquals("Contents for question 0", question.getContents());
 	}
 	
+	@Test(expected=NullPointerException.class)
+	public void testInsertAnswerWithNullConn() throws Exception {
+		Answer answer = new Answer(0, "the answer body");
+		this.dataFacade.insertAnswer(null, answer);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertAnswerWithNullAnswer() throws Exception {
+		this.dataFacade.insertAnswer(this.conn, null);
+	}
+	
+	@Test
+	public void testInsertAnswer() throws Exception {
+		Answer answer = new Answer(0, "the answer body");
+		this.dataFacade.insertAnswer(this.conn, answer);
+		
+		String sql = String.format(Sql.RETREIVE_ANSWER, answer.getId());
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		assertTrue(rs.next());
+		assertEquals(answer.getId(), rs.getInt("id"));
+		assertEquals(answer.getQuestionId(), rs.getInt("question_id"));
+		assertEquals(answer.getContents(), rs.getString("contents"));
+	}
+	
 	@Test
 	public void testWrapForSQL() {
 		String origStr1 = "str";

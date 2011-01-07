@@ -1,11 +1,19 @@
 <wicket:panel>
 	<div>
-		<p style="font-weight: bold;">
+		<div class="course_title" style="font-weight: bold;">
 			<span wicket:id="question_title">Question Title</span>
-		</p>
-		<p>
+		</div>
+		<div class="course_description">
 			<span wicket:id="question_contents">Question Contents</span>
-		</p>
+		</div>
+	</div>
+	
+	<div style="margin-top: 15px;" wicket:id="answers">
+		<div class="course_description">
+			<span style="margin-bottom: 15px; width: 480px;" wicket:id="answer">
+				An Answer
+			</span>
+		</div>
 	</div>
 	
 	<div syle="margin-top: 10px;">

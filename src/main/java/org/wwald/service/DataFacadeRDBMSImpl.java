@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.wwald.model.Answer;
 import org.wwald.model.Competency;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
@@ -1683,6 +1684,23 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}		
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#insertAnswer(Connection, Answer) 
+	 */
+	public void insertAnswer(Connection conn, Answer answer) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		if(answer == null) {
+			throw new NullPointerException("answer cannot be null");
+		}
+		
+		
+		
 	}
 
 	private void insertStaticPage(Connection conn, 

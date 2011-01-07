@@ -1,13 +1,18 @@
 package org.wwald.view;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -17,6 +22,7 @@ import org.wwald.model.Answer;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Question;
 import org.wwald.model.UserMeta;
+import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
 public class QuestionPanel extends Panel {
@@ -55,9 +61,14 @@ public class QuestionPanel extends Panel {
 															iQuestionId);
 			if(question != null) {
 				add(new Label("question_title", question.getTitle()));
-				add(new Label("question_contents", question.getContents()));
+				String formattedQuestion = 
+					WWALDApplication.get().getMarkDown().
+						transform(question.getContents());
+				add(new Label("question_contents", formattedQuestion).
+							setEscapeModelStrings(false));
+				add(getAnswersList());
 				add(getLogInLink());
-				add(getAnswerForm());
+				add(getAnswerForm(forumId, questionId));
 			} else {
 				String msg = "Question for forumId '" + forumId + 
 							 "' questionId '" + iQuestionId + "' is null";
@@ -67,6 +78,26 @@ public class QuestionPanel extends Panel {
 		} catch(Exception e) {
 			
 		}
+	}
+
+	private Component getAnswersList() {
+		List<String> answers = new ArrayList<String>();
+		answers.add("first answer");
+		answers.add("second answer");
+		answers.add("third answer");
+		
+		ListView answersListView = new ListView("answers", answers) {
+
+			@Override
+			protected void populateItem(ListItem item) {
+				String answer = (String)item.getModelObject();
+				String transformedAnswer = 
+					WWALDApplication.get().getMarkDown().transform(answer);
+				item.add(new Label("answer", transformedAnswer));
+			}			
+		};
+	
+		return answersListView;
 	}
 
 	private Component getLogInLink() {
@@ -81,7 +112,8 @@ public class QuestionPanel extends Panel {
 		return loginLink;
 	}
 
-	private Component getAnswerForm() {
+	private Component getAnswerForm(final String forumId, 
+									final String questionId) {
 		final UserMeta userMeta = WWALDSession.get().getUserMeta();
 		Form answerForm = new Form("answer_form") {
 			@Override
@@ -91,11 +123,30 @@ public class QuestionPanel extends Panel {
 					setResponsePage(LoginPage.class);
 				}
 				else {
-					//save the answer in the database
+					IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
+					ServletWebRequest request = (ServletWebRequest)getRequest();
+					String requestUrl = 
+						request.getHttpServletRequest().getRequestURL().toString();
+					String databaseId = 
+						ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+					Connection conn = ConnectionPool.getConnection(databaseId);
+					
+					try {
+						dataFacade.insertAnswer(conn, answer);
+						PageParameters pageParameters = new PageParameters();
+						pageParameters.add("forum", forumId);
+						pageParameters.add("question", questionId);
+						setResponsePage(ForumPage.class, pageParameters);
+					} catch(DataException de) {
+						String msg = "Could not save answer";
+						cLogger.error(msg, de);
+					}
 				}
 			}
 		};
-		TextArea answerTextArea = new TextArea("answer_field", new PropertyModel(this.answer, "contents"));
+		TextArea answerTextArea = 
+			new TextArea("answer_field", 
+						 new PropertyModel(this.answer, "contents"));
 		answerForm.add(answerTextArea);
 		if(userMeta == null) {
 			answerForm.setVisible(false);
