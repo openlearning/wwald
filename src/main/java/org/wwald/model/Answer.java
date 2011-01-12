@@ -21,7 +21,9 @@ public class Answer implements Serializable {
 	}
 	
 	public Answer(int id, int questionId, String contents) {
-		
+		this.id = id;
+		this.questionId = questionId;
+		this.contents = contents;
 	}
 
 	public int getId() {

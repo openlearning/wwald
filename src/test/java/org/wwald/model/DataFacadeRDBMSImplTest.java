@@ -1889,6 +1889,8 @@ public class DataFacadeRDBMSImplTest {
 	@Test
 	public void testInsertAnswer() throws Exception {
 		Answer answer = new Answer(0, "the answer body");
+		answer.setQuestionId(0);
+		
 		this.dataFacade.insertAnswer(this.conn, answer);
 		
 		String sql = String.format(Sql.RETREIVE_ANSWER, answer.getId());
@@ -1898,6 +1900,70 @@ public class DataFacadeRDBMSImplTest {
 		assertEquals(answer.getId(), rs.getInt("id"));
 		assertEquals(answer.getQuestionId(), rs.getInt("question_id"));
 		assertEquals(answer.getContents(), rs.getString("contents"));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testIsQuestionAnsweredWithNullConn() throws Exception {
+		int questionId = 0;
+		this.dataFacade.isQuestionAnswered(null, questionId);
+	}
+	
+	@Test
+	public void testIsQuestionAnsweredWhenItIs() throws Exception {
+		int questionId = 0;
+		this.dataFacade.markQuestionAsAnswered(this.conn, questionId);
+		assertTrue(this.dataFacade.isQuestionAnswered(this.conn, questionId));
+	}
+	
+	@Test
+	public void testIsQuestionAnsweredWhenItIsNot() throws Exception {
+		int questionId = 0;
+		assertFalse(this.dataFacade.isQuestionAnswered(this.conn, questionId));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testMarkQuestionAsAnsweredWithNullConn() throws Exception {
+		this.dataFacade.markQuestionAsAnswered(null, 0);
+	}
+	
+	@Test(expected=DataException.class)
+	public void testMarkQuestionAsAnsweredWithNullIncorrectQuestionIdMinusOne() 
+		throws Exception {
+		
+		this.dataFacade.markQuestionAsAnswered(this.conn, -1);
+	}
+	
+	@Test(expected=DataException.class)
+	public void testMarkQuestionAsAnsweredWithNullIncorrectQuestionIdBigNumber() 
+		throws Exception {
+		
+		this.dataFacade.markQuestionAsAnswered(this.conn, 1000);
+	}
+	
+	@Test
+	public void testMarkQuestionAsAnswered() throws Exception {
+		this.dataFacade.markQuestionAsAnswered(this.conn, 0);
+		String sql = String.format(Sql.RETREIVE_QUESTIONS_ANSWERED, "0");
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		assertTrue(rs.next());
+		assertEquals(0, rs.getInt("question_id"));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testMarkQuestionAsUnansweredWithNullConn() throws Exception {
+		this.dataFacade.markQuestionAsUnanswered(null, 0);
+	}
+	
+	@Test
+	public void testMarkQuestionAsUnanswered() throws Exception {
+		int questionId = 0;
+		this.dataFacade.markQuestionAsAnswered(conn, questionId);
+		this.dataFacade.markQuestionAsUnanswered(this.conn, questionId);
+		String sql = String.format(Sql.RETREIVE_QUESTIONS_ANSWERED, questionId);
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		assertFalse(rs.next());
 	}
 	
 	@Test

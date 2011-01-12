@@ -722,4 +722,45 @@ public interface IDataFacade {
 	 */
 	public void insertAnswer(Connection conn, Answer answer) 
 		throws DataException;
+	
+	/**
+	 * Determines if the specified question has been answered 
+	 * @param conn The database connection
+	 * @param questionId The specified question id. If the questionId is of a 
+	 * 		  non existent question then this method will return false
+	 * @return true if the question has been answered and false if it has not
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException
+	 */
+	public boolean isQuestionAnswered(Connection conn, 
+									  int questionId) 
+		throws DataException;
+	
+	/**
+	 * Marks a question as answered
+	 * @param conn The database connection
+	 * @param questionId The id of the question which will be marked as ansered
+	 * @throws NullPointerException If conn is null 
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}. If the 
+	 * questionId is incorrect a DataException will be thrown
+	 */
+	public void markQuestionAsAnswered(Connection conn, 
+									   int questionId) 
+		throws DataException;
+	
+	/**
+	 * Marks a question which was previously marked as ansered as an unanswered
+	 * question.
+	 * @param conn The database connection
+	 * @param questionId The id of the question to be marked as unanswered. If 
+	 * 		  the questionId is non existent then this methos will fail silently.
+	 * 		  No exceptions will be thrown
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException} 
+	 */
+	public void markQuestionAsUnanswered(Connection conn, 
+										 int questionId) 
+		throws DataException;
 }

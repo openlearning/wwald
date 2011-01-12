@@ -1699,10 +1699,97 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("answer cannot be null");
 		}
 		
+		String sql = String.format(Sql.INSERT_ANSWER, 
+								   0, 
+								   answer.getQuestionId(), 
+								   wrapForSQL(answer.getContents()));
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not insert Answer '" + answer + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#isQuestionAnswered(Connection, int)
+	 */
+	public boolean isQuestionAnswered(Connection conn, 
+									  int questionId) 
+		throws DataException {
 		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
 		
+		boolean answered = false;
+		
+		String sql = String.format(Sql.RETREIVE_QUESTIONS_ANSWERED, questionId);
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				if(questionId == rs.getInt("question_id")) {
+					answered = true;
+				}
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not determine if question is answered";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		return answered;
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#markQuestionAsAnswered(Connection, int)
+	 */
+	public void markQuestionAsAnswered(Connection conn, 
+									   int questionId) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		String sql = String.format(Sql.INSERT_QUESTION_ANSWERED, questionId);
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not mark question as answered question_id - '" + 
+						 questionId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#markQuestionAsAnswered(Connection, int)
+	 */
+	public void markQuestionAsUnanswered(Connection conn, 
+										 int questionId) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		String sql = String.format(Sql.DELETE_QUESTION_ANSWERED, questionId);
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not mark question as unanswered questionId - '" + 
+						 questionId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
 	}
 
+	
 	private void insertStaticPage(Connection conn, 
 								  StaticPagePOJO page) 
 		throws DataException {

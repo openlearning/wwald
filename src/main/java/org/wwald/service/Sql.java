@@ -78,4 +78,7 @@ public class Sql {
 	public static String INSERT_QUESTION = "INSERT INTO QUESTION (discussion_id, title, contents) VALUES (%s, %s, %s);";
 	public static String INSERT_ANSWER = "INSERT INTO ANSWER (id, question_id, contents) VALUES (%s, %s, %s);";
 	public static String RETREIVE_ANSWER = "SELECT * FROM ANSWER WHERE id=%s;";
+	public static String RETREIVE_QUESTIONS_ANSWERED = "SELECT * FROM QUESTIONS_ANSWERED WHERE question_id=%s;";
+	public static String INSERT_QUESTION_ANSWERED = "INSERT INTO QUESTIONS_ANSWERED VALUES (%s);";
+	public static String DELETE_QUESTION_ANSWERED = "DELETE FROM QUESTIONS_ANSWERED WHERE question_id=%s";
 }

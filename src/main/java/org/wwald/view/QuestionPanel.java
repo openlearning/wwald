@@ -1,12 +1,17 @@
 package org.wwald.view;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -24,10 +29,13 @@ import org.wwald.model.Question;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
+import org.wwald.service.Sql;
 
 public class QuestionPanel extends Panel {
 
+	private String questionId;
 	private Answer answer;
+	private boolean questionAnswered;
 	private static transient Logger cLogger = Logger.getLogger(QuestionPanel.class);
 	
 	public QuestionPanel(String id, String forumId, String questionId) {
@@ -45,6 +53,7 @@ public class QuestionPanel extends Panel {
 		}		
 		try {
 			int iQuestionId = Integer.parseInt(questionId);
+			this.questionId = questionId;
 			
 			this.answer = new Answer(iQuestionId);
 			
@@ -56,6 +65,8 @@ public class QuestionPanel extends Panel {
 				ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
 			Connection conn = ConnectionPool.getConnection(databaseId);
 			
+			initQuestionAnswered(conn);
+			
 			Question question = dataFacade.retreiveQuestion(conn, 
 															forumId, 
 															iQuestionId);
@@ -66,6 +77,7 @@ public class QuestionPanel extends Panel {
 						transform(question.getContents());
 				add(new Label("question_contents", formattedQuestion).
 							setEscapeModelStrings(false));
+				add(getQuestionAnsweredLink());
 				add(getAnswersList());
 				add(getLogInLink());
 				add(getAnswerForm(forumId, questionId));
@@ -76,8 +88,48 @@ public class QuestionPanel extends Panel {
 				setResponsePage(GenericErrorPage.class);
 			}
 		} catch(Exception e) {
-			
+			String msg = "Could not construct QuestionPanel";
+			cLogger.error(msg, e);
+			setResponsePage(GenericErrorPage.class);
 		}
+	}
+
+	private void initQuestionAnswered(Connection conn) throws DataException {
+		IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
+		int iQuestionId = Integer.parseInt(this.questionId);
+		this.questionAnswered = 
+			dataFacade.isQuestionAnswered(conn, iQuestionId);
+	}
+
+	private Component getQuestionAnsweredLink() {
+		AjaxCheckBox questionAnsweredCheckbox = 
+			new AjaxCheckBox("question_answered", 
+							new PropertyModel(QuestionPanel.this, "questionAnswered")) {
+
+			@Override
+			protected void onUpdate(AjaxRequestTarget target) {
+				IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
+				ServletWebRequest request = (ServletWebRequest)getRequest();
+				String requestUrl = 
+					request.getHttpServletRequest().getRequestURL().toString();
+				String databaseId = 
+					ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+				Connection conn = ConnectionPool.getConnection(databaseId);
+				try {
+					int iQuestionId = Integer.parseInt(questionId);
+					if(questionAnswered) {
+						dataFacade.markQuestionAsAnswered(conn, iQuestionId);
+					} else {
+						dataFacade.markQuestionAsUnanswered(conn, iQuestionId);
+					}
+				} 
+				catch(DataException de) {
+					cLogger.error("Could not change the answered status of this question " + de);
+				}
+			}
+			
+		};
+		return questionAnsweredCheckbox;
 	}
 
 	private Component getAnswersList() {
@@ -93,7 +145,8 @@ public class QuestionPanel extends Panel {
 				String answer = (String)item.getModelObject();
 				String transformedAnswer = 
 					WWALDApplication.get().getMarkDown().transform(answer);
-				item.add(new Label("answer", transformedAnswer));
+				Label answerLabel = new Label("answer", transformedAnswer);				
+				item.add(answerLabel.setEscapeModelStrings(false));
 			}			
 		};
 	
@@ -152,6 +205,14 @@ public class QuestionPanel extends Panel {
 			answerForm.setVisible(false);
 		}
 		return answerForm;
+	}
+	
+	public boolean getQuestionAnswred() {
+		return this.questionAnswered;
+	}
+	
+	public void setQuestionAnswered(boolean questionAnswered) {
+		this.questionAnswered = questionAnswered;
 	}
 
 }
