@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Question implements Serializable {
 	
 	private int id;
+	private UserMeta userMeta; //may be null
 	private String title;
 	private String contents;
 	private String discussionId;
@@ -31,6 +32,14 @@ public class Question implements Serializable {
 
 	public int getId() {
 		return this.id;
+	}
+	
+	public UserMeta getUserMeta() {
+		return this.userMeta;
+	}
+	
+	public void setUserMeta(UserMeta userMeta) {
+		this.userMeta = userMeta;
 	}
 	
 	public String getTitle() {

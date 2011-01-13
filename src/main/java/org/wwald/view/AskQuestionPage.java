@@ -12,9 +12,9 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.ConnectionPool;
-import org.wwald.model.Forum;
 import org.wwald.model.Question;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
@@ -49,6 +49,7 @@ public class AskQuestionPage extends BasePage {
 				IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
 				Connection conn = ConnectionPool.getConnection(databaseId);
 				try {
+					question.setUserMeta(WWALDSession.get().getUserMeta());
 					dataFacade.insertQuestion(conn, question);
 					setResponsePage(ForumPage.class, parameters);
 				} catch(DataException de) {

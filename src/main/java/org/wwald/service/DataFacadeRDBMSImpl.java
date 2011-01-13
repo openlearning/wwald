@@ -1598,7 +1598,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("question should not be null");
 		}
 		
-		String sql = String.format(Sql.INSERT_QUESTION, 
+		UserMeta user = question.getUserMeta();
+		
+		String sql = String.format(Sql.INSERT_QUESTION,
+								   (user != null) ? user.getUserid() : null,
 								   wrapForSQL(question.getDiscussionId()), 
 								   wrapForSQL(question.getTitle()), 
 								   wrapForSQL(question.getContents()));
@@ -1628,10 +1631,14 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()) {
 				int id = rs.getInt("id");
+				int userid = rs.getInt("userid");
+				UserMeta userMeta = retreiveUserMeta(conn, userid);
 				String discussionId = rs.getString("discussion_id");
 				String title = rs.getString("title");
 				String contents = rs.getString("contents");
-				questions.add(new Question(id, title, contents, discussionId));
+				Question question = new Question(id, title, contents, discussionId);
+				question.setUserMeta(userMeta);
+				questions.add(question);
 			}
 		} catch(SQLException sqle) {
 			String msg = "Could not retreive all questions for forum '" + 
@@ -1672,10 +1679,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()) {
 				int id = rs.getInt("id");
+				int userid = rs.getInt("userid");
+				UserMeta userMeta = retreiveUserMeta(conn, userid);
 				String discussionId = rs.getString("discussion_id");
 				String title = rs.getString("title");
 				String contents = rs.getString("contents");
 				question = new Question(id, title, contents, discussionId);
+				question.setUserMeta(userMeta);
 			}
 			return question;
 		} catch(SQLException sqle) {
@@ -1731,7 +1741,10 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("answer cannot be null");
 		}
 		
+		UserMeta user = answer.getUserMeta();
+		
 		String sql = String.format(Sql.INSERT_ANSWER,  
+								   (user != null) ? user.getUserid() : null,
 								   answer.getQuestionId(), 
 								   wrapForSQL(answer.getContents()));
 		try {

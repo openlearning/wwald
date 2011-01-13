@@ -9,10 +9,13 @@
 	</div>
 	
 	<div>
-		<label>
-			<input type="checkbox" wicket:id="question_answered">
-				Mark this question as answered
-		</label>
+		<a wicket:id="public_user_profile" href="#"><span wicket:id="public_user_profile_label">User who asked the question</span></a>
+	</div>
+	
+	<div>
+		<input type="checkbox" wicket:id="question_answered">
+			<span wicket:id="question_answered_label">Mark this question as answered</span>
+		</input>
 	</div>
 	
 	<div style="margin-top: 15px;" wicket:id="answers">

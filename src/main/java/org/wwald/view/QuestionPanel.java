@@ -16,20 +16,25 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
+import org.wwald.WWALDConstants;
 import org.wwald.WWALDSession;
+import org.wwald.WicketIdConstants;
 import org.wwald.model.Answer;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Question;
+import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 import org.wwald.service.Sql;
+import org.wwald.view.components.AccessControlledViewPageLink;
 
 public class QuestionPanel extends Panel {
 
@@ -77,7 +82,8 @@ public class QuestionPanel extends Panel {
 						transform(question.getContents());
 				add(new Label("question_contents", formattedQuestion).
 							setEscapeModelStrings(false));
-				add(getQuestionAnsweredLink());
+				add(getQuestionUserLink(question.getUserMeta()));
+				add(getQuestionAnsweredCheckbox(question.getUserMeta()));
 				add(getAnswersList(dataFacade, databaseId, iQuestionId));
 				add(getLogInLink());
 				add(getAnswerForm(forumId, questionId));
@@ -94,6 +100,26 @@ public class QuestionPanel extends Panel {
 		}
 	}
 
+	private Component getQuestionUserLink(UserMeta userMeta) {
+		if(userMeta == null) {
+			String msg = "userMeta cannot be null";
+			throw new IllegalArgumentException(msg);
+		}
+		
+		PageParameters parameters = new PageParameters();
+		parameters.add(WWALDConstants.USERID, String.valueOf(userMeta.getUserid()));
+		
+		//TODO: We should factor this code into a util method
+		Link userDetailsLink = new BookmarkablePageLink(WicketIdConstants.PUBLIC_USER_PROFILE, 
+														UserProfiles.class,
+														parameters);
+		Label label = 
+			new Label(WicketIdConstants.PUBLIC_USER_PROFILE_LABEL, 
+					  userMeta.getIdentifier());
+		userDetailsLink.add(label);
+		return userDetailsLink;
+	}
+
 	private void initQuestionAnswered(Connection conn) throws DataException {
 		IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
 		int iQuestionId = Integer.parseInt(this.questionId);
@@ -101,7 +127,7 @@ public class QuestionPanel extends Panel {
 			dataFacade.isQuestionAnswered(conn, iQuestionId);
 	}
 
-	private Component getQuestionAnsweredLink() {
+	private Component getQuestionAnsweredCheckbox(UserMeta userMeta) {
 		AjaxCheckBox questionAnsweredCheckbox = 
 			new AjaxCheckBox("question_answered", 
 							new PropertyModel(QuestionPanel.this, "questionAnswered")) {
@@ -129,6 +155,11 @@ public class QuestionPanel extends Panel {
 			}
 			
 		};
+		UserMeta loggedInUser = WWALDSession.get().getUserMeta();
+		if(loggedInUser == null || !loggedInUser.equals(userMeta)) {
+			questionAnsweredCheckbox.setVisible(false);
+		}
+		questionAnsweredCheckbox.add(new Label("question_answered_label", "Mark question as answered"));
 		return questionAnsweredCheckbox;
 	}
 

@@ -70,10 +70,12 @@ CREATE TABLE DISCUSSION (
 	
 CREATE TABLE QUESTION (
 	id IDENTITY,
+	userid INTEGER,
 	discussion_id VARCHAR(64),	
 	title VARCHAR (128),
 	contents LONGVARCHAR,
-		CONSTRAINT question_col1_fk FOREIGN KEY (discussion_id) REFERENCES DISCUSSION(id));
+		CONSTRAINT question_userid_fk FOREIGN KEY (userid) REFERENCES USER_META (userid),
+		CONSTRAINT question_discussion_id_fk FOREIGN KEY (discussion_id) REFERENCES DISCUSSION(id));
 
 CREATE TABLE QUESTIONS_ANSWERED (
 	question_id INTEGER NOT NULL PRIMARY KEY,
@@ -81,9 +83,11 @@ CREATE TABLE QUESTIONS_ANSWERED (
 
 CREATE TABLE ANSWER (
 	id IDENTITY,
+	userid INTEGER,
 	question_id INTEGER,	
 	contents LONGVARCHAR,
-		CONSTRAINT answer_col1_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
+		CONSTRAINT answer_userid_fk FOREIGN KEY (userid) REFERENCES USER_META (userid),
+		CONSTRAINT answer_question_id_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
 
 CREATE TABLE QUESTION_TAGS (
 	id IDENTITY,
@@ -91,22 +95,12 @@ CREATE TABLE QUESTION_TAGS (
 	tag VARCHAR(128),
 		CONSTRAINT question_tags_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
 	
-CREATE TABLE QUESTION_LIKES (
-	question_id INTEGER PRIMARY KEY,
-	likes INTEGER,
-		CONSTRAINT question_likes_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id));
-		
 CREATE TABLE QUESTION_USER_LIKES (
 	question_id INTEGER,
 	userid INTEGER,
 	PRIMARY KEY(question_id, userid),
 		CONSTRAINT question_user_likes_col1_fk FOREIGN KEY (question_id) REFERENCES QUESTION(id),
 		CONSTRAINT question_user_likes_col2_fk FOREIGN KEY (userid) REFERENCES USER_META(userid));
-		
-CREATE TABLE ANSWER_LIKES (
-	answer_id INTEGER PRIMARY KEY,
-	likes INTEGER,
-		CONSTRAINT answer_likes_fk FOREIGN KEY (answer_id) REFERENCES ANSWER(id));
 		
 CREATE TABLE ANSWER_USER_LIKES (
 	answer_id INTEGER,

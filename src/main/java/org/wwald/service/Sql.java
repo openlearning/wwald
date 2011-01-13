@@ -75,8 +75,8 @@ public class Sql {
 	public static String RETREIVE_ALL_QUESTIONS = "SELECT * FROM QUESTION;";
 	public static String RETREIVE_QUESTIONS_FOR_DISCUSSION_FORUM = "SELECT * FROM QUESTION WHERE discussion_id=%s";
 	public static String RETREIVE_QUESTION_FOR_DISCUSSION_FORUM = "SELECT * FROM QUESTION WHERE discussion_id=%s AND id=%s";
-	public static String INSERT_QUESTION = "INSERT INTO QUESTION (discussion_id, title, contents) VALUES (%s, %s, %s);";
-	public static String INSERT_ANSWER = "INSERT INTO ANSWER (question_id, contents) VALUES (%s, %s);";
+	public static String INSERT_QUESTION = "INSERT INTO QUESTION (userid, discussion_id, title, contents) VALUES (%s, %s, %s, %s);";
+	public static String INSERT_ANSWER = "INSERT INTO ANSWER (userid, question_id, contents) VALUES (%s, %s, %s);";
 	public static String RETREIVE_ANSWER = "SELECT * FROM ANSWER WHERE id=%s;";
 	public static String RETREIVE_ANSWERS_FOR_QUESTION = "SELECT * FROM ANSWER WHERE question_id=%s;";
 	public static String RETREIVE_QUESTIONS_ANSWERED = "SELECT * FROM QUESTIONS_ANSWERED WHERE question_id=%s;";

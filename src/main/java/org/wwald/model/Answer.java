@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Answer implements Serializable {
 	
 	private int id;
+	private UserMeta userMeta;
 	private int questionId;
 	private String contents;
 	
@@ -21,7 +22,12 @@ public class Answer implements Serializable {
 	}
 	
 	public Answer(int id, int questionId, String contents) {
+		this(id, null, questionId, contents);
+	}
+	
+	public Answer(int id, UserMeta userMeta, int questionId, String contents) {
 		this.id = id;
+		this.userMeta = userMeta;
 		this.questionId = questionId;
 		this.contents = contents;
 	}
@@ -30,8 +36,17 @@ public class Answer implements Serializable {
 		return id;
 	}
 
+	//TODO: Should we remove this method?
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public UserMeta getUserMeta() {
+		return this.userMeta;
+	}
+	
+	public void setUserMeta(UserMeta userMeta) {
+		this.userMeta = userMeta;
 	}
 
 	public int getQuestionId() {

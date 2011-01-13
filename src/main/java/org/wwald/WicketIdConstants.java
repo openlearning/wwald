@@ -109,7 +109,7 @@ public class WicketIdConstants {
 	public static final String NEW_PWD = "new_pwd";
 	public static final String RETYPE_NEW_PWD = "retype_new_pwd";
 	
-	//public user pofile pages
+	//public user profile pages
 	public static final String PUBLIC_USER_PROFILES_LIST = "public_user_profiles_list";
 	public static final String PUBLIC_USER_PROFILE = "public_user_profile";
 	public static final String PUBLIC_USER_PROFILE_LABEL = "public_user_profile_label";

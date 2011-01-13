@@ -1700,8 +1700,10 @@ public class DataFacadeRDBMSImplTest {
 		this.dataFacade.insertDiscussionForum(this.conn, forum);
 		
 		Question question = new Question("What is an RDBMS", "Please explain what an RDBMS is.", forumId);
+		//Note: Adding a question where the userid is null in the database
 		String insertQuestionSql = 
-			String.format(Sql.INSERT_QUESTION, 
+			String.format(Sql.INSERT_QUESTION,
+						  null,
 						  DataInitializer.wrapForSQL(question.getDiscussionId()), 
 						  DataInitializer.wrapForSQL(question.getTitle()), 
 						  DataInitializer.wrapForSQL(question.getContents()));
@@ -1891,9 +1893,12 @@ public class DataFacadeRDBMSImplTest {
 	@Test
 	public void testRetreiveAnswersForQuestionWithThreeANswers() throws Exception {
 		//let's add a few answers for question id 0
-		Answer answers[] = new Answer[] {new Answer(0, "first answer"),
-										 new Answer(0, "second answer"),
-										 new Answer(0, "third answer")};
+		UserMeta user = 
+			TestObjectsRepository.getInstance().
+				getUserUserMeta("dvidakovich").userMeta;
+		Answer answers[] = new Answer[] {new Answer(0, user, 0, "first answer"),
+										 new Answer(0, user, 0, "second answer"),
+										 new Answer(0, user, 0, "third answer")};
 		for(Answer answer : answers) {
 			this.dataFacade.insertAnswer(this.conn, answer);
 		}

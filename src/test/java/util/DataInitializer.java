@@ -241,6 +241,7 @@ public class DataInitializer {
 
 	private void populateForums(List<Course> coursesList, Connection conn) 
 		throws SQLException {
+		UserMeta student = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
 		
 		for(Course course : coursesList) {
 			//create the forum
@@ -253,7 +254,8 @@ public class DataInitializer {
 			System.out.println("Added forum for '" + course.getId() + "'");
 			//add some questions to the forum
 			for(int i=0; i<3; i++) {
-				String questionSql = String.format(Sql.INSERT_QUESTION, 
+				String questionSql = String.format(Sql.INSERT_QUESTION,
+						   student.getUserid(),
 						   wrapForSQL(course.getId()),
 						   wrapForSQL("Question " + String.valueOf(i)),
 						   wrapForSQL("Contents for question " + String.valueOf(i)));
