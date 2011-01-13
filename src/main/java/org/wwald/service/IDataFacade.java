@@ -724,6 +724,19 @@ public interface IDataFacade {
 		throws DataException;
 	
 	/**
+	 * Retreives all answers for the specified question
+	 * @param conn The database connection
+	 * @param questionId The question id of the question for which we want to
+	 * 		  retreive answers
+	 * @return A {@link List} of {@link Answer} objects for the specified
+	 * 		   question
+	 * @throws DataException
+	 */
+	public List<Answer> retreiveAnswersForQuestion(Connection conn, 
+												   int questionId) 
+        throws DataException;
+	
+	/**
 	 * Determines if the specified question has been answered 
 	 * @param conn The database connection
 	 * @param questionId The specified question id. If the questionId is of a 

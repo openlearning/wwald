@@ -1687,6 +1687,38 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	}
 	
 	/**
+	 * @see org.wwald.service.IDataFacade#retreiveAnswersForQuestion(Connection, int)
+	 */
+	public List<Answer> retreiveAnswersForQuestion(Connection conn, 
+			   									   int questionId) 
+			   throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		List<Answer> retVal = new ArrayList<Answer>();
+		
+		String sql = String.format(Sql.RETREIVE_ANSWERS_FOR_QUESTION, questionId);
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				String contents = rs.getString("contents");
+				Answer answer = new Answer(id, questionId, contents);
+				retVal.add(answer);				
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive answers for question '" + 
+						 questionId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		
+		return retVal;
+	}
+	
+	/**
 	 * @see org.wwald.service.IDataFacade#insertAnswer(Connection, Answer) 
 	 */
 	public void insertAnswer(Connection conn, Answer answer) 
@@ -1699,13 +1731,13 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("answer cannot be null");
 		}
 		
-		String sql = String.format(Sql.INSERT_ANSWER, 
-								   0, 
+		String sql = String.format(Sql.INSERT_ANSWER,  
 								   answer.getQuestionId(), 
 								   wrapForSQL(answer.getContents()));
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			int rows = stmt.executeUpdate(sql);
+//			System.out.println(rows);
 		} catch(SQLException sqle) {
 			String msg = "Could not insert Answer '" + answer + "'";
 			cLogger.error(msg, sqle);

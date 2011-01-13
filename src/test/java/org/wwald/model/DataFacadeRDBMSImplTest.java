@@ -1876,6 +1876,35 @@ public class DataFacadeRDBMSImplTest {
 	}
 	
 	@Test(expected=NullPointerException.class)
+	public void testRetreiveAnswersForQuestionWithNullConn() throws Exception {
+		this.dataFacade.retreiveAnswersForQuestion(null, 0);
+	}
+	
+	@Test
+	public void testRetreiveAnswersForQuestionWithZeroANswers() throws Exception {
+		List<Answer> answers = 
+			this.dataFacade.retreiveAnswersForQuestion(this.conn, 0);
+		assertNotNull(answers);
+		assertEquals(0, answers.size());
+	}
+	
+	@Test
+	public void testRetreiveAnswersForQuestionWithThreeANswers() throws Exception {
+		//let's add a few answers for question id 0
+		Answer answers[] = new Answer[] {new Answer(0, "first answer"),
+										 new Answer(0, "second answer"),
+										 new Answer(0, "third answer")};
+		for(Answer answer : answers) {
+			this.dataFacade.insertAnswer(this.conn, answer);
+		}
+		
+		List<Answer> retreivedAnswers = 
+			this.dataFacade.retreiveAnswersForQuestion(this.conn, 0);
+		assertNotNull(retreivedAnswers);
+		assertEquals(answers.length, retreivedAnswers.size());
+	}
+	
+	@Test(expected=NullPointerException.class)
 	public void testInsertAnswerWithNullConn() throws Exception {
 		Answer answer = new Answer(0, "the answer body");
 		this.dataFacade.insertAnswer(null, answer);

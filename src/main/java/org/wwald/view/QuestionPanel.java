@@ -78,7 +78,7 @@ public class QuestionPanel extends Panel {
 				add(new Label("question_contents", formattedQuestion).
 							setEscapeModelStrings(false));
 				add(getQuestionAnsweredLink());
-				add(getAnswersList());
+				add(getAnswersList(dataFacade, databaseId, iQuestionId));
 				add(getLogInLink());
 				add(getAnswerForm(forumId, questionId));
 			} else {
@@ -132,19 +132,20 @@ public class QuestionPanel extends Panel {
 		return questionAnsweredCheckbox;
 	}
 
-	private Component getAnswersList() {
-		List<String> answers = new ArrayList<String>();
-		answers.add("first answer");
-		answers.add("second answer");
-		answers.add("third answer");
+	private Component getAnswersList(IDataFacade dataFacade, 
+									 String databaseId, 
+									 int questionId) throws DataException {
+		Connection conn = ConnectionPool.getConnection(databaseId);
+		List<Answer> answers =  
+			dataFacade.retreiveAnswersForQuestion(conn, questionId);
 		
 		ListView answersListView = new ListView("answers", answers) {
 
 			@Override
 			protected void populateItem(ListItem item) {
-				String answer = (String)item.getModelObject();
+				Answer answer = (Answer)item.getModelObject();
 				String transformedAnswer = 
-					WWALDApplication.get().getMarkDown().transform(answer);
+					WWALDApplication.get().getMarkDown().transform(answer.getContents());
 				Label answerLabel = new Label("answer", transformedAnswer);				
 				item.add(answerLabel.setEscapeModelStrings(false));
 			}			
@@ -171,7 +172,6 @@ public class QuestionPanel extends Panel {
 		Form answerForm = new Form("answer_form") {
 			@Override
 			public void onSubmit() {
-				System.out.println("submitting answer");
 				if(userMeta == null) {
 					setResponsePage(LoginPage.class);
 				}
