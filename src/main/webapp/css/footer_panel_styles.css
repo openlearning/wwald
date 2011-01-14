@@ -6,43 +6,30 @@
     margin-top: 2em;
     width: 1024px;
     overflow: auto;
+    text-align: center;
 }
 
 #footer a:link {
 	color: #fff;
-	font-size: 11px;
+	font-size: 13px;
 	font-weight: bold;
 }
+
 #footer a:visited {
 	color: #fff;
-	font-size: 11px;
+	font-size: 13px;
 	font-weight: bold;
 }
+
 #footer a:hover {
 	color: #ddd;
-	font-size: 11px;
+	font-size: 13px;
 	font-weight: bold;
 }
 
-#footer div.chunk {
-    margin-top: 1em;
-    margin-left: 20px;
-    width: 15%;
-    float: left;
-    margin-bottom: 2em;
-}
-
-#footer div.chunk h3 {
-    font-size: 110%;
-}
-
-#footer div.chunk ul {
-    list-style-type: none;
-}
-
-#footer #copyright {
-    clear: left;
-    padding-top: 1em;
-    margin-bottom: 1em;
-    margin-left: 20px;
+.footer_row {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
