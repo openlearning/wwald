@@ -3,9 +3,13 @@ package org.wwald.view;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.util.value.ValueMap;
+import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.QuestionStatistics;
@@ -23,6 +27,7 @@ public class QuestionStatisticsPanel extends BasePanel {
 		
 		try {
 			//4890999
+			add(getUserImage(questionStatistics.getQuestioner().getUserid()));
 			add(getQuestionerLink(questionStatistics));
 			add(getNumberOfAnswers(questionStatistics));
 //			add(getLastAnswererLink());

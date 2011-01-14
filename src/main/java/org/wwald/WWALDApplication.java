@@ -21,10 +21,10 @@ import org.wwald.view.ErrorPageInternal;
 import org.wwald.view.ForumsPage;
 import org.wwald.view.HomePage;
 import org.wwald.view.LoginPage;
-import org.wwald.view.Register;
 import org.wwald.view.StaticPage;
 import org.wwald.view.UserProfiles;
 import org.wwald.view.components.CourseThumbnailImageResource;
+import org.wwald.view.components.UserThumbnailImageResource;
 
 import com.cforcoding.jmd.MarkDown;
 
@@ -36,6 +36,7 @@ import com.cforcoding.jmd.MarkDown;
 public class WWALDApplication extends WebApplication
 {
 	public static final String COURSE_THUMBNAIL_IMAGE = "course_image";
+	public static final String USER_THUMBNAIL_IMAGE = "user_image";
 	public static final String HOMEDIR; 
 	public static final String WWALDDIR;
 	public static PropertyDirMap DIRMAP;
@@ -97,6 +98,8 @@ public class WWALDApplication extends WebApplication
 		
 		getSharedResources().add(COURSE_THUMBNAIL_IMAGE, 
 								 new CourseThumbnailImageResource());
+		getSharedResources().add(USER_THUMBNAIL_IMAGE, 
+				 				new UserThumbnailImageResource());
 	}
 	
 	public IDataFacade getDataFacade() {

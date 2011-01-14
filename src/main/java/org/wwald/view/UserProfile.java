@@ -7,11 +7,14 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.util.value.ValueMap;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -32,6 +35,7 @@ public class UserProfile extends BasePage {
 		try {
 			UserMeta userMeta = retreiveUserMeta(parameters);
 			String identifier = userMeta.getIdentifier();
+			add(getUserThumbnailImage(userMeta));
 			add(new Label(WicketIdConstants.PUBLIC_USER_PROFILE_IDENTIFIER, 
 						  identifier));
 			add(getEnrolledCoursesListView(userMeta));
@@ -41,6 +45,17 @@ public class UserProfile extends BasePage {
 		}
 	}
 	
+	private Component getUserThumbnailImage(UserMeta userMeta) {
+		String dbId = getDatabaseId();
+		String userid = String.valueOf(userMeta.getUserid());
+		ValueMap vm = new ValueMap();
+		vm.put("userid", userid);
+		vm.put("dbId", dbId);
+		return new Image(WWALDApplication.USER_THUMBNAIL_IMAGE, 
+						 new ResourceReference(WWALDApplication.USER_THUMBNAIL_IMAGE), 
+						 vm);
+	}
+
 	private Component getEnrolledCoursesListView(UserMeta userMeta) 
 		throws DataException {
 		

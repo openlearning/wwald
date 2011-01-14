@@ -14,12 +14,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.resource.ContextRelativeResource;
-import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.value.ValueMap;
-import org.hsqldb.WebServer;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -33,7 +28,7 @@ import org.wwald.util.ParseException;
 import org.wwald.util.CourseWikiParser.CourseTitlePair;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
-public class CoursesPanel extends Panel {
+public class CoursesPanel extends BasePanel {
 	private static final Logger cLogger = Logger.getLogger(CoursesPanel.class);
 	
 	public CoursesPanel(String id) throws DataException, ParseException {
@@ -42,9 +37,8 @@ public class CoursesPanel extends Panel {
 	}
 	
 	private ListView getCoursesListView() throws DataException, ParseException {
-		ServletWebRequest request = (ServletWebRequest)getRequest();
-		String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
-		String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+		String databaseId = getDatabaseId();
+		
 		String wikiContent = ((WWALDApplication)getApplication()).
 									getDataFacade().
 										retreiveCourseWiki(ConnectionPool.getConnection(databaseId));
@@ -83,9 +77,7 @@ public class CoursesPanel extends Panel {
 															 new Role[]{Role.ADMIN}) {
 						@Override
 						public void onClick() {
-							ServletWebRequest request = (ServletWebRequest)getRequest();
-							String requestUrl = request.getHttpServletRequest().getRequestURL().toString();
-							String databaseId = ConnectionPool.getDatabaseIdFromRequestUrl(requestUrl);
+							String databaseId = getDatabaseId();
 							//TODO: Why can't we access dataFacade from HomePage?
 							PageParameters pageParameters = getPage().getPageParameters();
 							//TODO: Why would this ever be null?
@@ -125,24 +117,13 @@ public class CoursesPanel extends Panel {
 	}
 	
 	private Component getCourseImage(String id) {
-		String dbId = 
-			ConnectionPool.getDatabaseIdFromRequest((ServletWebRequest)getRequest());
+		String dbId = getDatabaseId();
 		ValueMap vm = new ValueMap();
 		vm.put("courseId", id);
 		vm.put("dbId", dbId);
 		return new Image(WWALDApplication.COURSE_THUMBNAIL_IMAGE, 
 						 new ResourceReference(WWALDApplication.COURSE_THUMBNAIL_IMAGE), 
 						 vm);
-//		String relImagePath = "images/" + id + ".png";
-//		ContextRelativeResource resource = null;
-//		try {
-//			resource = new ContextRelativeResource(relImagePath);
-//			resource.getResourceStream().getInputStream();
-//		} catch(ResourceStreamNotFoundException rsnfe) {
-//			resource = 
-//				new ContextRelativeResource(WWALDConstants.DEFAULT_COURSE_IMAGE_PATH);
-//		}
-//		return new Image("course_image", resource);
 	}
 	
 	private String shorten(String str) {
