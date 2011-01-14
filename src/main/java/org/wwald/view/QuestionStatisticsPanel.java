@@ -24,10 +24,10 @@ public class QuestionStatisticsPanel extends BasePanel {
 		try {
 			//4890999
 			add(getQuestionerLink(questionStatistics));
-			add(getNumberOfAnswers());
-			add(getLastAnswererLink());
-			add(getLikes());
-			add(getTags());
+			add(getNumberOfAnswers(questionStatistics));
+//			add(getLastAnswererLink());
+//			add(getLikes());
+//			add(getTags());
 		} catch(Exception e) {
 			String msg = "Exception caught while showing QuestionStatisticsPanel";
 			cLogger.error(msg, e);
@@ -52,9 +52,9 @@ public class QuestionStatisticsPanel extends BasePanel {
 		return userLink;
 	}
 
-	private Component getNumberOfAnswers() {
-		// TODO Auto-generated method stub
-		return null;
+	private Component getNumberOfAnswers(QuestionStatistics questionStatistics) {
+		return new Label("number_of_answers", 
+						 String.valueOf(questionStatistics.getNumberOfAnswers()));
 	}
 
 	private Component getLastAnswererLink() {

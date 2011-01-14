@@ -30,6 +30,7 @@ import org.wwald.model.Answer;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Question;
 import org.wwald.model.QuestionStatistics;
+import org.wwald.model.QuestionStatisticsBuilder;
 import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
@@ -37,7 +38,7 @@ import org.wwald.service.IDataFacade;
 import org.wwald.service.Sql;
 import org.wwald.view.components.AccessControlledViewPageLink;
 
-public class QuestionPanel extends Panel {
+public class QuestionPanel extends BasePanel {
 
 	private String questionId;
 	private Answer answer;
@@ -101,8 +102,15 @@ public class QuestionPanel extends Panel {
 		}
 	}
 
-	private Component getQuestionStatistics(Question question) {
-		QuestionStatistics questionStatistics = new QuestionStatistics(question);
+	private Component getQuestionStatistics(Question question) 
+		throws DataException {
+		
+		QuestionStatistics questionStatistics = 
+			QuestionStatisticsBuilder.
+				buildQuestionStatistics(question, 
+										WWALDApplication.get().getDataFacade(), 
+										getDatabaseId());
+		
 		QuestionStatisticsPanel questionStatisticsPanel = 
 			new QuestionStatisticsPanel("question_statistics", 
 										questionStatistics);

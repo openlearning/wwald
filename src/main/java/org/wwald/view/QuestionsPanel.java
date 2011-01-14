@@ -18,10 +18,11 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.Forum;
 import org.wwald.model.Question;
 import org.wwald.model.QuestionStatistics;
+import org.wwald.model.QuestionStatisticsBuilder;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
-public class QuestionsPanel extends Panel {
+public class QuestionsPanel extends BasePanel {
 
 	private static transient Logger cLogger = Logger.getLogger(QuestionsPanel.class);
 	
@@ -85,9 +86,20 @@ public class QuestionsPanel extends Panel {
 				
 				item.add(questionLink);
 				
-				//TODO: This code is repeated in QuestionPanel also
-				QuestionStatistics questionStatistics = 
-											new QuestionStatistics(question);
+				QuestionStatistics questionStatistics = null;
+				
+				//TODO: We need to handle this Exception in a better way
+				try {
+				questionStatistics = 
+					QuestionStatisticsBuilder.
+						buildQuestionStatistics(question, 
+												WWALDApplication.get().getDataFacade(), 
+												getDatabaseId());
+				} catch(DataException de) {
+					String msg = "Could not create QuestionStatistics";
+					cLogger.error(msg, de);
+				}
+				
 				QuestionStatisticsPanel questionStatisticsPanel = 
 							new QuestionStatisticsPanel("question_statistics", 
 														questionStatistics);
