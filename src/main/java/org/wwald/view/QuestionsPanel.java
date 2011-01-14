@@ -17,6 +17,7 @@ import org.wwald.WWALDApplication;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Forum;
 import org.wwald.model.Question;
+import org.wwald.model.QuestionStatistics;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
@@ -83,6 +84,14 @@ public class QuestionsPanel extends Panel {
 				questionLink.add(new Label("question_title", question.getTitle()));
 				
 				item.add(questionLink);
+				
+				//TODO: This code is repeated in QuestionPanel also
+				QuestionStatistics questionStatistics = 
+											new QuestionStatistics(question);
+				QuestionStatisticsPanel questionStatisticsPanel = 
+							new QuestionStatisticsPanel("question_statistics", 
+														questionStatistics);
+				item.add(questionStatisticsPanel);
 			}
 			
 		};

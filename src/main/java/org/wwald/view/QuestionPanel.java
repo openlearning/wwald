@@ -29,6 +29,7 @@ import org.wwald.WicketIdConstants;
 import org.wwald.model.Answer;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Question;
+import org.wwald.model.QuestionStatistics;
 import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
@@ -82,7 +83,7 @@ public class QuestionPanel extends Panel {
 						transform(question.getContents());
 				add(new Label("question_contents", formattedQuestion).
 							setEscapeModelStrings(false));
-				add(getQuestionUserLink(question.getUserMeta()));
+				add(getQuestionStatistics(question));
 				add(getQuestionAnsweredCheckbox(question.getUserMeta()));
 				add(getAnswersList(dataFacade, databaseId, iQuestionId));
 				add(getLogInLink());
@@ -100,24 +101,12 @@ public class QuestionPanel extends Panel {
 		}
 	}
 
-	private Component getQuestionUserLink(UserMeta userMeta) {
-		if(userMeta == null) {
-			String msg = "userMeta cannot be null";
-			throw new IllegalArgumentException(msg);
-		}
-		
-		PageParameters parameters = new PageParameters();
-		parameters.add(WWALDConstants.USERID, String.valueOf(userMeta.getUserid()));
-		
-		//TODO: We should factor this code into a util method
-		Link userDetailsLink = new BookmarkablePageLink(WicketIdConstants.PUBLIC_USER_PROFILE, 
-														UserProfiles.class,
-														parameters);
-		Label label = 
-			new Label(WicketIdConstants.PUBLIC_USER_PROFILE_LABEL, 
-					  userMeta.getIdentifier());
-		userDetailsLink.add(label);
-		return userDetailsLink;
+	private Component getQuestionStatistics(Question question) {
+		QuestionStatistics questionStatistics = new QuestionStatistics(question);
+		QuestionStatisticsPanel questionStatisticsPanel = 
+			new QuestionStatisticsPanel("question_statistics", 
+										questionStatistics);
+		return questionStatisticsPanel;
 	}
 
 	private void initQuestionAnswered(Connection conn) throws DataException {
