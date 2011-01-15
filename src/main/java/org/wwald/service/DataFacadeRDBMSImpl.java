@@ -1716,6 +1716,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 				int id = rs.getInt("id");
 				String contents = rs.getString("contents");
 				Answer answer = new Answer(id, questionId, contents);
+				int userid = rs.getInt("userid");
+				answer.setUserMeta(retreiveUserMeta(conn, userid));
 				retVal.add(answer);				
 			}
 		} catch(SQLException sqle) {

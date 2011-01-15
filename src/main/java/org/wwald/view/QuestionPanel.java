@@ -27,6 +27,7 @@ import org.wwald.WWALDConstants;
 import org.wwald.WWALDSession;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.Answer;
+import org.wwald.model.AnswerStatistics;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Question;
 import org.wwald.model.QuestionStatistics;
@@ -174,8 +175,19 @@ public class QuestionPanel extends BasePanel {
 				Answer answer = (Answer)item.getModelObject();
 				String transformedAnswer = 
 					WWALDApplication.get().getMarkDown().transform(answer.getContents());
-				Label answerLabel = new Label("answer", transformedAnswer);				
+				Label answerLabel = new Label("answer", transformedAnswer);
+				
 				item.add(answerLabel.setEscapeModelStrings(false));
+				item.add(getAnswerStatisticsPanel(answer));
+			}
+
+			private Component getAnswerStatisticsPanel(Answer answer) {
+				AnswerStatistics answerStatistics = new AnswerStatistics();
+				answerStatistics.setUser(answer.getUserMeta());
+				AnswerStatisticsPanel answerStatisticsPanel = 
+					new AnswerStatisticsPanel("answer_statistics", 
+											  answerStatistics);
+				return answerStatisticsPanel;
 			}			
 		};
 	

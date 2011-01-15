@@ -1875,6 +1875,8 @@ public class DataFacadeRDBMSImplTest {
 		assertEquals(0, question.getId());
 		assertEquals("Question 0", question.getTitle());
 		assertEquals("Contents for question 0", question.getContents());
+		assertEquals(TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta,
+					 question.getUserMeta());
 	}
 	
 	@Test(expected=NullPointerException.class)
@@ -1907,6 +1909,9 @@ public class DataFacadeRDBMSImplTest {
 			this.dataFacade.retreiveAnswersForQuestion(this.conn, 0);
 		assertNotNull(retreivedAnswers);
 		assertEquals(answers.length, retreivedAnswers.size());
+		for(Answer answer : retreivedAnswers) {
+			assertEquals(user, answer.getUserMeta());
+		}
 	}
 	
 	@Test(expected=NullPointerException.class)

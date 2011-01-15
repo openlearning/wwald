@@ -7,7 +7,6 @@ public class QuestionStatistics {
 	private Question question;
 	private int numberOfAnswers;
 	private UserMeta questioner;
-	private UserMeta lastAnswerBy;
 	private int likes;
 	private List<String> tags;
 	
@@ -37,14 +36,6 @@ public class QuestionStatistics {
 	
 	public UserMeta getQuestioner() {
 		return this.question.getUserMeta();
-	}
-	
-	public UserMeta getLastAnswerBy() {
-		return lastAnswerBy;
-	}
-	
-	public void setLastANswerBy(UserMeta lastAnswerBy) {
-		this.lastAnswerBy = lastAnswerBy;
 	}
 	
 	public int getLikes() {
