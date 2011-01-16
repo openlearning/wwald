@@ -10,7 +10,6 @@ import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
-import org.wwald.util.LoggingFilter;
 import org.wwald.util.LoginLogger;
 
 import twitter4j.Twitter;
@@ -42,7 +41,7 @@ public class CallbackHandlerPage extends BasePage {
 													 UserMeta.LoginVia.TWITTER);			
 			if(userMeta == null) {
 				userMeta = new UserMeta();
-				userMeta.setIdentifier("http://twitter.com/" + screenName);
+				userMeta.setIdentifier(screenName);
 				userMeta.setLoginVia(UserMeta.LoginVia.TWITTER);
 				userMeta.setRole(Role.STUDENT);
 				dataFacade.insertUserMeta(ConnectionPool.getConnection(databaseId), userMeta);
