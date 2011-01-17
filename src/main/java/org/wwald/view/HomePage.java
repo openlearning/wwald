@@ -8,7 +8,6 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.Role;
