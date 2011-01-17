@@ -15,9 +15,15 @@ import java.util.List;
 import org.wwald.model.Competency;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
+import org.wwald.model.Forum;
 import org.wwald.model.Mentor;
+import org.wwald.model.Question;
 import org.wwald.model.User;
 import org.wwald.model.UserMeta;
+import org.wwald.service.ApplicationFacade;
+import org.wwald.service.DataException;
+import org.wwald.service.DataFacadeRDBMSImpl;
+import org.wwald.service.IDataFacade;
 import org.wwald.service.Sql;
 
 import util.KvTableFileParser.KvTableItem;
@@ -35,19 +41,25 @@ public class DataInitializer {
 	private static final String TABLES_DATA_FILE = "create_tables_sql.txt";
 	private static final String MENTORS_DATA_FILE = "mentors.txt";
 	
+	private ApplicationFacade appFacade;
+	private IDataFacade dataFacade;
+	
 	public DataInitializer() {
 		this.appClassLoader = DataInitializer.class.getClassLoader();
+		this.dataFacade = new DataFacadeRDBMSImpl();
+		this.appFacade = new ApplicationFacade(dataFacade);
 	}
 	
-	public void initData(Connection conn) throws IOException, SQLException, DataFileSyntaxException {
+	public void initData(Connection conn) throws IOException, SQLException, DataFileSyntaxException, DataException {
 		if(conn == null) {
 			throw new IllegalArgumentException("conn cannot be null");
 		}
+		
 		createTables(conn);
 		populateTables(conn);
 	}
 
-	private void populateTables(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
+	private void populateTables(Connection conn) throws IOException, DataFileSyntaxException, SQLException, DataException {
 		populateUsers(conn);
 		populateCourses(conn);		
 		populatePages(conn);
@@ -132,7 +144,7 @@ public class DataInitializer {
 		}
 	}
 	
-	private void populateCourses(Connection conn) throws IOException, DataFileSyntaxException, SQLException {
+	private void populateCourses(Connection conn) throws IOException, DataFileSyntaxException, SQLException, DataException {
 		URL coursesDirUrl = appClassLoader.getResource(COURSES_BASE_PATH);
 		File coursesDataDir = new File(coursesDirUrl.getPath());
 		File courseDataFiles[] = coursesDataDir.listFiles();
@@ -240,28 +252,38 @@ public class DataInitializer {
 	}
 
 	private void populateForums(List<Course> coursesList, Connection conn) 
-		throws SQLException {
+		throws SQLException, DataException {
 		UserMeta student = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
 		
 		for(Course course : coursesList) {
 			//create the forum
-			String sql = String.format(Sql.INSERT_DISCUSSION_FORUM, 
-									   wrapForSQL(course.getId()),
-									   wrapForSQL(course.getTitle()),
-									   wrapForSQL(course.getTitle()));
-			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			Forum forum = new Forum(course.getId(), course.getTitle(), course.getTitle());
+			this.dataFacade.insertDiscussionForum(conn, forum);
+//			String sql = String.format(Sql.INSERT_DISCUSSION_FORUM, 
+//									   wrapForSQL(course.getId()),
+//									   wrapForSQL(course.getTitle()),
+//									   wrapForSQL(course.getTitle()));
+//			Statement stmt = conn.createStatement();
+//			stmt.executeUpdate(sql);
 			System.out.println("Added forum for '" + course.getId() + "'");
 			//add some questions to the forum
 			for(int i=0; i<3; i++) {
-				String questionSql = String.format(Sql.INSERT_QUESTION,
-						   student.getUserid(),
-						   wrapForSQL(course.getId()),
-						   wrapForSQL("Question " + String.valueOf(i)),
-						   wrapForSQL("Contents for question " + String.valueOf(i)));
-				stmt = conn.createStatement();
-				int rows = stmt.executeUpdate(questionSql);
+				Question question = new Question(0, 
+												 "Question " + String.valueOf(i),
+												 "Contents for question " + String.valueOf(i),
+												 course.getId());
+				question.setUserMeta(student);
+				appFacade.askQuestion(conn, question);
+				
+//				String questionSql = String.format(Sql.INSERT_QUESTION,
+//						   student.getUserid(),
+//						   wrapForSQL(course.getId()),
+//						   wrapForSQL("Question " + String.valueOf(i)),
+//						   wrapForSQL("Contents for question " + String.valueOf(i)));
+//				stmt = conn.createStatement();
+//				int rows = stmt.executeUpdate(questionSql);
 				System.out.println("Added question for '" + course.getId() + "'");
+				
 			}
 			
 		}

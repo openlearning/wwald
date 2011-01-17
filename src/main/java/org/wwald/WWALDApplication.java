@@ -13,6 +13,7 @@ import org.apache.wicket.settings.IExceptionSettings;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataFacadeRDBMSImpl;
 import org.wwald.service.IDataFacade;
+import org.wwald.util.AbstractMarkdownProcessor;
 import org.wwald.util.PropertyDirMap;
 import org.wwald.view.CallbackHandlerPage;
 import org.wwald.view.CoursePage;
@@ -44,7 +45,6 @@ public class WWALDApplication extends WebApplication
 	
 	private IDataFacade dataStore;
 	private ApplicationFacade applicationFacade;
-	private MarkDown markDownLib;
 	
 	static {
 		HOMEDIR = System.getProperty("user.home");
@@ -65,8 +65,7 @@ public class WWALDApplication extends WebApplication
 	public WWALDApplication()
 	{
 		this.dataStore = new DataFacadeRDBMSImpl();
-		this.applicationFacade = new ApplicationFacade(this.dataStore);
-		this.markDownLib = new MarkDown();		 
+		this.applicationFacade = new ApplicationFacade(this.dataStore);		 
 	}
 	
 	/**
@@ -110,8 +109,8 @@ public class WWALDApplication extends WebApplication
 		return this.applicationFacade;
 	}
 	
-	public synchronized MarkDown getMarkDown() {
-		return this.markDownLib;
+	public synchronized AbstractMarkdownProcessor getMarkDown() {
+		return AbstractMarkdownProcessor.JMD_MARKDOWN_PROCESSOR;
 	}
 	
 	public static WWALDApplication get() {

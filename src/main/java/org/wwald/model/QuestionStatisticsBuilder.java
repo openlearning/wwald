@@ -20,6 +20,12 @@ public class QuestionStatisticsBuilder {
 			dataFacade.retreiveAnswersForQuestion(conn, 
 												  question.getId());
 		questionStatistics.setNumberOfAnswers(answers.size());
+		
+		//get timestamp of the question
+		long timestamp = 
+			dataFacade.retreiveQuestionTimestamp(conn, question.getId());
+		questionStatistics.setTimestamp(timestamp);
+		
 		return questionStatistics;
 	}
 }

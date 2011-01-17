@@ -65,7 +65,7 @@ public class CourseCompetenciesPanel extends BasePanel {
 			
 			WWALDApplication app = (WWALDApplication)Application.get();
 			
-			String description = app.getMarkDown().transform(course.getFullDescription());
+			String description = app.getMarkDown().process(course.getFullDescription());
 			add(new Label(WicketIdConstants.COURSE_DESCRIPTION, description).setEscapeModelStrings(false));
 			add(getCompetenciesListView(course, selectedCompetency));
 			add(new Label(WicketIdConstants.SELECTED_COURSE, course.getTitle())); 
@@ -74,9 +74,9 @@ public class CourseCompetenciesPanel extends BasePanel {
 			
 			add(new Label(WicketIdConstants.SELECTED_LECTURE, getSelectedCompetencyTitle(selectedCompetency)));
 			//TODO: Can we use something other than labels out here
-			String competencyResources = app.getMarkDown().transform(getSelectedCompetencyResource(selectedCompetency));
+			String competencyResources = app.getMarkDown().process(getSelectedCompetencyResource(selectedCompetency));
 			add(new Label(WicketIdConstants.COMPETENCY_RESOURCES, competencyResources).setEscapeModelStrings(false));
-			String competencyDescription = app.getMarkDown().transform(getSelectedCompetencyDescription(selectedCompetency));
+			String competencyDescription = app.getMarkDown().process(getSelectedCompetencyDescription(selectedCompetency));
 			add(new Label(WicketIdConstants.COMPETENCY_DESCRIPTION, competencyDescription).setEscapeModelStrings(false));
 		} catch(Exception e) {
 			String msg = "Caught Exception while showing course competencies";

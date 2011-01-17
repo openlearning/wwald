@@ -5,6 +5,7 @@ import java.util.List;
 public class QuestionStatistics {
 	
 	private Question question;
+	private long timestamp;
 	private int numberOfAnswers;
 	private UserMeta questioner;
 	private int likes;
@@ -24,6 +25,14 @@ public class QuestionStatistics {
 	
 	public Question getQuestion() {
 		return this.question;
+	}
+	
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public long getTimestamp() {
+		return this.timestamp;
 	}
 	
 	public int getNumberOfAnswers() {

@@ -2,6 +2,7 @@ package org.wwald.service;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Locale;
 
 import org.wwald.model.Answer;
 import org.wwald.model.Competency;
@@ -677,11 +678,12 @@ public interface IDataFacade {
 	 * @param conn The database connection
 	 * @param question The question to insert
 	 * @param The forum in which the question must be inserted
+	 * @return The question with it's primary key 'id' populated
 	 * @throws NullPointerException If either conn, or question, or forum is null
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void insertQuestion(Connection conn, Question question) 
+	public Question insertQuestion(Connection conn, Question question) 
 		throws DataException;
 	
 	/**
@@ -776,4 +778,37 @@ public interface IDataFacade {
 	public void markQuestionAsUnanswered(Connection conn, 
 										 int questionId) 
 		throws DataException;
+	
+	/**
+	 * Insert the timestamp for the specified {@link Question}
+	 * @param conn The database connection
+	 * @param questionId The id of the question whose timestamp must be inserted
+	 * @param timestamp The timestamp in milliseconds from Jan 1, 1970
+	 * @param locale The locale where the timestamp is generated
+	 * @throws NullPointerException If conn or locale is null
+	 * @throws IllegalArgumentException if timestamp is a negative integer 
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertQuestionTimestamp(Connection conn,
+										int questionId,
+										long timestamp,
+										Locale locale) 
+		throws DataException;
+	
+	/**
+	 * Retreives the timestamp of the specified question as the number of 
+	 * milliseconds elapsed since 1 Jan, 1970
+	 * @param conn The database connection
+	 * @param questionId The question id
+	 * @return The timestamp as the number of milliseconds since 1 Jan, 1970, or
+	 * -1 if the timestamp for the specified question has not been recorded
+	 * @throws NullPointerException If conn is null
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public long retreiveQuestionTimestamp(Connection conn, 
+										  int questionId) 
+		throws DataException;
+	
 }

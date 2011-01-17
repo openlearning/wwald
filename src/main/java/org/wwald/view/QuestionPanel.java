@@ -82,7 +82,7 @@ public class QuestionPanel extends BasePanel {
 				add(new Label("question_title", question.getTitle()));
 				String formattedQuestion = 
 					WWALDApplication.get().getMarkDown().
-						transform(question.getContents());
+						process(question.getContents());
 				add(new Label("question_contents", formattedQuestion).
 							setEscapeModelStrings(false));
 				add(getQuestionStatistics(question));
@@ -174,7 +174,7 @@ public class QuestionPanel extends BasePanel {
 			protected void populateItem(ListItem item) {
 				Answer answer = (Answer)item.getModelObject();
 				String transformedAnswer = 
-					WWALDApplication.get().getMarkDown().transform(answer.getContents());
+					WWALDApplication.get().getMarkDown().process(answer.getContents());
 				Label answerLabel = new Label("answer", transformedAnswer);
 				
 				item.add(answerLabel.setEscapeModelStrings(false));

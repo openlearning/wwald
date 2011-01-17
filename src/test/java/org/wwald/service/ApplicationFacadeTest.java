@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
+import org.wwald.model.Question;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.model.UserMeta;
@@ -35,20 +36,12 @@ public class ApplicationFacadeTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		//CompetencyUniqueIdGenerator.reset(null);
-		//this.dataFacade = new DataFacadeRDBMSImpl();
-		//DataInitializer di = new DataInitializer();
-		//this.conn = ConnectionPool.getConnection(DATABASE_ID);
-		//di.initData(conn);
 		this.dataFacade = createMock(IDataFacade.class);
 		this.appFacade = new ApplicationFacade(this.dataFacade);
 	}
 	
 	@After
 	public void tearDown() throws Exception {		
-//		Statement stmt = this.conn.createStatement();
-//		stmt.execute("SHUTDOWN");
-//		ConnectionPool.closeConnection(DATABASE_ID);
 	}
 	
 	@Test
@@ -253,6 +246,20 @@ public class ApplicationFacadeTest {
 //	public void testGetUserCourseStatus() {
 //		fail("Not yet implemented");
 //	}
+	
+	@Test
+	public void testAskQuestion() throws Exception {
+		//TODO: Complete this test
+		UserMeta userMeta = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		Question question = new Question("question title", "question discussion", "Physics");
+		question.setUserMeta(userMeta);
+		
+		//create mocks
+		Connection mockConn = createMock(Connection.class);
+		
+		//record expected behavior
+		
+	}
 	
 	public static CourseEnrollmentStatus eqCourseEnrollmentStatusWithoutCheckingTimestamp(CourseEnrollmentStatus in) {
 		EasyMock.reportMatcher(new CourseEnrollmentStatusMatcher(in));

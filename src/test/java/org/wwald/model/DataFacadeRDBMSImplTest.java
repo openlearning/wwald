@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -2003,6 +2004,83 @@ public class DataFacadeRDBMSImplTest {
 		Statement stmt = this.conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
 		assertFalse(rs.next());
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertQuestionTimestampWithNullConn() throws Exception {
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.insertQuestionTimestamp(null, questionId, timestamp, locale);		
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertQuestionTimestampWithNullLocale() throws Exception {
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.insertQuestionTimestamp(this.conn, questionId, timestamp, null);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInsertQuestionTimestampWithBadQuestionId() throws Exception {
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.insertQuestionTimestamp(this.conn, -1, timestamp, locale);		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInsertQuestionTimestampWithBadTimestamp() throws Exception {
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.insertQuestionTimestamp(this.conn, questionId, -1, locale);
+	}
+	
+	@Test
+	public void testInsertQuestionTimestamp() throws Exception {
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.insertQuestionTimestamp(this.conn, questionId, timestamp, locale);
+		
+		String sql = String.format(Sql.RETREIVE_QUESTION_TIMESTAMP, questionId);
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		assertTrue(rs.next());
+		assertEquals(timestamp, rs.getLong("tstamp"));
+		assertEquals(locale.toString(), rs.getString("locale"));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveQuestionTimestampWithNullConn() throws Exception {
+		//first let us insert some test data
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.retreiveQuestionTimestamp(null, questionId);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testRetreiveQuestionTimestampWithBadQuestionId() throws Exception {
+		//first let us insert some test data
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.retreiveQuestionTimestamp(this.conn, -1);
+	}
+	
+	@Test
+	public void testRetreiveQuestionTimestamp() throws Exception {
+		//first let us insert some test data
+		int questionId = 0;
+		Locale locale = Locale.getDefault();
+		long timestamp = new Date().getTime();
+		this.dataFacade.insertQuestionTimestamp(this.conn, questionId, timestamp, locale);
+		long retreivedTimestamp = 
+			this.dataFacade.retreiveQuestionTimestamp(this.conn, questionId);
+		assertEquals(timestamp, retreivedTimestamp);
 	}
 	
 	@Test

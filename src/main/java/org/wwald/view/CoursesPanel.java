@@ -108,7 +108,7 @@ public class CoursesPanel extends BasePanel {
 					item.add(courseLink);
 					
 					WWALDApplication app = (WWALDApplication)Application.get();
-					String description = app.getMarkDown().transform(course.getShortDescription());
+					String description = app.getMarkDown().process(course.getShortDescription());
 					item.add(getCourseImage(course.getId()));
 					item.add(new Label(WicketIdConstants.COURSE_DESCRIPTION, description).setEscapeModelStrings(false));
 				}

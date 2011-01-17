@@ -1,6 +1,8 @@
 package org.wwald.view;
 
 import java.sql.Connection;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
@@ -50,7 +52,8 @@ public class AskQuestionPage extends BasePage {
 				Connection conn = ConnectionPool.getConnection(databaseId);
 				try {
 					question.setUserMeta(WWALDSession.get().getUserMeta());
-					dataFacade.insertQuestion(conn, question);
+					WWALDApplication.get().
+						getApplicationFacade().askQuestion(conn, question);
 					setResponsePage(ForumPage.class, parameters);
 				} catch(DataException de) {
 					String msg = "Could not save question in the database";

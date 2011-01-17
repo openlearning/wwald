@@ -30,6 +30,10 @@ public class Question implements Serializable {
 		this(0, title, contents, discussionId);
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public int getId() {
 		return this.id;
 	}

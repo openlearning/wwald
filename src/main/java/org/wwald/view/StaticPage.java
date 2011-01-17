@@ -40,7 +40,7 @@ public class StaticPage extends BasePage {
 				String pageContents = page.getContents();
 				String markdownTranformedContents = 
 					((WWALDApplication)WWALDApplication.
-							get()).getMarkDown().transform(pageContents);
+							get()).getMarkDown().process(pageContents);
 				add(new Label(WicketIdConstants.STATIC_PAGE_CONTENTS, markdownTranformedContents).setEscapeModelStrings(false));
 				add(editLink);
 			}

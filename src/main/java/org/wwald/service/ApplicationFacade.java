@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.Session;
@@ -14,9 +15,12 @@ import org.wwald.WWALDSession;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
+import org.wwald.model.Question;
 import org.wwald.model.User;
 import org.wwald.model.UserCourseStatus;
 import org.wwald.model.UserMeta;
+import org.wwald.view.ForumPage;
+import org.wwald.view.GenericErrorPage;
 
 public class ApplicationFacade {
 	
@@ -203,6 +207,36 @@ public class ApplicationFacade {
 			throw new DataException(msg, sqle);
 		}
 		return retVal;
+	}
+	
+	/**
+	 * 
+	 * @param conn
+	 * @param question
+	 * @throws DataException
+	 */
+	//TODO: not tested
+	public void askQuestion(Connection conn, 
+							Question question) throws DataException {
+		if(question == null) {
+			throw new NullPointerException("question cannot be null");
+		}
+		try {	
+			conn.setAutoCommit(false);
+			question = dataFacade.insertQuestion(conn, question);
+			
+			dataFacade.
+				insertQuestionTimestamp(conn, 
+										question.getId(), 
+										new Date().getTime(), 
+										Locale.getDefault());
+			
+			conn.commit();
+		} catch(SQLException sqle) {
+			String msg = "Could not save question in the database";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
 	}
 	
 	private String getAuditMsg(String msg, 

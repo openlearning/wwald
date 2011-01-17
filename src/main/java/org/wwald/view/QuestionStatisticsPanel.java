@@ -1,5 +1,8 @@
 package org.wwald.view;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -25,6 +28,7 @@ public class QuestionStatisticsPanel extends BasePanel {
 			//4890999
 			add(getUserImage(questionStatistics.getQuestioner().getUserid()));
 			add(getQuestionerLink(questionStatistics));
+			add(getQuestionTimestamp(questionStatistics.getTimestamp()));
 			add(getNumberOfAnswers(questionStatistics));
 //			add(getLastAnswererLink());
 //			add(getLikes());
@@ -34,6 +38,17 @@ public class QuestionStatisticsPanel extends BasePanel {
 			cLogger.error(msg, e);
 			setResponsePage(GenericErrorPage.class);
 		}
+	}
+
+	private Component getQuestionTimestamp(long timestamp) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat();
+		dateFormat.applyPattern("yyyy-MM-dd HH:mm");
+		String displayTimestamp = "unknown";
+		if(timestamp != -1) {
+			displayTimestamp = dateFormat.format(new Date(timestamp)); 
+		}
+		return new Label("question_timestamp", 
+						 "asked on " + displayTimestamp);
 	}
 
 	private Component getQuestionerLink(QuestionStatistics questionStatistics) {

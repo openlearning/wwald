@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.wwald.model.Answer;
@@ -1588,7 +1589,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#insertQuestion(Connection, Question, Forum)
 	 */
-	public void insertQuestion(Connection conn, Question question) 
+	public Question insertQuestion(Connection conn, Question question) 
 		throws DataException {
 		
 		if(conn == null) {
@@ -1598,6 +1599,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			throw new NullPointerException("question should not be null");
 		}
 		
+		boolean retreivedIdentity = false;
+		
 		UserMeta user = question.getUserMeta();
 		
 		String sql = String.format(Sql.INSERT_QUESTION,
@@ -1605,13 +1608,32 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 								   wrapForSQL(question.getDiscussionId()), 
 								   wrapForSQL(question.getTitle()), 
 								   wrapForSQL(question.getContents()));
+		int rowCnt = -1;
+		
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			rowCnt = stmt.executeUpdate(sql);
+			sql = "CALL IDENTITY()";
+			stmt = conn.createStatement();
+			boolean stmtex = stmt.execute(sql);
+			if(stmtex) {
+				ResultSet rs = stmt.getResultSet();
+				if(rs.next()) {
+					int identity = rs.getInt(1);
+					question.setId(identity);
+					retreivedIdentity = true;
+				}
+			}
 		} catch(SQLException sqle) {
 			String msg = "Could not insert question '" + question + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
+		}
+		if(retreivedIdentity) {
+			return question;
+		}
+		else {
+			throw new DataException("Could not retreive IDENTITY of the inserted question. Row Cnt is " + rowCnt);
 		}
 	}
 	
@@ -1834,6 +1856,83 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#insertQuestionTimestamp(Connection, long, Locale)
+	 */
+	public void insertQuestionTimestamp(Connection conn,
+										int questionId,
+										long timestamp,
+										Locale locale) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		if(locale == null) {
+			throw new NullPointerException("locale cannot be null");
+		}
+		
+		if(questionId < 0) {
+			throw new IllegalArgumentException("questionId cannot be a negative integer");
+		}
+		
+		if(timestamp < 0) {
+			throw new IllegalArgumentException("tstamp must be a positive integer");
+		}
+		
+		String sql = String.format(Sql.INSERT_QUESTION_TIMESTAMP, 
+								   questionId, 
+								   timestamp, 
+								   wrapForSQL(locale.toString()));
+		
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not insert timestamp for question";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+		
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#retreiveQuestionTimestamp(Connection, int)
+	 */
+	public long retreiveQuestionTimestamp(Connection conn, 
+			  							  int questionId) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		if(questionId < 0) {
+			String msg = "questionId cannot be a negative integer";
+			throw new IllegalArgumentException(msg);
+		}
+		
+		long retVal = -1;
+		
+		String sql = String.format(Sql.RETREIVE_QUESTION_TIMESTAMP, questionId);
+		
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				retVal = rs.getLong("tstamp");
+			}			
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive timestamp for question '" + 
+						 questionId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);			
+		}
+		
+		return retVal;
 	}
 
 	
