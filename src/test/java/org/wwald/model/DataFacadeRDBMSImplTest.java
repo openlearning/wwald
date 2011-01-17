@@ -2040,12 +2040,15 @@ public class DataFacadeRDBMSImplTest {
 	
 	@Test
 	public void testInsertQuestionTimestamp() throws Exception {
-		int questionId = 0;
+		//first we will have to insert a new Question and then insert a timestamp for it
+		Question question = new Question(0, "title", "contents", "Physics");
+		question = this.dataFacade.insertQuestion(this.conn, question);
+		
 		Locale locale = Locale.getDefault();
 		long timestamp = new Date().getTime();
-		this.dataFacade.insertQuestionTimestamp(this.conn, questionId, timestamp, locale);
+		this.dataFacade.insertQuestionTimestamp(this.conn, question.getId(), timestamp, locale);
 		
-		String sql = String.format(Sql.RETREIVE_QUESTION_TIMESTAMP, questionId);
+		String sql = String.format(Sql.RETREIVE_QUESTION_TIMESTAMP, question.getId());
 		Statement stmt = this.conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
 		assertTrue(rs.next());
@@ -2073,14 +2076,10 @@ public class DataFacadeRDBMSImplTest {
 	
 	@Test
 	public void testRetreiveQuestionTimestamp() throws Exception {
-		//first let us insert some test data
-		int questionId = 0;
-		Locale locale = Locale.getDefault();
-		long timestamp = new Date().getTime();
-		this.dataFacade.insertQuestionTimestamp(this.conn, questionId, timestamp, locale);
+		long currentTime = new Date().getTime();
 		long retreivedTimestamp = 
-			this.dataFacade.retreiveQuestionTimestamp(this.conn, questionId);
-		assertEquals(timestamp, retreivedTimestamp);
+			this.dataFacade.retreiveQuestionTimestamp(this.conn, 0);
+		assertTrue((currentTime - retreivedTimestamp) < 1000);
 	}
 	
 	@Test
