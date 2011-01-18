@@ -1,10 +1,6 @@
 package org.wwald.view;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,30 +12,25 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
-import org.wwald.WWALDConstants;
 import org.wwald.WWALDSession;
-import org.wwald.WicketIdConstants;
 import org.wwald.model.Answer;
 import org.wwald.model.AnswerStatistics;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Question;
 import org.wwald.model.QuestionStatistics;
 import org.wwald.model.QuestionStatisticsBuilder;
-import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
 import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
-import org.wwald.service.Sql;
-import org.wwald.view.components.AccessControlledViewPageLink;
+
+import static org.wwald.ForumConstants.*;
 
 public class QuestionPanel extends BasePanel {
 
@@ -81,11 +72,11 @@ public class QuestionPanel extends BasePanel {
 															forumId, 
 															iQuestionId);
 			if(question != null) {
-				add(new Label("question_title", question.getTitle()));
+				add(new Label(QUESTION_TITLE, question.getTitle()));
 				String formattedQuestion = 
 					WWALDApplication.get().getMarkDown().
 						process(question.getContents());
-				add(new Label("question_contents", formattedQuestion).
+				add(new Label(QUESTION_CONTENTS, formattedQuestion).
 							setEscapeModelStrings(false));
 				add(getQuestionStatistics(question));
 				add(getQuestionAnsweredCheckbox(question.getUserMeta()));
@@ -115,7 +106,7 @@ public class QuestionPanel extends BasePanel {
 										getDatabaseId());
 		
 		QuestionStatisticsPanel questionStatisticsPanel = 
-			new QuestionStatisticsPanel("question_statistics", 
+			new QuestionStatisticsPanel(QUESTION_STATISTICS, 
 										questionStatistics);
 		return questionStatisticsPanel;
 	}
@@ -129,7 +120,7 @@ public class QuestionPanel extends BasePanel {
 
 	private Component getQuestionAnsweredCheckbox(UserMeta userMeta) {
 		AjaxCheckBox questionAnsweredCheckbox = 
-			new AjaxCheckBox("question_answered", 
+			new AjaxCheckBox(QUESTION_ANSWERED, 
 							new PropertyModel(QuestionPanel.this, "questionAnswered")) {
 
 			@Override
@@ -159,7 +150,7 @@ public class QuestionPanel extends BasePanel {
 		if(loggedInUser == null || !loggedInUser.equals(userMeta)) {
 			questionAnsweredCheckbox.setVisible(false);
 		}
-		questionAnsweredCheckbox.add(new Label("question_answered_label", "Mark question as answered"));
+		questionAnsweredCheckbox.add(new Label(QUESTION_ANSWERED_LABEL, "Mark question as answered"));
 		return questionAnsweredCheckbox;
 	}
 
@@ -170,14 +161,14 @@ public class QuestionPanel extends BasePanel {
 		List<Answer> answers =  
 			dataFacade.retreiveAnswersForQuestion(conn, questionId);
 		
-		ListView answersListView = new ListView("answers", answers) {
+		ListView answersListView = new ListView(ANSWERS, answers) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				Answer answer = (Answer)item.getModelObject();
 				String transformedAnswer = 
 					WWALDApplication.get().getMarkDown().process(answer.getContents());
-				Label answerLabel = new Label("answer", transformedAnswer);
+				Label answerLabel = new Label(ANSWER, transformedAnswer);
 				
 				item.add(answerLabel.setEscapeModelStrings(false));
 				item.add(getAnswerStatisticsPanel(answer));
@@ -194,11 +185,11 @@ public class QuestionPanel extends BasePanel {
 					answerStatistics.setTimestamp(timestamp);
 					 
 					AnswerStatisticsPanel answerStatisticsPanel = 
-						new AnswerStatisticsPanel("answer_statistics", 
+						new AnswerStatisticsPanel(ANSWER_STATISTICS, 
 												  answerStatistics);
 					return answerStatisticsPanel;
 				} catch(DataException de) {
-					return new EmptyPanel("answer_statistics");
+					return new EmptyPanel(ANSWER_STATISTICS);
 				}
 			}			
 		};
@@ -208,8 +199,8 @@ public class QuestionPanel extends BasePanel {
 
 	private Component getLogInLink() {
 		BookmarkablePageLink loginLink = 
-			new BookmarkablePageLink("login_to_answer", LoginPage.class);
-		loginLink.add(new Label("login_to_answer_label", 
+			new BookmarkablePageLink(LOGIN_TO_ANSWER, LoginPage.class);
+		loginLink.add(new Label(LOGIN_TO_ANSWER_PANEL, 
 					  "Login to answer this question"));
 		final UserMeta userMeta = WWALDSession.get().getUserMeta();
 		if(userMeta != null) {
@@ -221,7 +212,7 @@ public class QuestionPanel extends BasePanel {
 	private Component getAnswerForm(final String forumId, 
 									final String questionId) {
 		final UserMeta userMeta = WWALDSession.get().getUserMeta();
-		Form answerForm = new Form("answer_form") {
+		Form answerForm = new Form(ANSWER_FORM) {
 			@Override
 			public void onSubmit() {
 				if(userMeta == null) {
@@ -239,8 +230,8 @@ public class QuestionPanel extends BasePanel {
 					try {
 						appFacade.answerQuestion(conn, answer);						
 						PageParameters pageParameters = new PageParameters();
-						pageParameters.add("forum", forumId);
-						pageParameters.add("question", questionId);
+						pageParameters.add(FORUM_PAGE_PARAM, forumId);
+						pageParameters.add(QUESTION_PAGE_PARAM, questionId);
 						setResponsePage(ForumPage.class, pageParameters);
 					} catch(DataException de) {
 						String msg = "Could not save answer";
@@ -250,7 +241,7 @@ public class QuestionPanel extends BasePanel {
 			}
 		};
 		TextArea answerTextArea = 
-			new TextArea("answer_field", 
+			new TextArea(ANSWER_FIELD, 
 						 new PropertyModel(this.answer, "contents"));
 		answerForm.add(answerTextArea);
 		if(userMeta == null) {

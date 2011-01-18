@@ -9,26 +9,28 @@ import org.apache.wicket.markup.html.link.Link;
 import org.wwald.WWALDSession;
 import org.wwald.model.UserMeta;
 
+import static org.wwald.ForumConstants.*;
+
 public class ForumPage extends BasePage {
 
 	private transient Logger cLogger = Logger.getLogger(ForumPage.class);
 	
 	public ForumPage(PageParameters parameters) {
 		super(parameters);
-		String forumId = parameters.getString("forum");
+		String forumId = parameters.getString(FORUM_PAGE_PARAM);
 		try {			
 			if(forumId != null) {
 				add(getAskQuestionLink(forumId));
-				String questionId = parameters.getString("question");
+				String questionId = parameters.getString(QUESTION_PAGE_PARAM);
 				if(questionId != null) {
 					QuestionPanel questionPanel = 
-						new QuestionPanel("question_or_questions_panel", 
+						new QuestionPanel(QUESTION_OR_QUESTIONS_PANEL, 
 										  forumId, 
 										  questionId);
 					add(questionPanel);
 				} else {
 					ForumPanel questionsPanel = 
-						new ForumPanel("question_or_questions_panel", 
+						new ForumPanel(QUESTION_OR_QUESTIONS_PANEL, 
 										   forumId);
 					add(questionsPanel);
 				}
@@ -53,14 +55,14 @@ public class ForumPage extends BasePage {
 			@Override
 			public void onClick() {
 				PageParameters pageParams = new PageParameters();
-				pageParams.add("forum", forumId);
+				pageParams.add(FORUM_PAGE_PARAM, forumId);
 				setResponsePage(AskQuestionPage.class, pageParams);
 			}
 			
 		};
 		
 		BookmarkablePageLink loginLink = 
-			new BookmarkablePageLink("ask_question_link", LoginPage.class);
+			new BookmarkablePageLink(ASK_QUESTION_LINK, LoginPage.class);
 		if(userMeta != null) {
 			return askQuestionLink;
 		}

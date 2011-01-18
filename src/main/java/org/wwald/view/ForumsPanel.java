@@ -16,6 +16,8 @@ import org.wwald.model.Forum;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
+import static org.wwald.ForumConstants.*;
+
 public class ForumsPanel extends BasePanel {
 
 	public ForumsPanel(String id) {
@@ -31,23 +33,23 @@ public class ForumsPanel extends BasePanel {
 		Connection conn = ConnectionPool.getConnection(getDatabaseId());
 		IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
 		List<Forum> forums = dataFacade.retreiveAllDiscussionForums(conn);
-		return new ListView("forums", forums) {
+		return new ListView(FORUMS, forums) {
 
 			@Override
 			protected void populateItem(ListItem item) {
 				Forum forum = (Forum)item.getModelObject();
 			
 				PageParameters pageParameters = new PageParameters();
-				pageParameters.add("forum", forum.getId());
+				pageParameters.add(FORUM, forum.getId());
 				Link forumLink = 
-					new BookmarkablePageLink("forum_link", 
+					new BookmarkablePageLink(FORUM_LINK, 
 											 ForumsPage.class, 
 											 pageParameters);
 				
-				forumLink.add(new Label("forum_link_label", forum.getId() + " " + forum.getTitle()));
+				forumLink.add(new Label(FORUM_LINK_LABEL, forum.getId() + " " + forum.getTitle()));
 				item.add(forumLink);
 				
-				Label forumDescriptionLabel = new Label("forum_description", forum.getDescription());
+				Label forumDescriptionLabel = new Label(FORUM_DESCRIPTION, forum.getDescription());
 				item.add(forumDescriptionLabel);
 			}
 			

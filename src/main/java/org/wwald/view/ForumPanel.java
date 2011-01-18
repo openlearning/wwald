@@ -22,6 +22,8 @@ import org.wwald.model.QuestionStatisticsBuilder;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
+import static org.wwald.ForumConstants.*;
+
 public class ForumPanel extends BasePanel {
 
 	private static transient Logger cLogger = Logger.getLogger(ForumPanel.class);
@@ -39,8 +41,8 @@ public class ForumPanel extends BasePanel {
 			Connection conn = ConnectionPool.getConnection(databaseId);
 			Forum forum = dataFacade.retreiveDiscussionForum(conn, forumId);
 			if(forum != null) {
-				add(new Label("forum_title", forum.getTitle()));
-				add(new Label("forum_description", forum.getDescription()));
+				add(new Label(FORUM_TITLE, forum.getTitle()));
+				add(new Label(FORUM_DESCRIPTION, forum.getDescription()));
 				add(getForumQuestions(forumId));
 			} else {
 				cLogger.error("Could not retreive Forum object for forumId '" 
@@ -68,21 +70,21 @@ public class ForumPanel extends BasePanel {
 		forum.setId(forumId);
 		List<Question> questions = dataFacade.retreiveAllQuestionsForForum(conn, 
 																	   forum);
-		return new ListView("forum_questions", questions) {
+		return new ListView(FORUM_QUESTIONS, questions) {
 	
 			@Override
 			protected void populateItem(ListItem item) {
 				Question question = (Question)item.getModelObject();
 				
 				PageParameters pageParameters = new PageParameters();
-				pageParameters.add("forum", forumId);
-				pageParameters.add("question", String.valueOf(question.getId()));
+				pageParameters.add(FORUM_PAGE_PARAM, forumId);
+				pageParameters.add(QUESTION_PAGE_PARAM, String.valueOf(question.getId()));
 				
 				Link questionLink = 
-					new BookmarkablePageLink("question_link", 
+					new BookmarkablePageLink(QUESTION_LINK, 
 											 ForumsPage.class,
 											 pageParameters);
-				questionLink.add(new Label("question_title", question.getTitle()));
+				questionLink.add(new Label(QUESTION_TITLE, question.getTitle()));
 				
 				item.add(questionLink);
 				
@@ -101,7 +103,7 @@ public class ForumPanel extends BasePanel {
 				}
 				
 				QuestionStatisticsPanel questionStatisticsPanel = 
-							new QuestionStatisticsPanel("question_statistics", 
+							new QuestionStatisticsPanel(QUESTION_STATISTICS, 
 														questionStatistics);
 				questionStatisticsPanel.setUserImageVisible(false);
 				item.add(questionStatisticsPanel);
