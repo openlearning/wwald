@@ -22,11 +22,11 @@ import org.wwald.model.QuestionStatisticsBuilder;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 
-public class QuestionsPanel extends BasePanel {
+public class ForumPanel extends BasePanel {
 
-	private static transient Logger cLogger = Logger.getLogger(QuestionsPanel.class);
+	private static transient Logger cLogger = Logger.getLogger(ForumPanel.class);
 	
-	public QuestionsPanel(String id, String forumId) {
+	public ForumPanel(String id, String forumId) {
 		super(id);
 		
 		IDataFacade dataFacade = WWALDApplication.get().getDataFacade();

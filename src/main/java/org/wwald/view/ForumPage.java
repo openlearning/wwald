@@ -27,8 +27,8 @@ public class ForumPage extends BasePage {
 										  questionId);
 					add(questionPanel);
 				} else {
-					QuestionsPanel questionsPanel = 
-						new QuestionsPanel("question_or_questions_panel", 
+					ForumPanel questionsPanel = 
+						new ForumPanel("question_or_questions_panel", 
 										   forumId);
 					add(questionsPanel);
 				}
