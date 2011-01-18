@@ -46,6 +46,9 @@ public class AdminPage extends AccessControlledPage {
 																  pageParamsForTwitterSecretKey, 
 																  new Role[]{Role.ADMIN});
 		add(twitterSecretLink);
+		
+		Link manageDbLink = new AccessControlledViewPageLink("manage_db", DBPage.class, new Role[]{Role.ADMIN});
+		add(manageDbLink);
 	}
 
 	@Override

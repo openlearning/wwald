@@ -6,5 +6,6 @@ public enum Permission {
 	MANAGE_USERS,
 	ADD_USER,
 	ADD_MENTOR,
-	SITE_ANALYTICS;
+	SITE_ANALYTICS,
+	MANAGE_DB;
 }

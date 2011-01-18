@@ -10,7 +10,8 @@ public enum Role {
 		  Permission.ADD_MENTOR, 
 		  Permission.ADD_USER, 
 		  Permission.MANAGE_USERS,
-		  Permission.SITE_ANALYTICS);
+		  Permission.SITE_ANALYTICS,
+		  Permission.MANAGE_DB);
 	
 	private Permission permissions[];
 	

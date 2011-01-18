@@ -1,15 +1,17 @@
 package org.wwald.view;
 
+import static org.wwald.ForumConstants.ASK_QUESTION_LINK;
+import static org.wwald.ForumConstants.FORUM_PAGE_PARAM;
+import static org.wwald.ForumConstants.QUESTION_OR_QUESTIONS_PANEL;
+import static org.wwald.ForumConstants.QUESTION_PAGE_PARAM;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.wwald.WWALDSession;
 import org.wwald.model.UserMeta;
-
-import static org.wwald.ForumConstants.*;
 
 public class ForumPage extends BasePage {
 

@@ -29,7 +29,7 @@ public class CallbackHandlerPage extends BasePage {
 		try {
 			AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 			WWALDSession.get().setRequestToken(null);
-			String screenName = accessToken.getScreenName();			
+			String screenName = accessToken.getScreenName();		
 			LoginLogger.successfullLogin(screenName, UserMeta.LoginVia.TWITTER, WWALDSession.get().getId());
 			
 			String databaseId = getDatabaseId();
