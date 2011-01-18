@@ -9,6 +9,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.QuestionStatistics;
@@ -37,6 +38,16 @@ public class QuestionStatisticsPanel extends BasePanel {
 			String msg = "Exception caught while showing QuestionStatisticsPanel";
 			cLogger.error(msg, e);
 			setResponsePage(GenericErrorPage.class);
+		}
+	}
+	
+	public void setUserImageVisible(boolean visible) {
+		Component image = get(WWALDApplication.USER_THUMBNAIL_IMAGE);
+		if(image != null) {
+			image.setVisible(visible);
+		} else {
+			String msg = "Could not get image component for setting visibility";
+			cLogger.warn(msg);
 		}
 	}
 

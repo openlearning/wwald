@@ -27,9 +27,10 @@ public abstract class BasePanel extends Panel {
 		ValueMap vm = new ValueMap();
 		vm.add("dbId", getDatabaseId());
 		vm.add("userid", sUserid);
-		return new Image(WWALDApplication.USER_THUMBNAIL_IMAGE, 
+		Image image = new Image(WWALDApplication.USER_THUMBNAIL_IMAGE, 
 						 new ResourceReference(WWALDApplication.USER_THUMBNAIL_IMAGE), 
 						 vm);
+		return image;
 	}
 	
 	public IDataFacade getDataFacade() {

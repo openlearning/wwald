@@ -90,11 +90,11 @@ public class ForumPanel extends BasePanel {
 				
 				//TODO: We need to handle this Exception in a better way
 				try {
-				questionStatistics = 
-					QuestionStatisticsBuilder.
-						buildQuestionStatistics(question, 
-												WWALDApplication.get().getDataFacade(), 
-												getDatabaseId());
+					questionStatistics = 
+						QuestionStatisticsBuilder.
+							buildQuestionStatistics(question, 
+													WWALDApplication.get().getDataFacade(), 
+													getDatabaseId());
 				} catch(DataException de) {
 					String msg = "Could not create QuestionStatistics";
 					cLogger.error(msg, de);
@@ -103,6 +103,7 @@ public class ForumPanel extends BasePanel {
 				QuestionStatisticsPanel questionStatisticsPanel = 
 							new QuestionStatisticsPanel("question_statistics", 
 														questionStatistics);
+				questionStatisticsPanel.setUserImageVisible(false);
 				item.add(questionStatisticsPanel);
 			}
 			
