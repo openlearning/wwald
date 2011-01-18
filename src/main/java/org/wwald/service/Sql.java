@@ -81,7 +81,9 @@ public class Sql {
 	public static String RETREIVE_ANSWERS_FOR_QUESTION = "SELECT * FROM ANSWER WHERE question_id=%s;";
 	public static String RETREIVE_QUESTIONS_ANSWERED = "SELECT * FROM QUESTIONS_ANSWERED WHERE question_id=%s;";
 	public static String INSERT_QUESTION_ANSWERED = "INSERT INTO QUESTIONS_ANSWERED VALUES (%s);";
-	public static String DELETE_QUESTION_ANSWERED = "DELETE FROM QUESTIONS_ANSWERED WHERE question_id=%s";
-	public static String INSERT_QUESTION_TIMESTAMP = "INSERT INTO QUESTION_TIMESTAMP (question_id, tstamp, locale) VALUES (%s, %s, %s)";
-	public static String RETREIVE_QUESTION_TIMESTAMP = "SELECT * FROM QUESTION_TIMESTAMP WHERE question_id=%s";
+	public static String DELETE_QUESTION_ANSWERED = "DELETE FROM QUESTIONS_ANSWERED WHERE question_id=%s;";
+	public static String INSERT_QUESTION_TIMESTAMP = "INSERT INTO QUESTION_TIMESTAMP (question_id, tstamp, locale) VALUES (%s, %s, %s);";
+	public static String RETREIVE_QUESTION_TIMESTAMP = "SELECT * FROM QUESTION_TIMESTAMP WHERE question_id=%s;";
+	public static String INSERT_ANSWER_TIMESTAMP = "INSERT INTO ANSWER_TIMESTAMP (answer_id, tstamp, locale) VALUES (%s, %s, %s);";
+	public static String RETREIVE_ANSWER_TIMESTAMP = "SELECT * FROM ANSWER_TIMESTAMP WHERE answer_id=%s;";
 }

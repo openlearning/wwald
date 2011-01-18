@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -34,6 +35,7 @@ import org.wwald.model.QuestionStatistics;
 import org.wwald.model.QuestionStatisticsBuilder;
 import org.wwald.model.Role;
 import org.wwald.model.UserMeta;
+import org.wwald.service.ApplicationFacade;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
 import org.wwald.service.Sql;
@@ -182,12 +184,22 @@ public class QuestionPanel extends BasePanel {
 			}
 
 			private Component getAnswerStatisticsPanel(Answer answer) {
-				AnswerStatistics answerStatistics = new AnswerStatistics();
-				answerStatistics.setUser(answer.getUserMeta());
-				AnswerStatisticsPanel answerStatisticsPanel = 
-					new AnswerStatisticsPanel("answer_statistics", 
-											  answerStatistics);
-				return answerStatisticsPanel;
+				try {
+					String databaseId = getDatabaseId();
+					Connection conn = ConnectionPool.getConnection(databaseId);
+					long timestamp = getDataFacade().retreiveAnswerTimestamp(conn, answer.getId());
+					
+					AnswerStatistics answerStatistics = new AnswerStatistics();
+					answerStatistics.setUser(answer.getUserMeta());
+					answerStatistics.setTimestamp(timestamp);
+					 
+					AnswerStatisticsPanel answerStatisticsPanel = 
+						new AnswerStatisticsPanel("answer_statistics", 
+												  answerStatistics);
+					return answerStatisticsPanel;
+				} catch(DataException de) {
+					return new EmptyPanel("answer_statistics");
+				}
 			}			
 		};
 	
@@ -216,7 +228,7 @@ public class QuestionPanel extends BasePanel {
 					setResponsePage(LoginPage.class);
 				}
 				else {
-					IDataFacade dataFacade = WWALDApplication.get().getDataFacade();
+					ApplicationFacade appFacade = WWALDApplication.get().getApplicationFacade();
 					ServletWebRequest request = (ServletWebRequest)getRequest();
 					String requestUrl = 
 						request.getHttpServletRequest().getRequestURL().toString();
@@ -225,7 +237,7 @@ public class QuestionPanel extends BasePanel {
 					Connection conn = ConnectionPool.getConnection(databaseId);
 					
 					try {
-						dataFacade.insertAnswer(conn, answer);
+						appFacade.answerQuestion(conn, answer);						
 						PageParameters pageParameters = new PageParameters();
 						pageParameters.add("forum", forumId);
 						pageParameters.add("question", questionId);

@@ -1755,7 +1755,7 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#insertAnswer(Connection, Answer) 
 	 */
-	public void insertAnswer(Connection conn, Answer answer) 
+	public Answer insertAnswer(Connection conn, Answer answer) 
 		throws DataException {
 		
 		if(conn == null) {
@@ -1764,7 +1764,8 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 		if(answer == null) {
 			throw new NullPointerException("answer cannot be null");
 		}
-		
+		boolean retreivedIdentity = false;
+		int rowCnt = -1;
 		UserMeta user = answer.getUserMeta();
 		
 		String sql = String.format(Sql.INSERT_ANSWER,  
@@ -1773,12 +1774,30 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 								   wrapForSQL(answer.getContents()));
 		try {
 			Statement stmt = conn.createStatement();
-			int rows = stmt.executeUpdate(sql);
-//			System.out.println(rows);
+			rowCnt = stmt.executeUpdate(sql);
+			sql = "CALL IDENTITY()";
+			stmt = conn.createStatement();
+			boolean stmtex = stmt.execute(sql);
+			if(stmtex) {
+				ResultSet rs = stmt.getResultSet();
+				if(rs.next()) {
+					int identity = rs.getInt(1);
+					answer.setId(identity);
+					retreivedIdentity = true;
+				}
+			}
 		} catch(SQLException sqle) {
 			String msg = "Could not insert Answer '" + answer + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
+		}
+		if(retreivedIdentity) {
+			return answer;
+		}
+		else {
+			String msg = "Could not retreive the IDENTITY of the inserted answer. " +
+						 "The rowCnt is " + rowCnt;
+			throw new DataException(msg);
 		}
 	}
 	
@@ -1930,6 +1949,82 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 						 questionId + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);			
+		}
+		
+		return retVal;
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#insertAnswerTimestamp(Connection, int, long, Locale)
+	 */
+	public void insertAnswerTimestamp(Connection conn, 
+									  int answerId, 
+									  long timestamp, 
+									  Locale locale) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		if(answerId < 0) {
+			throw new IllegalArgumentException("answerId cannot be a negative number");
+		}
+		
+		if(timestamp < 0) {
+			throw new IllegalArgumentException("timestamp cannot be a negative number");
+		}
+		
+		if(locale == null) {
+			throw new NullPointerException("locale cannot be null");
+		}
+		
+		String sql = String.format(Sql.INSERT_ANSWER_TIMESTAMP, 
+								   answerId,
+								   timestamp,
+								   wrapForSQL(locale.toString()));
+		
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);			
+		} catch(SQLException sqle) {
+			String msg = "Could not insert answer timestamp '" + timestamp + 
+						 "' for answer id '" + answerId + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(sqle);
+		}
+	}
+
+
+	/**
+	 * @see org.wwald.service.IDataFacade#retreiveAnswerTimestamp(Connection, int)
+	 */
+	public long retreiveAnswerTimestamp(Connection conn, 
+										int answerId) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		if(answerId < 0) {
+			String msg = "answerId should be a positive number";
+			throw new IllegalArgumentException(msg);
+		}
+		
+		long retVal = -1;
+		String sql = String.format(Sql.RETREIVE_ANSWER_TIMESTAMP, answerId);
+		
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				retVal = rs.getLong("tstamp");
+			}
+		} catch(SQLException sqle) {
+			String msg = "Could not retreive timestamp for answer '" + 
+						  answerId + "'";
+			throw new DataException(msg);
 		}
 		
 		return retVal;

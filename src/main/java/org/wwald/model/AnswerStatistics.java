@@ -7,7 +7,7 @@ public class AnswerStatistics {
 	
 	private UserMeta user;
 	private int likes;
-	private Date timestamp;
+	private long timestamp;
 	
 	public UserMeta getUser() {
 		return user;
@@ -25,11 +25,11 @@ public class AnswerStatistics {
 		this.likes = likes;
 	}
 	
-	public Date getTimestamp() {
+	public long getTimestamp() {
 		return timestamp;
 	}
 	
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
 	

@@ -2079,7 +2079,83 @@ public class DataFacadeRDBMSImplTest {
 		long currentTime = new Date().getTime();
 		long retreivedTimestamp = 
 			this.dataFacade.retreiveQuestionTimestamp(this.conn, 0);
+		//the question and timestamp were created in DataInitializer and should
+		//not have been more than a second back
 		assertTrue((currentTime - retreivedTimestamp) < 1000);
+	}
+	
+	@Test
+	public void testRetreiveNonexistentQuestionTimestamp() throws Exception {
+		//there is no question or timestamp with the id 10000 
+		assertEquals(-1, this.dataFacade.retreiveQuestionTimestamp(this.conn, 10000));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertAnswerTimestampWithNullConn() throws Exception {
+		this.dataFacade.insertAnswerTimestamp(null, 0, 0, Locale.getDefault());
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInsertAnswerTimestampWithIllegalAnswerId() throws Exception {
+		this.dataFacade.insertAnswerTimestamp(this.conn, -1, 0, Locale.getDefault());
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInsertAnswerTimestampWithIllegalTimestamp() throws Exception {
+		this.dataFacade.insertAnswerTimestamp(this.conn, 0, -1, Locale.getDefault());
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testInsertAnswerTimestampWithNullLocale() throws Exception {
+		this.dataFacade.insertAnswerTimestamp(this.conn, 0, 0, null);
+	}
+	
+	@Test
+	public void testInsertAnswerTimestamp() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		long timestamp = new Date().getTime();
+		Locale locale = Locale.getDefault();
+		Answer answer = new Answer(0, user, 0, "my answer");
+		answer = this.dataFacade.insertAnswer(conn, answer);
+		this.dataFacade.insertAnswerTimestamp(this.conn, answer.getId(), timestamp, locale);
+		
+		//retreive the inserted timestamp and verify it
+		String sql = String.format(Sql.RETREIVE_ANSWER_TIMESTAMP, answer.getId());
+		Statement stmt = this.conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		assertTrue(rs.next());
+		assertEquals(answer.getId(), rs.getInt("answer_id"));
+		assertEquals(timestamp, rs.getLong("tstamp"));
+		assertEquals(locale.toString(), rs.getString("locale"));		
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testRetreiveAnswerTimestampWithNullConn() throws Exception {
+		this.dataFacade.retreiveAnswerTimestamp(null, 0);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testRetreiveAnswerTimestampWithBadAnswerId() throws Exception {
+		this.dataFacade.retreiveAnswerTimestamp(this.conn, -1);
+	}
+	
+	@Test
+	public void testRetreiveAnswerTimestamp() throws Exception {
+		//first insert an answer and it's timestamp
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		long timestamp = new Date().getTime();
+		Locale locale = Locale.getDefault();
+		Answer answer = new Answer(0, user, 0, "the answer");
+		answer = this.dataFacade.insertAnswer(this.conn, answer);
+		this.dataFacade.insertAnswerTimestamp(this.conn, answer.getId(), timestamp, locale);
+		
+		assertEquals(timestamp, this.dataFacade.retreiveAnswerTimestamp(this.conn, answer.getId()));
+	}
+	
+	@Test
+	public void testRetreiveNonexistentAnswerTimestamp() throws Exception {		
+		//there is no answer or timestamp with the id 10000
+		assertEquals(-1, this.dataFacade.retreiveAnswerTimestamp(this.conn, 10000));
 	}
 	
 	@Test

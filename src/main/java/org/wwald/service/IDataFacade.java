@@ -718,11 +718,12 @@ public interface IDataFacade {
 	 * Inserts the specified {@link Answer} in the database
 	 * @param conn The database connection
 	 * @param answer The {@link Answer}
+	 * @return The {@link Answer} object with it's id populated
 	 * @throws NullPointerException If either conn or answer is null
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void insertAnswer(Connection conn, Answer answer) 
+	public Answer insertAnswer(Connection conn, Answer answer) 
 		throws DataException;
 	
 	/**
@@ -809,6 +810,37 @@ public interface IDataFacade {
 	 */
 	public long retreiveQuestionTimestamp(Connection conn, 
 										  int questionId) 
+		throws DataException;
+
+	/**
+	 * Inserts the timestamp of the specified {@link Answer} as the number of
+	 * milliseconds elapsed since 1 Jan 1972
+	 * @param conn The database connection
+	 * @param answerId The id of the answer
+	 * @param timestamp The timestamp as number of milliseconds elapsed since
+	 * 1 January 1970
+	 * @param locale The locale for which we have specified the timestamp
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void insertAnswerTimestamp(Connection conn, 
+									  int answerId, 
+									  long timestamp, 
+									  Locale locale) 
+		throws DataException;
+	
+	
+	/**
+	 * Returns the timestamp of the specified answer as the number of milliseconds
+	 * elapsed since 1 January 1970
+	 * @param conn The database connection
+	 * @param answerId The id of the answer
+	 * @return The timestamp as the number of millisecinds elapsed since 1 January
+	 * 1970, or -1 if the timestamp for this answer has not been recorded
+	 * @throws DataException
+	 */
+	public long retreiveAnswerTimestamp(Connection conn, 
+										int answerId) 
 		throws DataException;
 	
 }

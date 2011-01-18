@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.Session;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.wwald.WWALDSession;
+import org.wwald.model.Answer;
 import org.wwald.model.ConnectionPool;
 import org.wwald.model.Course;
 import org.wwald.model.CourseEnrollmentStatus;
@@ -231,11 +232,36 @@ public class ApplicationFacade {
 										new Date().getTime(), 
 										Locale.getDefault());
 			
-			conn.commit();
+			conn.commit();			
 		} catch(SQLException sqle) {
 			String msg = "Could not save question in the database";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
+		} finally {
+			try { conn.setAutoCommit(true); } catch(SQLException sqle) 
+			{cLogger.error("Could not set autoCommit back to true");}
+		}
+	}
+	
+	public void answerQuestion(Connection conn, 
+							   Answer answer) throws DataException {
+		try {
+			conn.setAutoCommit(false);
+			answer = dataFacade.insertAnswer(conn, answer);
+			long timestamp = new Date().getTime();
+			Locale locale = Locale.getDefault();
+			dataFacade.insertAnswerTimestamp(conn, 
+											 answer.getId(), 
+											 timestamp, 
+											 locale);
+			conn.commit();			
+		} catch(SQLException sqle) {
+			String msg = "Could not save answer in the database";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		} finally {
+			try { conn.setAutoCommit(true); } catch(SQLException sqle) 
+			{cLogger.error("Could not set autoCommit back to true");}
 		}
 	}
 	
