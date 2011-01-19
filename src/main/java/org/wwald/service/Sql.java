@@ -14,6 +14,7 @@ public class Sql {
 	public static String RETREIVE_ALL_USER_META = "SELECT * from USER_META;";
 	public static String RETREIVE_USER_META = "SELECT * from USER_META where userid=%s;";
 	public static String RETREIVE_USER_META_BY_IDETIFIER_LOGIN_VIA = "SELECT * from USER_META where identifier=%s AND login_via=%s;";
+	public static String DELETE_USER_META = "DELETE FROM USER_META WHERE userid=%s;";
 	
 	public static String RETREIVE_PASSWORD = "SELECT password from USER where username=%s";
 	

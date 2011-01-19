@@ -479,11 +479,12 @@ public interface IDataFacade {
 	 * Inserts the specified UserMeta object in the database
 	 * @param conn The database connection
 	 * @param userMeta The {@link UserMeta} object
+	 * @return UserMeta The UserMeta with it's userid populated
 	 * @throws NullPointerException If either conn or userMeta is null
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
 	 * {@link SQLException} is wrapped in the {@link DataException}
 	 */
-	public void insertUserMeta(Connection conn, 
+	public UserMeta insertUserMeta(Connection conn, 
 							   UserMeta userMeta) 
 		throws DataException;
 	
@@ -503,6 +504,8 @@ public interface IDataFacade {
 	 * userid
 	 * @param conn The database connection
 	 * @param userid The userid The userid
+	 * @return A {@link UserMeta} object for the specified user or null if the 
+	 * user could not be found in persistent storage
 	 * @throws NullPointerException If conn is null
 	 * @throws IllegalArgumentException If userid is less than 0
 	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
@@ -540,6 +543,20 @@ public interface IDataFacade {
 	 * not have any {@link UserMeta} objects then the list will be an empty list
 	 */
 	public void updateUserMetaRole(Connection conn, UserMeta userMeta) throws DataException;
+	
+	/**
+	 * Deletes the {@link UserMeta} object specified by the userid from 
+	 * persistent storage
+	 * @param conn The database connection
+	 * @param userid The userid of the user who is to be deleted
+	 * @throws NullPointerException If conn is null
+	 * @throws IllegalArgumentException If userid is a negative number
+	 * @throws DataException if the jdbc code throws a {@link SqlException}. The 
+	 * {@link SQLException} is wrapped in the {@link DataException}
+	 */
+	public void deleteUserMeta(Connection conn, 
+							   int userid) 
+		throws DataException;
 	
 	//Static Pages
 	/**

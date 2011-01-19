@@ -1430,6 +1430,43 @@ public class DataFacadeRDBMSImplTest {
 		this.dataFacade.updateUserMetaRole(this.conn, null);
 	}
 	
+	@Test(expected=NullPointerException.class)
+	public void testDeleteUserMetaWithNullConn() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		this.dataFacade.deleteUserMeta(null, user.getUserid());
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testDeleteUserMetaWithBadUserid() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		this.dataFacade.deleteUserMeta(this.conn, -1);
+	}
+	
+	@Test(expected=DataException.class)
+	public void testDeleteUserMetaWhereThereAreIntegrityConstraints() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		this.dataFacade.deleteUserMeta(this.conn, user.getUserid());
+		
+		UserMeta retreivedUser = this.dataFacade.retreiveUserMeta(conn, user.getUserid());
+		assertNull(retreivedUser);
+	}
+	
+	@Test
+	public void testDeleteUserMetaForNonExistentUser() throws Exception {
+		UserMeta user = TestObjectsRepository.getInstance().getUserUserMeta("dvidakovich").userMeta;
+		this.dataFacade.deleteUserMeta(this.conn, 10000);
+		//TODO: This will fail silently... should we change this method to return a boolean?
+	}
+	
+	@Test
+	public void testDeleteUserMeta() throws Exception {
+		UserMeta userMeta = this.dataFacade.retreiveUserMetaByIdentifierLoginVia(this.conn, "admindude", UserMeta.LoginVia.INTERNAL);
+		this.dataFacade.deleteUserMeta(this.conn, userMeta.getUserid());
+		
+		UserMeta retreivedUser = this.dataFacade.retreiveUserMeta(this.conn, userMeta.getUserid());
+		assertNull(retreivedUser);
+	}
+	
 	@Test
 	public void testRetreiveStaticPage() throws Exception {
 		StaticPagePOJO aboutPagePojo = 

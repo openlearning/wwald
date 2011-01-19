@@ -1123,9 +1123,11 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 	/**
 	 * @see org.wwald.service.IDataFacade#insertUserMeta(Connection, UserMeta)
 	 */
-	public void insertUserMeta(Connection conn, 
-							   UserMeta userMeta) 
+	public UserMeta insertUserMeta(Connection conn, 
+							   	   UserMeta userMeta) 
 		throws DataException {
+		
+		//TODO: Add unit tests to verify the return value
 		
 		if(conn == null) {
 			throw new NullPointerException(NULL_CONN_ERROR_MSG);
@@ -1137,16 +1139,31 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 								   wrapForSQL(userMeta.getIdentifier()), 								    
 								   wrapForSQL(userMeta.getLoginVia().toString()),
 								   wrapForSQL(userMeta.getRole().toString()));
+		
+		boolean retreivedIdentity = false;
+		int rowCnt = -1;
+		
 		try {
 			Statement stmt = conn.createStatement();
 			cLogger.info("Executing SQL '" + sql + "'");
-			int rows = stmt.executeUpdate(sql);
-			System.out.println("rows updated " + rows);
+			stmt.executeUpdate(sql);
+			sql = "CALL IDENTITY()";
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				userMeta.setUserid(rs.getInt(1));
+				retreivedIdentity = true;
+			}
 		} catch(SQLException sqle) {
 			String msg = "Could not insert UserMeta";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
+		if(retreivedIdentity) {
+			return userMeta;
+		} else {
+			String msg = "Could not retreive identity for inserted UserMeta";
+			throw new DataException(msg);
+		}		
 	}
 	
 	
@@ -1286,6 +1303,33 @@ public class DataFacadeRDBMSImpl implements IDataFacade {
 			stmt.executeUpdate(sql);
 		} catch(SQLException sqle) {
 			String msg = "Could not update userMeta '" + userMeta + "'";
+			cLogger.error(msg, sqle);
+			throw new DataException(msg, sqle);
+		}
+	}
+	
+	/**
+	 * @see org.wwald.service.IDataFacade#deleteUserMeta(Connection, int)
+	 */
+	public void deleteUserMeta(Connection conn, 
+			   				   int userid) 
+		throws DataException {
+		
+		if(conn == null) {
+			throw new NullPointerException(NULL_CONN_ERROR_MSG);
+		}
+		
+		if(userid < 0) {
+			throw new IllegalArgumentException("userid cannot be a negative integer");
+		}
+		
+		String sql = String.format(Sql.DELETE_USER_META, userid);
+		
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch(SQLException sqle) {
+			String msg = "Could not delete UserMeta for userid '" + userid + "'";
 			cLogger.error(msg, sqle);
 			throw new DataException(msg, sqle);
 		}
