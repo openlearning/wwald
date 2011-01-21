@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.wwald.WWALDApplication;
 import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
@@ -23,20 +24,26 @@ public class CoursePage extends BasePage {
 		try {
 			this.selectedCourse = getSelectedCourse(parameters);
 			
-//			replaceSidebar(getSidebar(this));
-			
-			Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
-			if(parameters.getString(WWALDConstants.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
-				parameters.add(WWALDConstants.SELECTED_COMPETENCY, String.valueOf(selectedCompetency.getId()));
-			}
-			if(selectedCourse == null) {
-				setResponsePage(EditCompetencies.class, parameters);
-			}
-			else {
-				add(new CourseCompetenciesPanel(WicketIdConstants.COURSE_COMPETENCIES_PANEL, 
-						   						this.selectedCourse,
-						   						selectedCompetency, 
-						   						parameters));
+			if(this.selectedCourse == null) {
+				//Since the course does not exist we take the user back to the
+				//home page... 
+				//TODO: We must display an error message somewhere
+				setResponsePage(HomePage.class);
+			} else {
+//				replaceSidebar(getSidebar(this));				
+				Competency selectedCompetency = getSelectedCompetency(parameters,selectedCourse);
+				if(parameters.getString(WWALDConstants.SELECTED_COMPETENCY) == null && selectedCompetency != null ){
+					parameters.add(WWALDConstants.SELECTED_COMPETENCY, String.valueOf(selectedCompetency.getId()));
+				}
+				if(selectedCourse == null) {
+					setResponsePage(EditCompetencies.class, parameters);
+				}
+				else {
+					add(new CourseCompetenciesPanel(WicketIdConstants.COURSE_COMPETENCIES_PANEL, 
+							   						this.selectedCourse,
+							   						selectedCompetency, 
+							   						parameters));
+				}
 			}
 		} catch(DataException de) {
 			String msg = "Sorry cannot display this page because an internal error has occured";
