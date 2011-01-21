@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.wwald.WWALDApplication;
@@ -102,10 +103,18 @@ public class ForumPanel extends BasePanel {
 					cLogger.error(msg, de);
 				}
 				
-				QuestionStatisticsPanel questionStatisticsPanel = 
+				Panel questionStatisticsPanel = null;
+				try {
+				questionStatisticsPanel = 
 							new QuestionStatisticsPanel(QUESTION_STATISTICS, 
 														questionStatistics);
-				questionStatisticsPanel.setUserImageVisible(false);
+				((QuestionStatisticsPanel)questionStatisticsPanel).
+					setUserImageVisible(false);
+				} catch(DataException de) {
+					String msg = "Could not create QuestionStatisticsPanel";
+					cLogger.error(msg, de);
+					questionStatisticsPanel = new EmptyPanel(QUESTION_STATISTICS);
+				}
 				item.add(questionStatisticsPanel);
 			}
 			

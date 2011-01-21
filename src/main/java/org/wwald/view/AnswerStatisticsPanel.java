@@ -3,6 +3,7 @@ package org.wwald.view;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -12,10 +13,16 @@ import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.AnswerStatistics;
 import org.wwald.model.UserMeta;
+import org.wwald.service.DataException;
 
 public class AnswerStatisticsPanel extends BasePanel {
 
-	public AnswerStatisticsPanel(String id, AnswerStatistics answerStatistics) {
+	private static transient Logger cLogger = 
+		Logger.getLogger(AnswerStatisticsPanel.class);
+	
+	public AnswerStatisticsPanel(String id, AnswerStatistics answerStatistics) 
+		throws DataException {
+		
 		super(id);
 		add(getUserImage(answerStatistics.getUser().getUserid()));
 		add(getUser(answerStatistics));

@@ -14,6 +14,7 @@ import org.wwald.WWALDConstants;
 import org.wwald.WicketIdConstants;
 import org.wwald.model.QuestionStatistics;
 import org.wwald.model.UserMeta;
+import org.wwald.service.DataException;
 
 public class QuestionStatisticsPanel extends BasePanel {
 	
@@ -21,24 +22,20 @@ public class QuestionStatisticsPanel extends BasePanel {
 		Logger.getLogger(QuestionStatisticsPanel.class);
 	
 	public QuestionStatisticsPanel(String id, 
-								   QuestionStatistics questionStatistics) {
+								   QuestionStatistics questionStatistics) 
+		throws DataException {
 
 		super(id);
 		
-		try {
-			//4890999
-			add(getUserImage(questionStatistics.getQuestioner().getUserid()));
-			add(getQuestionerLink(questionStatistics));
-			add(getQuestionTimestamp(questionStatistics.getTimestamp()));
-			add(getNumberOfAnswers(questionStatistics));
+		//4890999
+		add(getUserImage(questionStatistics.getQuestioner().getUserid()));
+		add(getQuestionerLink(questionStatistics));
+		add(getQuestionTimestamp(questionStatistics.getTimestamp()));
+		add(getNumberOfAnswers(questionStatistics));
 //			add(getLastAnswererLink());
 //			add(getLikes());
 //			add(getTags());
-		} catch(Exception e) {
-			String msg = "Exception caught while showing QuestionStatisticsPanel";
-			cLogger.error(msg, e);
-			setResponsePage(GenericErrorPage.class);
-		}
+		
 	}
 	
 	public void setUserImageVisible(boolean visible) {

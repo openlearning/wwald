@@ -22,6 +22,7 @@ import org.wwald.model.ConnectionPool;
 import org.wwald.model.UserMeta;
 import org.wwald.service.DataException;
 import org.wwald.service.IDataFacade;
+import org.wwald.view.components.UserImage;
 
 /**
  * Displays the public UserProfile of a user
@@ -46,14 +47,15 @@ public class UserProfile extends BasePage {
 	}
 	
 	private Component getUserThumbnailImage(UserMeta userMeta) {
-		String dbId = getDatabaseId();
-		String userid = String.valueOf(userMeta.getUserid());
-		ValueMap vm = new ValueMap();
-		vm.put("userid", userid);
-		vm.put("dbId", dbId);
-		return new Image(WWALDApplication.USER_THUMBNAIL_IMAGE, 
-						 new ResourceReference(WWALDApplication.USER_THUMBNAIL_IMAGE), 
-						 vm);
+		return new UserImage(WWALDApplication.USER_THUMBNAIL_IMAGE, userMeta);
+//		String dbId = getDatabaseId();
+//		String userid = String.valueOf(userMeta.getUserid());
+//		ValueMap vm = new ValueMap();
+//		vm.put("userid", userid);
+//		vm.put("dbId", dbId);
+//		return new Image(WWALDApplication.USER_THUMBNAIL_IMAGE, 
+//						 new ResourceReference(WWALDApplication.USER_THUMBNAIL_IMAGE), 
+//						 vm);
 	}
 
 	private Component getEnrolledCoursesListView(UserMeta userMeta) 

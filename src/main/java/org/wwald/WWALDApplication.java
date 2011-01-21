@@ -25,9 +25,6 @@ import org.wwald.view.LoginPage;
 import org.wwald.view.StaticPage;
 import org.wwald.view.UserProfiles;
 import org.wwald.view.components.CourseThumbnailImageResource;
-import org.wwald.view.components.UserThumbnailImageResource;
-
-import com.cforcoding.jmd.MarkDown;
 
 /**
  * Application object for your web application. If you want to run this application without deploying, run the Start class.
@@ -97,8 +94,6 @@ public class WWALDApplication extends WebApplication
 		
 		getSharedResources().add(COURSE_THUMBNAIL_IMAGE, 
 								 new CourseThumbnailImageResource());
-		getSharedResources().add(USER_THUMBNAIL_IMAGE, 
-				 				new UserThumbnailImageResource());
 	}
 	
 	public IDataFacade getDataFacade() {
