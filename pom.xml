@@ -131,8 +131,7 @@
     		<groupId>org.markdownj</groupId>
     		<artifactId>markdownj</artifactId>
     		<version>0.4-SNAPSHOT</version>
-    		<scope>system</scope>
-    		<systemPath>${basedir}/lib/markdownj-1.0.2b4-0.3.0.jar</systemPath>
+    		<scope>compile</scope>
 		</dependency>
 		
 
